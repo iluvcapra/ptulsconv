@@ -1,0 +1,253 @@
+SESSION NAME:	Robin Hood Spotting
+SAMPLE RATE:	48000.000000
+BIT DEPTH:	24-bit
+SESSION START TIMECODE:	01:00:00:00.00
+TIMECODE FORMAT:	29.97 Frame
+# OF AUDIO TRACKS:	17
+# OF AUDIO CLIPS:	4
+# OF AUDIO FILES:	1
+
+
+P L U G - I N S  L I S T I N G
+MANUFACTURER            	PLUG-IN NAME            	VERSION         	FORMAT          	STEMS                   	NUMBER OF INSTANCES
+Avid                    	ReVibe II               	18.8.0d1448     	AAX Native      	Mono / LCR              	1 active
+DMGAudio                	EQuality                	1.31            	AAX Native      	Mono / Mono             	1 active
+
+
+T R A C K  L I S T I N G
+TRACK NAME:	DIA WT
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	TIMESTAMP         	STATE
+
+
+TRACK NAME:	MX WT (Stereo)
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	TIMESTAMP         	STATE
+1       	1       	RobinHood.1-01.L              	01:00:08:00.00	01:09:15:25.02	00:09:07:25.02	    00:00:51:17.00	Unmuted
+
+
+2       	1       	RobinHood.1-01.R              	01:00:08:00.00	01:09:15:25.02	00:09:07:25.02	    00:00:51:17.00	Unmuted
+
+
+TRACK NAME:	FX WT (Stereo)
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	TIMESTAMP         	STATE
+
+
+
+
+TRACK NAME:	Scenes
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	TIMESTAMP         	STATE
+1       	1       	@ {Sc=MT Main Titles}         	01:00:08:00.00	01:01:35:25.00	00:01:27:25.00	    01:00:08:00.00	Unmuted
+1       	2       	@ {Sc=1 Ext. Town Square - News of the King}	01:01:35:25.00	01:01:57:01.74	00:00:21:06.74	    01:01:35:25.00	Unmuted
+1       	3       	@{Sc=2 Int. Castle - John and Guy}	01:01:57:01.74	01:02:49:07.00	00:00:52:05.26	    01:01:57:01.74	Unmuted
+1       	4       	@{Sc=Int/Ext. Montage - John's Soldiers Terrorize the Countryside}	01:02:49:07.00	01:03:21:18.00	00:00:32:11.00	    01:02:49:07.00	Unmuted
+1       	5       	@{Sc=Ext. Edge of Sherwood Forest - Much Poaches a Deer}	01:03:21:18.00	01:06:24:11.00	00:03:02:23.00	    01:03:21:18.00	Unmuted
+1       	6       	@{Sc=Int. Nottingham Castle - The Feast}	01:06:24:11.00	01:09:15:24.00	00:02:51:12.100	    01:06:24:11.00	Unmuted
+
+
+TRACK NAME:	Robin
+COMMENTS:	[ADR] {Actor=Errol Flynn} $CN=1
+USER DELAY:	0 Samples
+STATE: Solo 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	TIMESTAMP         	STATE
+1       	1       	"What now, Sir Guy? You would not kill a man for telling the truth, would you?" $QN=R101	01:05:06:18.00	01:05:09:22.87	00:00:03:04.87	    01:05:06:18.00	Unmuted
+1       	2       	"You can be thankful that my humor is of a different sort." $QN=R102	01:05:11:06.00	01:05:13:12.11	00:00:02:06.11	    01:05:11:06.00	Unmuted
+1       	3       	"By a better right than you have, to misuse it..." $QN=R103	01:05:15:21.00	01:05:18:06.00	00:00:02:15.00	    01:05:15:22.74	Unmuted
+1       	4       	"And that goes for your master, Prince John." $QN=R104	01:05:18:06.00	01:05:20:01.09	00:00:01:25.09	    01:05:18:06.00	Unmuted
+1       	5       	"Thank you, he does need a bit of a talking to, hey Will?"  $QN=R105	01:05:24:10.00	01:05:27:01.00	00:00:02:21.00	    01:05:24:10.00	Unmuted
+1       	6       	"Hold there! What's his fault?" $QN=R106	01:05:30:05.00	01:05:31:21.00	00:00:01:16.00	    01:05:30:05.00	Unmuted
+1       	7       	"You're wrong! I killed that deer, this man's my servant." $QN=R107	01:05:33:07.79	01:05:35:28.00	00:00:02:20.21	    01:05:33:07.79	Unmuted
+1       	8       	"Really, are there no exceptions?" $QN=R108	01:05:42:22.00	01:05:46:08.39	00:00:03:16.39	    01:05:42:22.00	Unmuted
+1       	9       	"Better look before you shoot next time, little man!" $QN=R109	01:06:01:21.00	01:06:03:21.55	00:00:02:00.55	    01:06:01:19.10	Unmuted
+1       	10      	"Fetch the deer, then." $QN=R110	01:06:20:00.00	01:06:21:01.00	00:00:01:01.00	    01:06:20:00.00	Unmuted
+
+
+TRACK NAME:	Will
+COMMENTS:	[ADR] {Actor=Patrick Knowles} $CN=2
+USER DELAY:	0 Samples
+STATE: Muted 
+PLUG-INS: 	EQuality (mono)
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	TIMESTAMP         	STATE
+1       	1       	"Yes, he has been getting rather out-of-hand." $QN=W101	01:05:27:07.00	01:05:28:26.00	00:00:01:19.00	    01:05:27:07.00	Unmuted
+1       	2       	"Ha hah ha ha ha ha ha ha." $QN=W102	01:05:59:03.74	01:06:01:13.100	00:00:02:10.26	    01:05:59:03.74	Unmuted
+
+
+TRACK NAME:	Marian
+COMMENTS:	[ADR] {Actor=Olivia DeHavilland} $CN=3
+USER DELAY:	0 Samples
+STATE: Muted 
+PLUG-INS: 	ReVibe II (mono/LCR)
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	TIMESTAMP         	STATE
+1       	1       	"Must I take him, Your Highness?" $QN=M101	01:07:52:23.00	01:07:54:17.00	00:00:01:24.00	    01:07:52:23.00	Unmuted
+1       	2       	"Well, he's a Norman, of course." $QN=M102	01:07:56:16.00	01:07:58:14.00	00:00:01:27.100	    01:07:56:16.00	Unmuted
+1       	3       	"Isn't that reason enough for a Royal Ward who must obey her guardian?" $QN=M103	01:08:01:11.00	01:08:04:24.00	00:00:03:12.100	    01:08:01:11.00	Unmuted
+1       	4       	"Perhaps when I know him better—" $QN=M104	01:08:17:24.00	01:08:19:14.09	00:00:01:20.09	    01:08:17:24.00	Unmuted
+
+
+TRACK NAME:	John
+COMMENTS:	[ADR] {Actor=Claude Raines} $CN=4
+USER DELAY:	0 Samples
+STATE: Inactive 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	TIMESTAMP         	STATE
+1       	1       	"And how are the dear Saxons taking the news, Sir Guy?" $QN=J101	01:01:57:29.00	01:02:01:20.00	00:00:03:21.00	    01:01:57:29.00	Unmuted
+1       	2       	"They'll be more than worried when I get through squeezing the fat out of their pampered hides!" $QN=J102	01:02:05:05.00	01:02:09:04.72	00:00:03:29.72	    01:02:05:05.00	Unmuted
+1       	3       	"What better moment than this, Sir Guy? …" $QN=J103	01:02:10:25.00	01:02:12:25.15	00:00:02:00.15	    01:02:10:25.00	Unmuted
+1       	4       	"Who ever would have thought my dear brother would be so considerate…" $QN=J104	01:02:13:04.00	01:02:15:29.00	00:00:02:25.00	    01:02:13:04.00	Unmuted
+1       	5       	"…as to get himself captured, and leave ALL of England to my tender care?" $QN=J105	01:02:15:29.00	01:02:21:27.00	00:00:05:28.00	    01:02:15:29.00	Unmuted
+1       	6       	"If he returns, and I'll see to it that he doesn't." $QN=J106	01:02:24:21.00	01:02:28:06.00	00:00:03:15.00	    01:02:24:21.00	Unmuted
+1       	7       	"We must drink to this moment, Sir Guy..." $QN=J107	01:02:28:07.00	01:02:30:19.00	00:00:02:12.00	    01:02:28:07.00	Unmuted
+1       	8       	"...Golden days are ahead!" $QN=J108	01:02:31:02.00	01:02:32:21.09	00:00:01:19.09	    01:02:31:02.00	Unmuted
+1       	9       	"I'll assign tax districts to you tomorrow." $QN=J109	01:02:34:07.00	01:02:36:28.00	00:00:02:21.00	    01:02:34:07.00	Unmuted
+1       	10      	"My Lords, I thank you." $QN=J110	01:07:32:05.00	01:07:34:19.00	00:00:02:14.00	    01:07:32:05.00	Unmuted
+1       	11      	"Well, this is what we Normans like: good food, good company, and a beautful woman to flatter me." $QN=J111	01:07:35:06.00	01:07:41:01.00	00:00:05:25.00	    01:07:35:06.00	Unmuted
+1       	12      	"Eh, Lady Marian? Was it worthwhile coming with me from London to see what stout fellows our Nottingham friends are?" $QN=J112	01:07:41:21.00	01:07:47:11.00	00:00:05:20.00	    01:07:41:21.00	Unmuted
+1       	13      	"Take Sir Guy of Gisbourne now, one of our most renowned defenders of the realm." $QN=J113	01:07:48:00.00	01:07:52:21.00	00:00:04:21.00	    01:07:48:00.00	Unmuted
+1       	14      	"Why, you like him, don't you?" $QN=J114	01:07:54:19.00	01:07:56:06.00	00:00:01:17.00	    01:07:54:19.00	Unmuted
+1       	15      	"Is that the ONLY reason for liking him?" $QN=J115	01:07:58:29.00	01:08:01:05.00	00:00:02:06.00	    01:07:58:29.00	Unmuted
+1       	16      	"Nay, I'd not force you, my Lady." $QN=J116	01:08:04:23.00	01:08:07:09.00	00:00:02:15.100	    01:08:04:23.00	Unmuted
+1       	17      	"But he's our most powerful friend in these shires, and he's already in love with you." $QN=J117	01:08:07:09.00	01:08:11:26.85	00:00:04:17.85	    01:08:07:09.00	Unmuted
+1       	18      	"If I could promise him marriage to a royal ward, it might help my plans." $QN=J118	01:08:12:10.00	01:08:17:09.32	00:00:04:29.32	    01:08:12:10.00	Unmuted
+1       	19      	"Of course…" $QN=J119         	01:08:19:08.00	01:08:20:02.00	00:00:00:24.00	    01:08:19:08.00	Unmuted
+1       	20      	"You're a very wise young woman." $QN=J120	01:08:20:15.00	01:08:22:13.00	00:00:01:28.00	    01:08:20:15.00	Unmuted
+1       	21      	John.grp-02 $QN=J121          	01:08:23:12.00	01:08:27:13.37	00:00:04:01.37	    01:08:23:12.00	Unmuted
+
+
+TRACK NAME:	Guy
+COMMENTS:	[ADR] {Actor=Basil Rathbone} $CN=5
+USER DELAY:	0 Samples
+STATE: Solo 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	TIMESTAMP         	STATE
+1       	1       	"They're even more worried than (usual) your highness." {R=Unintelligible} $QN=GY101	01:02:03:02.00	01:02:05:04.00	00:00:02:02.00	    01:02:03:02.00	Unmuted
+1       	2       	"And you intend to act on your plans?" $QN=GY102	01:02:08:28.00	01:02:10:25.11	00:00:01:27.11	    01:02:08:28.00	Unmuted
+1       	3       	"He may disapprove if he returns, Your Highness." $QN=GY103	01:02:22:14.00	01:02:24:09.00	00:00:01:25.00	    01:02:22:14.00	Unmuted
+1       	4       	"Tomorrow, Your Highness!" {R=Set Noise} $QN=GY104	01:02:38:19.00	01:02:40:12.00	00:00:01:23.00	    01:02:38:19.00	Unmuted
+1       	5       	"Get him! Follow me the rest remain here!" {R=Intelligibility} $QN=GY105	01:03:51:00.66	01:03:53:06.41	00:00:02:05.75	    01:03:51:00.66	Unmuted
+1       	6       	"What's your name? You Saxon dog!" $QN=GY106	01:04:19:15.00	01:04:21:28.00	00:00:02:13.00	    01:04:19:09.70	Unmuted
+1       	7       	"What's your name?" $QN=GY107 	01:04:29:08.00	01:04:29:26.63	00:00:00:18.63	    01:04:29:08.00	Unmuted
+1       	8       	"Don't you know it's death to kill the King's deer?" $QN=GY108	01:04:32:14.00	01:04:34:01.00	00:00:01:17.00	    01:04:32:14.00	Unmuted
+1       	9       	"What the devil!" $QN=GY109   	01:05:05:22.00	01:05:06:22.00	00:00:01:00.00	    01:05:05:17.00	Unmuted
+1       	10      	"If it amuse me, yes!" $QN=GY110	01:05:09:21.00	01:05:11:03.00	00:00:01:12.00	    01:05:09:21.00	Unmuted
+1       	11      	"By what right do you interfere with the King's justice?" $QN=GY111	01:05:13:14.00	01:05:15:18.00	00:00:02:04.00	    01:05:13:14.00	Unmuted
+1       	12      	"I'll give him that message, at the baron's meeting in Nottingham tonight." $QN=GY112	01:05:20:23.00	01:05:23:25.46	00:00:03:02.46	    01:05:20:18.22	Unmuted
+1       	13      	"Fetch him along!" $QN=GY113  	01:05:29:17.00	01:05:30:04.00	00:00:00:17.00	    01:05:29:17.00	Unmuted
+1       	14      	"He killed a royal deer!" $QN=GY114	01:05:31:24.00	01:05:32:25.00	00:00:01:01.00	    01:05:31:24.00	Unmuted
+1       	15      	"Oh, I suppose you realize the penalty for killing the King's deer is death, wether for serf or noble." $QN=GY115	01:05:36:08.24	01:05:42:03.78	00:00:05:25.54	    01:05:36:08.24	Unmuted
+1       	16      	(react to ARROW pointed at head! Then goad horse.) [EFF] $QN=GY116	01:05:46:15.74	01:05:49:03.00	00:00:02:17.26	    01:05:46:15.74	Unmuted
+
+
+TRACK NAME:	Much
+COMMENTS:	[ADR] {Actor=Herbert Mundin} $CN=6
+USER DELAY:	0 Samples
+STATE: Muted Solo 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	TIMESTAMP         	STATE
+1       	1       	(effort TRIPPING and FALLING) {R=Added} [EFF] $QN=MH101	01:04:12:05.03	01:04:13:16.92	00:00:01:11.89	    01:04:12:05.03	Unmuted
+1       	2       	"A better one than yours!" $QN=MH102	01:04:22:01.00	01:04:23:05.12	00:00:01:04.12	    01:04:22:01.00	Unmuted
+1       	3       	(effort STRUCK WITH HAND) [EFF] {R=Added} $QN=MH103	01:04:23:20.00	01:04:25:12.21	00:00:01:22.21	    01:04:23:23.79	Unmuted
+1       	4       	"Sir Guy of the Devil! There's little to choose between them!" $QN=MH104	01:04:26:03.68	01:04:28:20.79	00:00:02:17.11	    01:04:26:03.68	Unmuted
+1       	5       	"Much, the Miller's son." $QN=MH105	01:04:30:27.00	01:04:32:00.00	00:00:01:03.00	    01:04:30:27.00	Unmuted
+1       	6       	"Yes, and death from hunger if I don't!" $QN=MH106	01:04:34:08.00	01:04:36:02.00	00:00:01:24.00	    01:04:34:08.00	Unmuted
+1       	7       	"Thanks to you and the rest of you Norman cut-throats at Nottingham castle!" $QN=MH107	01:04:36:02.00	01:04:39:10.00	00:00:03:08.00	    01:04:36:02.00	Unmuted
+1       	8       	(effort STRUCK) [EFF] $QN=MH108	01:04:39:12.00	01:04:39:26.00	00:00:00:14.00	    01:04:39:12.00	Unmuted
+1       	9       	"I WON'T be quiet!..." $QN=MH109	01:04:40:20.00	01:04:41:29.00	00:00:01:09.00	    01:04:40:20.00	Unmuted
+1       	10      	"You can KILL me if you like! But not until I've had my say!" $QN=MH110	01:04:42:00.00	01:04:44:25.00	00:00:02:25.00	    01:04:42:00.00	Unmuted
+1       	11      	"You can beat and starve us Saxons now! But when King Richard escapes, he'll take you by the scruff of the neck and (throw) into the sea!" {R=Intelligibility} $QN=MH111	01:04:45:07.00	01:04:52:16.00	00:00:07:09.00	    01:04:45:07.00	Unmuted
+1       	12      	"Thanks, good master." $QN=MH112	01:06:00:04.29	01:06:01:15.72	00:00:01:11.43	    01:06:00:04.29	Unmuted
+1       	13      	"From this day on, I follow only you…" $QN=MH113	01:06:03:24.00	01:06:05:26.00	00:00:02:02.00	    01:06:03:24.00	Unmuted
+1       	14      	"Why there isn't a poor Saxon in all of Nottinghamshire that doesn't know and bless Sir Robin of Locksley!" $QN=MH114	01:06:06:11.00	01:06:11:02.58	00:00:04:21.58	    01:06:06:11.00	Unmuted
+1       	15      	"Take me as your servant!" $QN=MH115	01:06:11:12.00	01:06:12:17.09	00:00:01:05.09	    01:06:11:12.00	Unmuted
+1       	16      	"Why in all the forest there isn't a hunter as good as me," $QN=MH116	01:06:13:10.00	01:06:16:20.00	00:00:03:10.00	    01:06:13:10.00	Unmuted
+1       	17      	"I ask no pay, just to follow you." $QN=MH117	01:06:16:21.00	01:06:19:29.00	00:00:03:07.100	    01:06:16:21.00	Unmuted
+
+
+TRACK NAME:	Butcher
+COMMENTS:	[ADR] {Actor=George Bunny} $CN=101
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	TIMESTAMP         	STATE
+1       	1       	"But who's gonna pay me?" $QN=BT101	01:02:51:00.69	01:02:52:19.00	00:00:01:18.31	    01:02:51:00.69	Unmuted
+
+
+TRACK NAME:	Town Crier
+COMMENTS:	[ADR] {Actor=Leonard Mundie} $CN=102
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	TIMESTAMP         	STATE
+1       	1       	"News has come from Vienna…" $QN=TC101	01:01:38:26.00	01:01:40:20.00	00:00:01:24.00	    01:01:38:26.00	Unmuted
+1       	2       	"Leopold of Austria has seized King Richard, on his return from the crusades…" $QN=TC102	01:01:40:29.00	01:01:45:27.00	00:00:04:28.00	    01:01:40:29.00	Unmuted
+1       	3       	"Our King is being held prisoner, nothing futher is known..." $QN=TC103	01:01:45:27.00	01:01:50:14.21	00:00:04:17.21	    01:01:45:27.00	Unmuted
+1       	4       	"His Highness Prince John, will make further public pronouncement tomorrow." $QN=TC104	01:01:50:27.00	01:01:55:10.33	00:00:04:13.33	    01:01:50:27.00	Unmuted
+
+
+TRACK NAME:	Soldier 1
+COMMENTS:	[ADR] $CN=103
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	TIMESTAMP         	STATE
+1       	1       	"Pay, pay, that's all you Saxon's think about!" $QN=SA101	01:02:52:17.54	01:02:55:25.53	00:00:03:07.99	    01:02:52:17.54	Unmuted
+1       	2       	"Didn't I tell you it was for Prince John, who has just come up from London?" {R=Rhotic R} $QN=SA102	01:02:56:04.00	01:02:59:19.00	00:00:03:15.00	    01:02:56:10.27	Unmuted
+
+
+TRACK NAME:	Soldier 2
+COMMENTS:	[ADR] $CN=104
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	TIMESTAMP         	STATE
+1       	1       	"He refused to send his men to work in Guy of Gisbourne's fields." {R=Mis-pronounced} $QN=SB101	01:03:14:11.00	01:03:17:29.44	00:00:03:18.44	    01:03:14:11.00	Unmuted
+
+
+TRACK NAME:	Soldier 3
+COMMENTS:	[ADR] $CN=105
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	TIMESTAMP         	STATE
+1       	1       	"Look to your manners! This is Sir Guy of Gisbourne!" $QN=SC101	01:04:23:26.00	01:04:26:02.85	00:00:02:06.85	    01:04:23:26.00	Unmuted
+1       	2       	"Be quiet, you!" {R=Performance} $QN=SC102	01:04:39:24.00	01:04:40:21.00	00:00:00:27.00	    01:04:39:24.00	Unmuted
+
+
+TRACK NAME:	Priest
+COMMENTS:	[ADR] {Actor=Thomas R. Mills} $CN=106
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	TIMESTAMP         	STATE
+1       	1       	"No, stop! Stop!" (effort SHOVED AWAY) {R=Off mic} [EFF] $QN=PR101	01:03:07:01.76	01:03:09:08.13	00:00:02:06.37	    01:03:07:01.76	Unmuted
+1       	2       	"This man is free-born! He's a landowner, you can't make a slave of him!" $QN=PR102	01:03:09:20.00	01:03:13:25.18	00:00:04:05.18	    01:03:09:20.00	Unmuted
+1       	3       	"But I protest! Argh…" (effort PUSHED OUT OF ROOM) $QN=PR103	01:03:17:14.00	01:03:21:22.24	00:00:04:08.24	    01:03:17:07.12	Unmuted
+
+
+TRACK NAME:	Guest at Court
+COMMENTS:	[ADR] $CN=107
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	TIMESTAMP         	STATE
+1       	1       	"While Richard is bent on adventure in foreign lands, it is our duty as Normans to preserrve the realm, by giving loyal support to Prince John" $QN=GC101	01:07:08:07.00	01:07:17:20.00	00:00:09:13.00	    01:07:08:07.00	Unmuted
+1       	2       	"the only true defender of the Norman spirit. Hail to Prince John." [AP] $QN=GC102	01:07:17:20.00	01:07:20:21.00	00:00:03:01.00	    01:07:17:20.00	Unmuted
+
+
+M A R K E R S  L I S T I N G
+#   	LOCATION     	TIME REFERENCE    	UNITS    	NAME                             	COMMENTS
+1   	01:00:00:00.00	0                 	Samples  	{Title=The Adventures of Robin Hood} 	{Supv=Nathan Levinson}

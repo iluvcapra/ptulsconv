@@ -54,11 +54,16 @@ class PTTextVisitor(NodeVisitor):
             if clip[0] != None:
                 clips.append(clip[0])
 
+        plugins = []
+        for plugin in visited_children[0][17]:
+            plugins.append(plugin[1])
+
         return dict(
             name=visited_children[0][2],
             comments=visited_children[0][6],
             user_delay_samples=visited_children[0][10],
             state=visited_children[0][14],
+            plugins=plugins,
             clips=clips
         )
 

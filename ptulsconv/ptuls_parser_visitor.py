@@ -83,7 +83,6 @@ class DictionaryParserVisitor(NodeVisitor):
         states = []
         for next_state in visited_children:
             states.append(next_state[0][0].text)
-
         return states
 
     def visit_track_clip_state(self, node, visited_children):

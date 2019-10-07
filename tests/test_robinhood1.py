@@ -90,6 +90,21 @@ class TestRobinHood1(unittest.TestCase):
             self.assertEqual(parsed['markers'][0]['time_reference'], 0)
             self.assertEqual(parsed['markers'][0]['units'], "Samples")
 
+    def test_transform_timecode(self):
+        parsed = dict()
+        with open(self.path, 'r') as f:
+            visitor = ptulsconv.DictionaryParserVisitor()
+            result = ptulsconv.protools_text_export_grammar.parse(f.read())
+            parsed = visitor.visit(result)
+
+        xformer = ptulsconv.TimecodeInterpreter()
+        xformer.apply_session_start = True
+
+        xformed = xformer.transform(parsed)
+
+        pprint.pprint(xformed)
+
+
 
 
 if __name__ == '__main__':

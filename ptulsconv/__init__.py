@@ -1,2 +1,2 @@
 from .ptuls_grammar import protools_text_export_grammar
-from .ptuls_parser_visitor import PTTextVisitor
+from .ptuls_parser_visitor import DictionaryParserVisitor

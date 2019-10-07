@@ -60,7 +60,7 @@ protools_text_export_grammar = Grammar(
     markers_column_header  = "#   " fs "LOCATION     " fs "TIME REFERENCE    " fs 
                              "UNITS    " fs "NAME                             " fs "COMMENTS" rs
 
-    marker_record = string_value fs string_value fs string_value fs 
+    marker_record = integer_value isp fs timecode_value fs integer_value isp fs 
                     string_value fs string_value fs string_value rs             
 
     fs = "\t"

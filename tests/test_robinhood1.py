@@ -9,7 +9,7 @@ class TestRobinHood1(unittest.TestCase):
 
     def test_header_export(self):
         with open(self.path, 'r') as f:
-            visitor = ptulsconv.PTTextVisitor()
+            visitor = ptulsconv.DictionaryParserVisitor()
             result = ptulsconv.protools_text_export_grammar.parse(f.read())
             parsed: dict = visitor.visit(result)
 
@@ -21,7 +21,7 @@ class TestRobinHood1(unittest.TestCase):
 
     def test_all_sections(self):
         with open(self.path, 'r') as f:
-            visitor = ptulsconv.PTTextVisitor()
+            visitor = ptulsconv.DictionaryParserVisitor()
             result = ptulsconv.protools_text_export_grammar.parse(f.read())
             parsed: dict = visitor.visit(result)
 
@@ -34,7 +34,7 @@ class TestRobinHood1(unittest.TestCase):
 
     def test_tracks(self):
         with open(self.path, 'r') as f:
-            visitor = ptulsconv.PTTextVisitor()
+            visitor = ptulsconv.DictionaryParserVisitor()
             result = ptulsconv.protools_text_export_grammar.parse(f.read())
             parsed: dict = visitor.visit(result)
             self.assertEqual(len(parsed['tracks']), 14)
@@ -60,7 +60,7 @@ class TestRobinHood1(unittest.TestCase):
 
     def test_a_track(self):
         with open(self.path, 'r') as f:
-            visitor = ptulsconv.PTTextVisitor()
+            visitor = ptulsconv.DictionaryParserVisitor()
             result = ptulsconv.protools_text_export_grammar.parse(f.read())
             parsed: dict = visitor.visit(result)
             guy_track = parsed['tracks'][5]
@@ -77,6 +77,19 @@ class TestRobinHood1(unittest.TestCase):
             self.assertEqual(guy_track['clips'][5]['duration'], "00:00:02:13")
             self.assertEqual(guy_track['clips'][5]['timestamp'], None)
             self.assertEqual(guy_track['clips'][5]['state'], 'Unmuted')
+
+    def test_memory_locations(self):
+        with open(self.path, 'r') as f:
+            visitor = ptulsconv.DictionaryParserVisitor()
+            result = ptulsconv.protools_text_export_grammar.parse(f.read())
+            parsed: dict = visitor.visit(result)
+
+            self.assertEqual(len(parsed['markers']),1)
+            self.assertEqual(parsed['markers'][0]['number'], 1)
+            self.assertEqual(parsed['markers'][0]['location'], "01:00:00:00")
+            self.assertEqual(parsed['markers'][0]['time_reference'], 0)
+            self.assertEqual(parsed['markers'][0]['units'], "Samples")
+
 
 
 if __name__ == '__main__':

@@ -8,7 +8,7 @@ class TestRobinHood5(unittest.TestCase):
 
     def test_skipped_segments(self):
         with open(self.path, 'r') as f:
-            visitor = ptulsconv.PTTextVisitor()
+            visitor = ptulsconv.DictionaryParserVisitor()
             result = ptulsconv.protools_text_export_grammar.parse(f.read())
             parsed: dict = visitor.visit(result)
             self.assertIsNone(parsed['files'])
@@ -16,14 +16,14 @@ class TestRobinHood5(unittest.TestCase):
 
     def test_plugins(self):
         with open(self.path, 'r') as f:
-            visitor = ptulsconv.PTTextVisitor()
+            visitor = ptulsconv.DictionaryParserVisitor()
             result = ptulsconv.protools_text_export_grammar.parse(f.read())
             parsed: dict = visitor.visit(result)
             self.assertEqual(len(parsed['plugins']), 2)
 
     def test_stereo_track(self):
         with open(self.path, 'r') as f:
-            visitor = ptulsconv.PTTextVisitor()
+            visitor = ptulsconv.DictionaryParserVisitor()
             result = ptulsconv.protools_text_export_grammar.parse(f.read())
             parsed: dict = visitor.visit(result)
             self.assertEqual(parsed['tracks'][1]['name'], 'MX WT (Stereo)')
@@ -33,7 +33,7 @@ class TestRobinHood5(unittest.TestCase):
 
     def test_a_track(self):
         with open(self.path, 'r') as f:
-            visitor = ptulsconv.PTTextVisitor()
+            visitor = ptulsconv.DictionaryParserVisitor()
             result = ptulsconv.protools_text_export_grammar.parse(f.read())
             parsed: dict = visitor.visit(result)
 

@@ -8,7 +8,7 @@ class TestRobinHood6(unittest.TestCase):
 
     def test_a_track(self):
         with open(self.path, 'r') as f:
-            visitor = ptulsconv.PTTextVisitor()
+            visitor = ptulsconv.DictionaryParserVisitor()
             result = ptulsconv.protools_text_export_grammar.parse(f.read())
             parsed: dict = visitor.visit(result)
             marian_track = parsed['tracks'][6]

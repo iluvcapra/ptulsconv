@@ -1,15 +1,17 @@
 import unittest
 import ptulsconv
 import pprint
+import os.path
+
 
 class TestRobinHood1(unittest.TestCase):
-    path = 'tests/export_cases/Robin Hood Spotting.txt'
+    path = os.path.dirname(__file__) + '/export_cases/Robin Hood Spotting.txt'
 
     def test_header_export(self):
         with open(self.path, 'r') as f:
             visitor = ptulsconv.PTTextVisitor()
             result = ptulsconv.protools_text_export_grammar.parse(f.read())
-            parsed :dict = visitor.visit(result)
+            parsed: dict = visitor.visit(result)
 
             self.assertTrue('header' in parsed.keys())
             self.assertEqual(parsed['header']['session_name'], 'Robin Hood Spotting')
@@ -21,7 +23,7 @@ class TestRobinHood1(unittest.TestCase):
         with open(self.path, 'r') as f:
             visitor = ptulsconv.PTTextVisitor()
             result = ptulsconv.protools_text_export_grammar.parse(f.read())
-            parsed :dict = visitor.visit(result)
+            parsed: dict = visitor.visit(result)
 
             self.assertIn('header', parsed.keys())
             self.assertIn('files', parsed.keys())
@@ -34,7 +36,7 @@ class TestRobinHood1(unittest.TestCase):
         with open(self.path, 'r') as f:
             visitor = ptulsconv.PTTextVisitor()
             result = ptulsconv.protools_text_export_grammar.parse(f.read())
-            parsed :dict = visitor.visit(result)
+            parsed: dict = visitor.visit(result)
             self.assertEqual(len(parsed['tracks']), 14)
             self.assertListEqual(["Scenes", "Robin", "Will", "Marian", "John",
                                   "Guy", "Much", "Butcher", "Town Crier",
@@ -60,7 +62,7 @@ class TestRobinHood1(unittest.TestCase):
         with open(self.path, 'r') as f:
             visitor = ptulsconv.PTTextVisitor()
             result = ptulsconv.protools_text_export_grammar.parse(f.read())
-            parsed :dict = visitor.visit(result)
+            parsed: dict = visitor.visit(result)
             guy_track = parsed['tracks'][5]
             self.assertEqual(guy_track['name'], 'Guy')
             self.assertEqual(guy_track['comments'], '[ADR] {Actor=Basil Rathbone} $CN=5')
@@ -69,11 +71,13 @@ class TestRobinHood1(unittest.TestCase):
             self.assertEqual(len(guy_track['clips']), 16)
             self.assertEqual(guy_track['clips'][5]['channel'], 1)
             self.assertEqual(guy_track['clips'][5]['event'], 6)
-            self.assertEqual(guy_track['clips'][5]['clip_name'], "\"What's your name? You Saxon dog!\" $QN=GY106" )
+            self.assertEqual(guy_track['clips'][5]['clip_name'], "\"What's your name? You Saxon dog!\" $QN=GY106")
             self.assertEqual(guy_track['clips'][5]['start_time'], "01:04:19:15")
             self.assertEqual(guy_track['clips'][5]['end_time'], "01:04:21:28")
             self.assertEqual(guy_track['clips'][5]['duration'], "00:00:02:13")
+            self.assertEqual(guy_track['clips'][5]['timestamp'], None)
             self.assertEqual(guy_track['clips'][5]['state'], 'Unmuted')
+
 
 if __name__ == '__main__':
     unittest.main()

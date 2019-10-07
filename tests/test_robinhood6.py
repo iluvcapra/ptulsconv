@@ -2,6 +2,7 @@ import unittest
 import ptulsconv
 import os.path
 
+
 class TestRobinHood6(unittest.TestCase):
     path = os.path.dirname(__file__) + '/export_cases/Robin Hood Spotting6.txt'
 

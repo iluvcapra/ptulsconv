@@ -1,6 +1,6 @@
 import unittest
 import ptulsconv
-import pprint
+#import pprint
 import os.path
 
 
@@ -18,6 +18,7 @@ class TestRobinHood1(unittest.TestCase):
             self.assertEqual(parsed['header']['sample_rate'], 48000.0)
             self.assertEqual(parsed['header']['bit_depth'], 24)
             self.assertEqual(parsed['header']['timecode_format'], 29.97)
+            self.assertEqual(parsed['header']['timecode_drop_frame'], False)
 
     def test_all_sections(self):
         with open(self.path, 'r') as f:
@@ -101,8 +102,6 @@ class TestRobinHood1(unittest.TestCase):
         xformer.apply_session_start = True
 
         xformed = xformer.transform(parsed)
-
-        pprint.pprint(xformed)
 
 
 

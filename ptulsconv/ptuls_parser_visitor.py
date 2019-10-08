@@ -17,14 +17,20 @@ class DictionaryParserVisitor(NodeVisitor):
                     markers=markers)
 
     def visit_header(self, node, visited_children):
+
+        tc_drop = False
+        for _ in visited_children[20]:
+            tc_drop = True
+
         return dict(session_name=visited_children[2],
                     sample_rate=visited_children[6],
                     bit_depth=visited_children[10],
                     start_timecode=visited_children[15],
                     timecode_format=visited_children[19],
-                    count_audio_tracks=visited_children[24],
-                    count_clips=visited_children[28],
-                    count_files=visited_children[32])
+                    timecode_drop_frame=tc_drop,
+                    count_audio_tracks=visited_children[25],
+                    count_clips=visited_children[29],
+                    count_files=visited_children[33])
 
     def visit_files_section(self, node, visited_children):
         return list(map(lambda child: dict(filename=child[0], path=child[2]), visited_children[2]))
@@ -50,8 +56,9 @@ class DictionaryParserVisitor(NodeVisitor):
                 clips.append(clip[0])
 
         plugins = []
-        for plugin in track_header[17]:
-            plugins.append(plugin[1])
+        for plugin_opt in track_header[16]:
+            for plugin in plugin_opt[1]:
+                plugins.append(plugin[1])
 
         return dict(
             name=track_header[2],
@@ -114,8 +121,8 @@ class DictionaryParserVisitor(NodeVisitor):
     def visit_integer_value(self, node, visited_children):
         return int(node.text)
 
-    def visit_timecode_value(self, node, visited_children):
-        return visited_children[1].text
+    # def visit_timecode_value(self, node, visited_children):
+    #     return node.text.strip(" ")
 
     def visit_float_value(self, node, visited_children):
         return float(node.text)

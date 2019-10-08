@@ -6,8 +6,8 @@ protools_text_export_grammar = Grammar(
     header   = "SESSION NAME:" fs string_value rs 
                "SAMPLE RATE:" fs float_value rs 
                "BIT DEPTH:" fs integer_value "-bit" rs 
-               "SESSION START TIMECODE:" fs timecode_value rs 
-               "TIMECODE FORMAT:" fs float_value " Frame" rs 
+               "SESSION START TIMECODE:" fs string_value rs 
+               "TIMECODE FORMAT:" fs float_value " Drop"? " Frame" rs 
                "# OF AUDIO TRACKS:" fs integer_value rs 
                "# OF AUDIO CLIPS:" fs integer_value rs 
                "# OF AUDIO FILES:" fs integer_value rs block_ending
@@ -38,7 +38,7 @@ protools_text_export_grammar = Grammar(
                            "COMMENTS:" fs string_value rs
                            "USER DELAY:" fs integer_value " Samples" rs
                            "STATE: " track_state_list rs
-                           "PLUG-INS: " ( fs string_value )* rs
+                           ("PLUG-INS: " ( fs string_value )* rs)?
                            "CHANNEL " fs "EVENT   " fs "CLIP NAME                     " fs 
                            "START TIME    " fs "END TIME      " fs "DURATION      " fs 
                            ("TIMESTAMP         " fs)? "STATE" rs
@@ -50,7 +50,7 @@ protools_text_export_grammar = Grammar(
     track_clip_entry     = integer_value isp fs 
                            integer_value isp fs 
                            string_value fs 
-                           timecode_value fs timecode_value fs timecode_value fs (timecode_value fs)? 
+                           string_value fs string_value fs string_value fs (string_value fs)? 
                            track_clip_state rs
                            
     track_clip_state     = ("Muted" / "Unmuted")
@@ -60,14 +60,13 @@ protools_text_export_grammar = Grammar(
     markers_column_header  = "#   " fs "LOCATION     " fs "TIME REFERENCE    " fs 
                              "UNITS    " fs "NAME                             " fs "COMMENTS" rs
 
-    marker_record = integer_value isp fs timecode_value fs integer_value isp fs 
+    marker_record = integer_value isp fs string_value fs integer_value isp fs 
                     string_value fs string_value fs string_value rs             
 
     fs = "\t"
     rs = "\n"
     block_ending = rs rs
     string_value   = ~"[^\t\n]*"
-    timecode_value = ~"[^\d\t\n]*" ~"\d\d:\d\d:\d\d:\d\d(\.\d+)?" ~"[^\d\t\n]*"
     integer_value  = ~"\d+"
     float_value    = ~"\d+(\.\d+)"
     isp            = ~"[^\d\t\n]*"    

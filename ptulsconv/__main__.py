@@ -5,9 +5,6 @@ import sys
 parser = OptionParser()
 parser.add_option('-t','--timecode', dest='convert_times', default=False, action='store_true',
                   help="Include timecode converted to seconds in output.")
-parser.add_option('-z','--offset', dest='apply_start_offset', default=False, action='store_true',
-                  help='Apply session start offset to converted start and finish timecodes on '
-                       'clips and markers. Implies -t.')
 parser.usage = "ptulsconv [-tz] TEXT_EXPORT.txt"
 
 if __name__ == "__main__":
@@ -18,6 +15,4 @@ if __name__ == "__main__":
         exit(-1)
 
     convert(input_file=args[1],
-            convert_times=(options.convert_times or options.apply_start_offset),
-            apply_session_start=options.apply_start_offset,
-            output=sys.stdout)
+            convert_times=options.convert_times, output=sys.stdout)

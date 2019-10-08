@@ -1,0 +1,230 @@
+SESSION NAME:	Robin Hood Spotting
+SAMPLE RATE:	48000.000000
+BIT DEPTH:	24-bit
+SESSION START TIMECODE:	01:00:00;00
+TIMECODE FORMAT:	29.97 Drop Frame
+# OF AUDIO TRACKS:	17
+# OF AUDIO CLIPS:	4
+# OF AUDIO FILES:	1
+
+
+T R A C K  L I S T I N G
+TRACK NAME:	DIA WT
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+
+
+TRACK NAME:	MX WT (Stereo)
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	RobinHood.1-01.L              	          0:08	          9:16	          9:08	Unmuted
+
+
+2       	1       	RobinHood.1-01.R              	          0:08	          9:16	          9:08	Unmuted
+
+
+TRACK NAME:	FX WT (Stereo)
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+
+
+
+
+TRACK NAME:	Scenes
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	@ {Sc=MT Main Titles}         	          0:08	          1:35	          1:27	Unmuted
+1       	2       	@ {Sc=1 Ext. Town Square - News of the King}	          1:35	          1:57	          0:21	Unmuted
+1       	3       	@{Sc=2 Int. Castle - John and Guy}	          1:57	          2:49	          0:52	Unmuted
+1       	4       	@{Sc=Int/Ext. Montage - John's Soldiers Terrorize the Countryside}	          2:49	          3:21	          0:32	Unmuted
+1       	5       	@{Sc=Ext. Edge of Sherwood Forest - Much Poaches a Deer}	          3:21	          6:24	          3:02	Unmuted
+1       	6       	@{Sc=Int. Nottingham Castle - The Feast}	          6:24	          9:16	          2:51	Unmuted
+
+
+TRACK NAME:	Robin
+COMMENTS:	[ADR] {Actor=Errol Flynn} $CN=1
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	"What now, Sir Guy? You would not kill a man for telling the truth, would you?" $QN=R101	          5:06	          5:10	          0:03	Unmuted
+1       	2       	"You can be thankful that my humor is of a different sort." $QN=R102	          5:11	          5:13	          0:02	Unmuted
+1       	3       	"By a better right than you have, to misuse it..." $QN=R103	          5:16	          5:18	          0:02	Unmuted
+1       	4       	"And that goes for your master, Prince John." $QN=R104	          5:18	          5:20	          0:01	Unmuted
+1       	5       	"Thank you, he does need a bit of a talking to, hey Will?"  $QN=R105	          5:24	          5:27	          0:02	Unmuted
+1       	6       	"Hold there! What's his fault?" $QN=R106	          5:30	          5:32	          0:01	Unmuted
+1       	7       	"You're wrong! I killed that deer, this man's my servant." $QN=R107	          5:33	          5:36	          0:02	Unmuted
+1       	8       	"Really, are there no exceptions?" $QN=R108	          5:43	          5:46	          0:03	Unmuted
+1       	9       	"Better look before you shoot next time, little man!" $QN=R109	          6:02	          6:04	          0:02	Unmuted
+1       	10      	"Fetch the deer, then." $QN=R110	          6:20	          6:21	          0:01	Unmuted
+
+
+TRACK NAME:	Will
+COMMENTS:	[ADR] {Actor=Patrick Knowles} $CN=2
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	"Yes, he has been getting rather out-of-hand." $QN=W101	          5:27	          5:29	          0:01	Unmuted
+1       	2       	"Ha hah ha ha ha ha ha ha." $QN=W102	          5:59	          6:01	          0:02	Unmuted
+
+
+TRACK NAME:	Marian
+COMMENTS:	[ADR] {Actor=Olivia DeHavilland} $CN=3
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	"Must I take him, Your Highness?" $QN=M101	          7:53	          7:55	          0:01	Unmuted
+1       	2       	"Well, he's a Norman, of course." $QN=M102	          7:57	          7:58	          0:01	Unmuted
+1       	3       	"Isn't that reason enough for a Royal Ward who must obey her guardian?" $QN=M103	          8:01	          8:05	          0:03	Unmuted
+1       	4       	"Perhaps when I know him better—" $QN=M104	          8:18	          8:19	          0:01	Unmuted
+
+
+TRACK NAME:	John
+COMMENTS:	[ADR] {Actor=Claude Raines} $CN=4
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	"And how are the dear Saxons taking the news, Sir Guy?" $QN=J101	          1:58	          2:01	          0:03	Unmuted
+1       	2       	"They'll be more than worried when I get through squeezing the fat out of their pampered hides!" $QN=J102	          2:05	          2:09	          0:03	Unmuted
+1       	3       	"What better moment than this, Sir Guy? …" $QN=J103	          2:10	          2:12	          0:02	Unmuted
+1       	4       	"Who ever would have thought my dear brother would be so considerate…" $QN=J104	          2:13	          2:16	          0:02	Unmuted
+1       	5       	"…as to get himself captured, and leave ALL of England to my tender care?" $QN=J105	          2:16	          2:22	          0:05	Unmuted
+1       	6       	"If he returns, and I'll see to it that he doesn't." $QN=J106	          2:24	          2:28	          0:03	Unmuted
+1       	7       	"We must drink to this moment, Sir Guy..." $QN=J107	          2:28	          2:30	          0:02	Unmuted
+1       	8       	"...Golden days are ahead!" $QN=J108	          2:31	          2:32	          0:01	Unmuted
+1       	9       	"I'll assign tax districts to you tomorrow." $QN=J109	          2:34	          2:37	          0:02	Unmuted
+1       	10      	"My Lords, I thank you." $QN=J110	          7:32	          7:35	          0:02	Unmuted
+1       	11      	"Well, this is what we Normans like: good food, good company, and a beautful woman to flatter me." $QN=J111	          7:35	          7:41	          0:05	Unmuted
+1       	12      	"Eh, Lady Marian? Was it worthwhile coming with me from London to see what stout fellows our Nottingham friends are?" $QN=J112	          7:42	          7:47	          0:05	Unmuted
+1       	13      	"Take Sir Guy of Gisbourne now, one of our most renowned defenders of the realm." $QN=J113	          7:48	          7:53	          0:04	Unmuted
+1       	14      	"Why, you like him, don't you?" $QN=J114	          7:55	          7:56	          0:01	Unmuted
+1       	15      	"Is that the ONLY reason for liking him?" $QN=J115	          7:59	          8:01	          0:02	Unmuted
+1       	16      	"Nay, I'd not force you, my Lady." $QN=J116	          8:05	          8:07	          0:02	Unmuted
+1       	17      	"But he's our most powerful friend in these shires, and he's already in love with you." $QN=J117	          8:07	          8:12	          0:04	Unmuted
+1       	18      	"If I could promise him marriage to a royal ward, it might help my plans." $QN=J118	          8:12	          8:17	          0:04	Unmuted
+1       	19      	"Of course…" $QN=J119         	          8:19	          8:20	          0:00	Unmuted
+1       	20      	"You're a very wise young woman." $QN=J120	          8:21	          8:22	          0:01	Unmuted
+1       	21      	John.grp-02 $QN=J121          	          8:23	          8:27	          0:04	Unmuted
+
+
+TRACK NAME:	Guy
+COMMENTS:	[ADR] {Actor=Basil Rathbone} $CN=5
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	"They're even more worried than (usual) your highness." {R=Unintelligible} $QN=GY101	          2:03	          2:05	          0:02	Unmuted
+1       	2       	"And you intend to act on your plans?" $QN=GY102	          2:09	          2:10	          0:01	Unmuted
+1       	3       	"He may disapprove if he returns, Your Highness." $QN=GY103	          2:22	          2:24	          0:01	Unmuted
+1       	4       	"Tomorrow, Your Highness!" {R=Set Noise} $QN=GY104	          2:38	          2:40	          0:01	Unmuted
+1       	5       	"Get him! Follow me the rest remain here!" {R=Intelligibility} $QN=GY105	          3:51	          3:53	          0:02	Unmuted
+1       	6       	"What's your name? You Saxon dog!" $QN=GY106	          4:19	          4:22	          0:02	Unmuted
+1       	7       	"What's your name?" $QN=GY107 	          4:29	          4:30	          0:00	Unmuted
+1       	8       	"Don't you know it's death to kill the King's deer?" $QN=GY108	          4:32	          4:34	          0:01	Unmuted
+1       	9       	"What the devil!" $QN=GY109   	          5:06	          5:07	          0:01	Unmuted
+1       	10      	"If it amuse me, yes!" $QN=GY110	          5:10	          5:11	          0:01	Unmuted
+1       	11      	"By what right do you interfere with the King's justice?" $QN=GY111	          5:13	          5:15	          0:02	Unmuted
+1       	12      	"I'll give him that message, at the baron's meeting in Nottingham tonight." $QN=GY112	          5:21	          5:24	          0:03	Unmuted
+1       	13      	"Fetch him along!" $QN=GY113  	          5:29	          5:30	          0:00	Unmuted
+1       	14      	"He killed a royal deer!" $QN=GY114	          5:32	          5:33	          0:01	Unmuted
+1       	15      	"Oh, I suppose you realize the penalty for killing the King's deer is death, wether for serf or noble." $QN=GY115	          5:36	          5:42	          0:05	Unmuted
+1       	16      	(react to ARROW pointed at head! Then goad horse.) [EFF] $QN=GY116	          5:46	          5:49	          0:02	Unmuted
+
+
+TRACK NAME:	Much
+COMMENTS:	[ADR] {Actor=Herbert Mundin} $CN=6
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	(effort TRIPPING and FALLING) {R=Added} [EFF] $QN=MH101	          4:12	          4:13	          0:01	Unmuted
+1       	2       	"A better one than yours!" $QN=MH102	          4:22	          4:23	          0:01	Unmuted
+1       	3       	(effort STRUCK WITH HAND) [EFF] {R=Added} $QN=MH103	          4:23	          4:25	          0:01	Unmuted
+1       	4       	"Sir Guy of the Devil! There's little to choose between them!" $QN=MH104	          4:26	          4:28	          0:02	Unmuted
+1       	5       	"Much, the Miller's son." $QN=MH105	          4:31	          4:32	          0:01	Unmuted
+1       	6       	"Yes, and death from hunger if I don't!" $QN=MH106	          4:34	          4:36	          0:01	Unmuted
+1       	7       	"Thanks to you and the rest of you Norman cut-throats at Nottingham castle!" $QN=MH107	          4:36	          4:39	          0:03	Unmuted
+1       	8       	(effort STRUCK) [EFF] $QN=MH108	          4:39	          4:40	          0:00	Unmuted
+1       	9       	"I WON'T be quiet!..." $QN=MH109	          4:40	          4:42	          0:01	Unmuted
+1       	10      	"You can KILL me if you like! But not until I've had my say!" $QN=MH110	          4:42	          4:45	          0:02	Unmuted
+1       	11      	"You can beat and starve us Saxons now! But when King Richard escapes, he'll take you by the scruff of the neck and (throw) into the sea!" {R=Intelligibility} $QN=MH111	          4:45	          4:52	          0:07	Unmuted
+1       	12      	"Thanks, good master." $QN=MH112	          6:00	          6:01	          0:01	Unmuted
+1       	13      	"From this day on, I follow only you…" $QN=MH113	          6:04	          6:06	          0:02	Unmuted
+1       	14      	"Why there isn't a poor Saxon in all of Nottinghamshire that doesn't know and bless Sir Robin of Locksley!" $QN=MH114	          6:06	          6:11	          0:04	Unmuted
+1       	15      	"Take me as your servant!" $QN=MH115	          6:11	          6:12	          0:01	Unmuted
+1       	16      	"Why in all the forest there isn't a hunter as good as me," $QN=MH116	          6:13	          6:17	          0:03	Unmuted
+1       	17      	"I ask no pay, just to follow you." $QN=MH117	          6:17	          6:20	          0:03	Unmuted
+
+
+TRACK NAME:	Butcher
+COMMENTS:	[ADR] {Actor=George Bunny} $CN=101
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	"But who's gonna pay me?" $QN=BT101	          2:51	          2:52	          0:01	Unmuted
+
+
+TRACK NAME:	Town Crier
+COMMENTS:	[ADR] {Actor=Leonard Mundie} $CN=102
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	"News has come from Vienna…" $QN=TC101	          1:38	          1:40	          0:01	Unmuted
+1       	2       	"Leopold of Austria has seized King Richard, on his return from the crusades…" $QN=TC102	          1:41	          1:46	          0:04	Unmuted
+1       	3       	"Our King is being held prisoner, nothing futher is known..." $QN=TC103	          1:46	          1:50	          0:04	Unmuted
+1       	4       	"His Highness Prince John, will make further public pronouncement tomorrow." $QN=TC104	          1:51	          1:55	          0:04	Unmuted
+
+
+TRACK NAME:	Soldier 1
+COMMENTS:	[ADR] $CN=103
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	"Pay, pay, that's all you Saxon's think about!" $QN=SA101	          2:52	          2:56	          0:03	Unmuted
+1       	2       	"Didn't I tell you it was for Prince John, who has just come up from London?" {R=Rhotic R} $QN=SA102	          2:56	          2:59	          0:03	Unmuted
+
+
+TRACK NAME:	Soldier 2
+COMMENTS:	[ADR] $CN=104
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	"He refused to send his men to work in Guy of Gisbourne's fields." {R=Mis-pronounced} $QN=SB101	          3:14	          3:18	          0:03	Unmuted
+
+
+TRACK NAME:	Soldier 3
+COMMENTS:	[ADR] $CN=105
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	"Look to your manners! This is Sir Guy of Gisbourne!" $QN=SC101	          4:24	          4:26	          0:02	Unmuted
+1       	2       	"Be quiet, you!" {R=Performance} $QN=SC102	          4:40	          4:40	          0:00	Unmuted
+
+
+TRACK NAME:	Priest
+COMMENTS:	[ADR] {Actor=Thomas R. Mills} $CN=106
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	"No, stop! Stop!" (effort SHOVED AWAY) {R=Off mic} [EFF] $QN=PR101	          3:07	          3:09	          0:02	Unmuted
+1       	2       	"This man is free-born! He's a landowner, you can't make a slave of him!" $QN=PR102	          3:09	          3:14	          0:04	Unmuted
+1       	3       	"But I protest! Argh…" (effort PUSHED OUT OF ROOM) $QN=PR103	          3:17	          3:21	          0:04	Unmuted
+
+
+TRACK NAME:	Guest at Court
+COMMENTS:	[ADR] $CN=107
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	"While Richard is bent on adventure in foreign lands, it is our duty as Normans to preserrve the realm, by giving loyal support to Prince John" $QN=GC101	          7:08	          7:18	          0:09	Unmuted
+1       	2       	"the only true defender of the Norman spirit. Hail to Prince John." [AP] $QN=GC102	          7:18	          7:21	          0:03	Unmuted
+
+
+M A R K E R S  L I S T I N G
+#   	LOCATION     	TIME REFERENCE    	UNITS    	NAME                             	COMMENTS
+1   	0:00         	0                 	Samples  	{Title=The Adventures of Robin Hood} 	{Supv=Nathan Levinson}

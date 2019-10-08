@@ -2,7 +2,7 @@ import unittest
 
 from ptulsconv.transformations import TagInterpreter
 
-class MyTestCase(unittest.TestCase):
+class TestTagInterpreter(unittest.TestCase):
     def test_line(self):
         ti = TagInterpreter()
         s1 = ti.parse_tags("this is a test")

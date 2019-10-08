@@ -74,6 +74,15 @@ class TestBroadcastTimecode(unittest.TestCase):
         f3 = broadcast_timecode.footage_to_frame_count(s3, include_fractional=False)
         self.assertEqual(f3, 0)
 
+    def test_frame_count_to_footage(self):
+        c1 = 19
+        s1 = broadcast_timecode.frame_count_to_footage(c1)
+        self.assertEqual(s1, "1+03")
+
+        c2 = 24
+        f2 = .1
+        s2 = broadcast_timecode.frame_count_to_footage(c2, fractional_frames=f2)
+        self.assertEqual(s2, "1+08.100")
 
 if __name__ == '__main__':
     unittest.main()

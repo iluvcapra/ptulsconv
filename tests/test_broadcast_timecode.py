@@ -1,0 +1,69 @@
+import unittest
+from ptulsconv import broadcast_timecode
+
+class TestBroadcastTimecode(unittest.TestCase):
+    def test_basic_to_framecount(self):
+        r1 = "01:00:00:00"
+        f1, _ = broadcast_timecode.smpte_to_frame_count(r1, 24, False)
+        self.assertEqual(f1, 86_400)
+        f2, _ = broadcast_timecode.smpte_to_frame_count(r1, 30)
+        self.assertEqual(f2, 108_000)
+
+        r2 = "0:00:00:01"
+        f3, _ = broadcast_timecode.smpte_to_frame_count(r2, 24)
+        self.assertEqual(f3, 1)
+
+    def test_basic_to_string(self):
+        c1 = 24
+        s1 = broadcast_timecode.frame_count_to_smpte(c1,24)
+        self.assertEqual(s1, "00:00:01:00")
+        s2 = broadcast_timecode.frame_count_to_smpte(c1, 30)
+        self.assertEqual(s2, "00:00:00:24")
+        c2 = 108_000
+        s3 = broadcast_timecode.frame_count_to_smpte(c2, 30)
+        self.assertEqual(s3, "01:00:00:00")
+        c3 = 86401
+        s4 = broadcast_timecode.frame_count_to_smpte(c3, 24)
+        self.assertEqual(s4, "01:00:00:01")
+
+    def test_drop_frame_to_string(self):
+        c1 = 108_000
+        s1 = broadcast_timecode.frame_count_to_smpte(c1, 30, drop_frame=True)
+        self.assertEqual(s1, "01:00:03;18")
+
+    def test_fractional_to_framecount(self):
+        s1 = "00:00:01:04.105"
+        c1, f1 = broadcast_timecode.smpte_to_frame_count(s1, 24, drop_frame_hint=False)
+        self.assertEqual(c1, 28)
+        self.assertEqual(f1, 0.105)
+
+    def test_fractional_to_string(self):
+        c1 = 99
+        f1 = .145
+        s1 = broadcast_timecode.frame_count_to_smpte(c1, 25, drop_frame=False, fractional_frame=f1)
+        self.assertEqual(s1, "00:00:03:24.145")
+
+    def test_drop_frame_to_framecount(self):
+        r1 = "01:00:00;00"
+        f1, _ = broadcast_timecode.smpte_to_frame_count(r1, 30, True)
+        self.assertEqual(f1, 107_892)
+
+        r11 = "01:00:00;01"
+        f11, _ = broadcast_timecode.smpte_to_frame_count(r11, 30, True)
+        self.assertEqual(f11, 107_893)
+
+        r2 = "00:01:00;02"
+        f2, _ = broadcast_timecode.smpte_to_frame_count(r2, 30, True)
+        self.assertEqual(f2, 1800)
+
+        r3 = "00:00:59;29"
+        f3, _ = broadcast_timecode.smpte_to_frame_count(r3, 30, True)
+        self.assertEqual(f3, 1799)
+
+
+
+
+
+
+if __name__ == '__main__':
+    unittest.main()

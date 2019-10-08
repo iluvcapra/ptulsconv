@@ -1,10 +1,10 @@
 from fractions import Fraction
 import re
 import math
-import functools
 
 
-def smpte_to_frame_count(smpte_rep_string: str, frames_per_logical_second: int, drop_frame_hint=False):
+def smpte_to_frame_count(smpte_rep_string: str, frames_per_logical_second: int, drop_frame_hint=False,
+                         include_fractional=False):
     """
     Convert a string with a SMPTE timecode representation into a frame count.
 
@@ -14,16 +14,13 @@ def smpte_to_frame_count(smpte_rep_string: str, frames_per_logical_second: int, 
     :param drop_frame_hint: `True` if the timecode rep is drop frame. This is ignored (and implied `True`) if
             the last separator in the timecode string is a semicolon. This is ignored (and implied `False`) if
             `frames_per_logical_second` is not 30 or 60.
-    :returns (frame_count, fraction): If a fractional frame is in the SMPTE string it will be returned here in the
-            `fraction` part.
+    :param include_fractional: If `True` fractional frames will be parsed and returned as a second retval in a tuple
     """
     assert frames_per_logical_second in [24, 25, 30, 48, 50, 60]
 
     m = re.search("(\d?\d)[:;](\d\d)[:;](\d\d)([:;])(\d\d)(\.\d+)?", smpte_rep_string)
     hh, mm, ss, sep, ff, frac = m.groups()
-    hh, mm, ss, ff = int(hh), int(mm), int(ss), int(ff)
-    if frac is not None:
-        frac = float(frac)
+    hh, mm, ss, ff, frac = int(hh), int(mm), int(ss), int(ff), float(frac or 0.0)
 
     drop_frame = drop_frame_hint
     if sep == ";":
@@ -35,19 +32,25 @@ def smpte_to_frame_count(smpte_rep_string: str, frames_per_logical_second: int, 
     raw_frames = hh * 3600 * frames_per_logical_second + mm * 60 * frames_per_logical_second + \
                  ss * frames_per_logical_second + ff
 
-    if drop_frame is False:
-        return raw_frames, frac
-    else:
+    frames = raw_frames
+    if drop_frame is True:
         frames_dropped_per_inst = (frames_per_logical_second / 15)
         mins = hh * 60 + mm
         inst_count = mins - math.floor(mins / 10)
         dropped_frames = frames_dropped_per_inst * inst_count
-        return raw_frames - dropped_frames, frac
+        frames = raw_frames - dropped_frames
+
+    if include_fractional:
+        return frames, frac
+    else:
+        return frames
 
 
 def frame_count_to_smpte(frame_count: int, frames_per_logical_second: int, drop_frame: bool = False,
                          fractional_frame: float = None):
     assert frames_per_logical_second in [24,25,30,48,50,60]
+    assert fractional_frame is None or fractional_frame < 1.0
+
     nominal_frames = frame_count
     separator = ":"
     if drop_frame:
@@ -69,6 +72,22 @@ def frame_count_to_smpte(frame_count: int, frames_per_logical_second: int, drop_
     else:
         return "%02i:%02i:%02i%s%02i" % (hh, mm, ss, separator, ff)
 
+def footage_to_frame_count(footage_string, include_fractional = False):
+    m = re.search("(\d+)\+(\d+)(\.\d+)?", footage_string)
+    feet, frm, frac = m.groups()
+    feet, frm, frac = int(feet), int(frm), float(frac or 0.0)
 
+    frames = feet * 16 + frm
 
+    if include_fractional:
+        return frames, frac
+    else:
+        return frames
 
+def frame_count_to_footage(frame_count, fractional_frames = None):
+    assert fractional_frames < 1.0 or fractional_frames is None
+    feet, frm = divmod(frame_count, 16)
+    if fractional_frames:
+        return "%i+%02i" % (feet, frm)
+    else:
+        return "%i+%02i%s" % (feet, frm, ("%.3f" % fractional_frames)[1:])

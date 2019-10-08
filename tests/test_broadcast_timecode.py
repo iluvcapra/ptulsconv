@@ -1,21 +1,22 @@
 import unittest
 from ptulsconv import broadcast_timecode
 
+
 class TestBroadcastTimecode(unittest.TestCase):
     def test_basic_to_framecount(self):
         r1 = "01:00:00:00"
-        f1, _ = broadcast_timecode.smpte_to_frame_count(r1, 24, False)
+        f1 = broadcast_timecode.smpte_to_frame_count(r1, 24, False)
         self.assertEqual(f1, 86_400)
-        f2, _ = broadcast_timecode.smpte_to_frame_count(r1, 30)
+        f2 = broadcast_timecode.smpte_to_frame_count(r1, 30)
         self.assertEqual(f2, 108_000)
 
         r2 = "0:00:00:01"
-        f3, _ = broadcast_timecode.smpte_to_frame_count(r2, 24)
+        f3 = broadcast_timecode.smpte_to_frame_count(r2, 24)
         self.assertEqual(f3, 1)
 
     def test_basic_to_string(self):
         c1 = 24
-        s1 = broadcast_timecode.frame_count_to_smpte(c1,24)
+        s1 = broadcast_timecode.frame_count_to_smpte(c1, 24)
         self.assertEqual(s1, "00:00:01:00")
         s2 = broadcast_timecode.frame_count_to_smpte(c1, 30)
         self.assertEqual(s2, "00:00:00:24")
@@ -33,7 +34,7 @@ class TestBroadcastTimecode(unittest.TestCase):
 
     def test_fractional_to_framecount(self):
         s1 = "00:00:01:04.105"
-        c1, f1 = broadcast_timecode.smpte_to_frame_count(s1, 24, drop_frame_hint=False)
+        c1, f1 = broadcast_timecode.smpte_to_frame_count(s1, 24, drop_frame_hint=False, include_fractional=True)
         self.assertEqual(c1, 28)
         self.assertEqual(f1, 0.105)
 
@@ -45,24 +46,33 @@ class TestBroadcastTimecode(unittest.TestCase):
 
     def test_drop_frame_to_framecount(self):
         r1 = "01:00:00;00"
-        f1, _ = broadcast_timecode.smpte_to_frame_count(r1, 30, True)
-        self.assertEqual(f1, 107_892)
+        z1 = broadcast_timecode.smpte_to_frame_count(r1, 30, drop_frame_hint=True)
+        self.assertEqual(z1, 107_892)
 
         r11 = "01:00:00;01"
-        f11, _ = broadcast_timecode.smpte_to_frame_count(r11, 30, True)
+        f11 = broadcast_timecode.smpte_to_frame_count(r11, 30)
         self.assertEqual(f11, 107_893)
 
         r2 = "00:01:00;02"
-        f2, _ = broadcast_timecode.smpte_to_frame_count(r2, 30, True)
+        f2 = broadcast_timecode.smpte_to_frame_count(r2, 30, True)
         self.assertEqual(f2, 1800)
 
         r3 = "00:00:59;29"
-        f3, _ = broadcast_timecode.smpte_to_frame_count(r3, 30, True)
+        f3 = broadcast_timecode.smpte_to_frame_count(r3, 30, True)
         self.assertEqual(f3, 1799)
 
+    def test_footage_to_framecount(self):
+        s1 = "194+11"
+        f1 = broadcast_timecode.footage_to_frame_count(s1)
+        self.assertEqual(f1, 3115)
 
+        s2 = "1+1.014"
+        f2 = broadcast_timecode.footage_to_frame_count(s2, include_fractional=True)
+        self.assertEqual(f2, (17, 0.014))
 
-
+        s3 = "0+0.1"
+        f3 = broadcast_timecode.footage_to_frame_count(s3, include_fractional=False)
+        self.assertEqual(f3, 0)
 
 
 if __name__ == '__main__':

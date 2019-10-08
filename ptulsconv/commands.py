@@ -16,6 +16,3 @@ def convert(input_file, convert_times, apply_session_start, output=sys.stdout):
 
     json.dump(parsed, output)
 
-
-
-

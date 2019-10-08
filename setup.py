@@ -24,5 +24,10 @@ setup(name='ptulsconv',
           "Programming Language :: Python :: 3.7"],
       packages=['ptulsconv'],
       keywords='text-processing parsers film tv editing editorial',
-      install_requires=['parsimonious', 'timecode']
+      install_requires=['parsimonious', 'timecode'],
+      entry_points={
+          'console_scripts': [
+              'ptulsconv = ptulsconv.__main__:main'
+          ]
+      }
       )

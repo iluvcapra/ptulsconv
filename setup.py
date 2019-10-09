@@ -1,15 +1,17 @@
 from setuptools import setup
 
+from ptulsconv import __author__, __license__, __version__
+
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(name='ptulsconv',
-      version='0.1',
-      author='Jamie Hardt',
-      author_email='jamiehardt@me.com',
+      version=__version__,
+      author=__author__,
       description='Parse and convert Pro Tools text exports',
       long_description_content_type="text/markdown",
       long_description=long_description,
+      license=__license__,
       url='https://github.com/iluvcapra/ptulsconv',
       project_urls={
           'Source':

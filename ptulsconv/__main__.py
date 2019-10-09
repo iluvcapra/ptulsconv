@@ -1,5 +1,4 @@
 from ptulsconv.commands import convert
-import ptulsconv.broadcast_timecode
 from optparse import OptionParser
 import sys
 

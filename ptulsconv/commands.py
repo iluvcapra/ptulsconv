@@ -92,7 +92,7 @@ def fmp_dump(data, input_file_name, output):
 
 
 
-def convert(input_file, format='fmp', start=None, end=None, output=sys.stdout):
+def convert(input_file, format='fmpxml', start=None, end=None, output=sys.stdout):
     with open(input_file, 'r') as file:
         ast = ptulsconv.protools_text_export_grammar.parse(file.read())
         dict_parser = ptulsconv.DictionaryParserVisitor()
@@ -118,6 +118,6 @@ def convert(input_file, format='fmp', start=None, end=None, output=sys.stdout):
 
         if format == 'json':
             json.dump(parsed, output)
-        elif format == 'fmp':
+        elif format == 'fmpxml':
             fmp_dump(parsed, input_file, output)
 

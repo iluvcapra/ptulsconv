@@ -114,7 +114,7 @@ class TagInterpreter:
         def generic_visit(self, node, visited_children):
             return visited_children or node
 
-    def __init__(self, ignore_muted = True):
+    def __init__(self, ignore_muted=True):
         self.visitor = TagInterpreter.TagListVisitor()
         self.ignore_muted = ignore_muted
 
@@ -172,7 +172,7 @@ class TagInterpreter:
 
         return dict(events=transformed)
 
-    def effective_timespan_tags_at_time(self, rules, time):
+    def effective_timespan_tags_at_time(_, rules, time) -> dict:
         retval = dict()
 
         for rule in rules:

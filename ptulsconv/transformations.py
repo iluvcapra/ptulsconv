@@ -1,6 +1,9 @@
 from . import broadcast_timecode
 from parsimonious import Grammar, NodeVisitor
+from parsimonious.exceptions import IncompleteParseError
 import math
+import sys
+
 
 class Transformation:
     def transform(self, input_dict) -> dict:
@@ -22,7 +25,6 @@ class TimecodeInterpreter(Transformation):
         retval['tracks'] = self.convert_tracks(input_dict['tracks'], timecode_rate=rate,
                                                drop_frame=retval['header']['timecode_drop_frame'])
 
-
         for marker in retval['markers']:
             marker['location_decoded'] = self.convert_time(marker['location'], rate,
                                                            drop_frame=retval['header']['timecode_drop_frame'])
@@ -33,7 +35,7 @@ class TimecodeInterpreter(Transformation):
         for track in tracks:
             new_clips = []
             for clip in track['clips']:
-                new_clips.append( self.convert_clip(clip, drop_frame=drop_frame, timecode_rate= timecode_rate) )
+                new_clips.append(self.convert_clip(clip, drop_frame=drop_frame, timecode_rate=timecode_rate))
 
             track['clips'] = new_clips
 
@@ -64,11 +66,11 @@ class TagInterpreter(Transformation):
         tag_list  = tag*
         tag       = key_tag / short_tag / full_text_tag / tag_junk
         key_tag        = "[" key "]" word_sep?
-        short_tag      = "$" key "=" word 
+        short_tag      = "$" key "=" word word_sep?
         full_text_tag  = "{" key "=" value "}" word_sep?
         key            = ~"[A-Za-z][A-Za-z0-9_]*"
         value          = ~"[^}]+"
-        tag_junk       = (word word_sep)*
+        tag_junk       = word word_sep?
         word           = ~"[^ \[\{\$][^ ]*"
         word_sep       = ~" +"
         modifier       = ("@" / "&") word_sep?
@@ -79,9 +81,9 @@ class TagInterpreter(Transformation):
         def visit_document(self, _, visited_children):
             modifier_opt, line_opt, _, tag_list_opt = visited_children
 
-            return dict(line= next(iter(line_opt), None),
-                        tags= next(iter(tag_list_opt), None),
-                        mode= next(iter(modifier_opt), 'Normal')
+            return dict(line=next(iter(line_opt), None),
+                        tags=next(iter(tag_list_opt), None),
+                        mode=next(iter(modifier_opt), 'Normal')
                         )
 
         def visit_line(self, node, _):
@@ -98,8 +100,9 @@ class TagInterpreter(Transformation):
         def visit_tag_list(self, _, visited_children):
             retdict = dict()
             for child in visited_children:
-                k, v = child[0]
-                retdict[k] = v
+                if child[0] is not None:
+                    k, v = child[0]
+                    retdict[k] = v
             return retdict
 
         def visit_key_tag(self, _, children):
@@ -110,6 +113,9 @@ class TagInterpreter(Transformation):
 
         def visit_full_text_tag(self, _, children):
             return children[1].text, children[3].text
+
+        def visit_tag_junk(self, node, _):
+            return None
 
         def generic_visit(self, node, visited_children):
             return visited_children or node
@@ -122,15 +128,15 @@ class TagInterpreter(Transformation):
         transformed = list()
         timespan_rules = list()
 
-        title_tags = self.parse_tags(input_dict['header']['session_name'])
+        title_tags = self.parse_tags(input_dict['header']['session_name'], "<Session Name>")
         markers = sorted(input_dict['markers'], key=lambda m: m['location_decoded']['frame_count'])
 
         for track in input_dict['tracks']:
             if 'Muted' in track['state'] and self.ignore_muted:
                 continue
 
-            track_tags = self.parse_tags(track['name'])
-            comment_tags = self.parse_tags(track['comments'])
+            track_tags = self.parse_tags(track['name'], "<Track %s>" % (track['name']))
+            comment_tags = self.parse_tags(track['comments'], "<Track %s>" % (track['name']))
             track_context_tags = track_tags['tags']
             track_context_tags.update(comment_tags['tags'])
 
@@ -138,7 +144,8 @@ class TagInterpreter(Transformation):
                 if clip['state'] == 'Muted' and self.ignore_muted:
                     continue
 
-                clip_tags = self.parse_tags(clip['clip_name'])
+                clip_tags = self.parse_tags(clip['clip_name'],
+                                            "<Track %s/Clip event number %i at %s>" % (track['name'], clip['event'], clip['start_time']))
                 clip_start = clip['start_time_decoded']['frame_count']
                 if clip_tags['mode'] == 'Normal':
                     event = dict()
@@ -158,7 +165,8 @@ class TagInterpreter(Transformation):
                     event['PT.Clip.Start_Frames'] = clip_start
                     event['PT.Clip.Finish_Frames'] = clip['end_time_decoded']['frame_count']
                     event['PT.Clip.Start_Seconds'] = clip_start / input_dict['header']['timecode_format']
-                    event['PT.Clip.Finish_Seconds'] = clip['end_time_decoded']['frame_count'] / input_dict['header']['timecode_format']
+                    event['PT.Clip.Finish_Seconds'] = clip['end_time_decoded']['frame_count'] / input_dict['header'][
+                        'timecode_format']
                     transformed.append(event)
 
                 elif clip_tags['mode'] == 'Append':
@@ -189,8 +197,8 @@ class TagInterpreter(Transformation):
         retval = dict()
 
         for marker in markers:
-            marker_name_tags = self.parse_tags(marker['name'])
-            marker_comment_tags = self.parse_tags(marker['comments'])
+            marker_name_tags = self.parse_tags(marker['name'], "Marker %i" % (marker['number']))
+            marker_comment_tags = self.parse_tags(marker['comments'], "Marker %i" % (marker['number']))
             effective_tags = marker_name_tags['tags']
             effective_tags.update(marker_comment_tags['tags'])
 
@@ -200,9 +208,20 @@ class TagInterpreter(Transformation):
                 break
         return retval
 
-    def parse_tags(self, source):
-        parse_tree = self.tag_grammar.parse(source)
-        return self.visitor.visit(parse_tree)
+    def parse_tags(self, source, context_str=None):
+        try:
+            parse_tree = self.tag_grammar.parse(source)
+            return self.visitor.visit(parse_tree)
+        except IncompleteParseError as e:
+            if context_str is not None:
+                print("Error reading tags in: ", context_str, file=sys.stderr)
+
+            trimmed_source = source[:e.pos]
+            parse_tree = self.tag_grammar.parse(trimmed_source)
+            return self.visitor.visit(parse_tree)
+
+
+
 
 class SubclipOfSequence(Transformation):
 
@@ -224,5 +243,3 @@ class SubclipOfSequence(Transformation):
                 out_events.append(e)
 
         return dict(events=out_events)
-
-

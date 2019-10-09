@@ -7,6 +7,10 @@ def fmp_dump(data, input_file_name, output):
     from xml.etree.ElementTree import TreeBuilder, ElementTree, tostring
     doc = TreeBuilder(element_factory=None)
 
+    # field_map maps tags in the text export to fields in FMPXMLRESULT
+    #  - tuple field 0 is a list of tags, the first tag with contents will be used as source
+    #  - tuple field 1 is the field in FMPXMLRESULT
+    #  - tuple field 2 the constructor/type of the field
     field_map = ((['Title', 'PT.Session.Name'], 'Title', str),
                  (['Supv'], 'Supervisor', str),
                  (['Client'], 'Client', str),

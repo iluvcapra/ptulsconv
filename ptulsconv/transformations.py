@@ -157,6 +157,8 @@ class TagInterpreter(Transformation):
                     event['PT.Clip.Finish'] = clip['end_time']
                     event['PT.Clip.Start_Frames'] = clip_start
                     event['PT.Clip.Finish_Frames'] = clip['end_time_decoded']['frame_count']
+                    event['PT.Clip.Start_Seconds'] = clip_start / input_dict['header']['timecode_format']
+                    event['PT.Clip.Finish_Seconds'] = clip['end_time_decoded']['frame_count'] / input_dict['header']['timecode_format']
                     transformed.append(event)
 
                 elif clip_tags['mode'] == 'Append':
@@ -172,7 +174,7 @@ class TagInterpreter(Transformation):
                                 tags=clip_tags['tags'])
                     timespan_rules.append(rule)
 
-        return dict(events=transformed)
+        return dict(header=input_dict['header'], events=transformed)
 
     def effective_timespan_tags_at_time(_, rules, time) -> dict:
         retval = dict()
@@ -210,11 +212,15 @@ class SubclipOfSequence(Transformation):
 
     def transform(self, input_dict: dict) -> dict:
         out_events = []
+        offset = self.start
+        offset_sec = self.start / input_dict['header']['timecode_format']
         for event in input_dict['events']:
             if self.start <= event['PT.Clip.Start_Frames'] <= self.end:
                 e = event
-                e['PT.Clip.Start_Frames'] = event['PT.Clip.Start_Frames'] - self.start
-                e['PT.Clip.Finish_Frames'] = event['PT.Clip.Finish_Frames'] - self.start
+                e['PT.Clip.Start_Frames'] = event['PT.Clip.Start_Frames'] - offset
+                e['PT.Clip.Finish_Frames'] = event['PT.Clip.Finish_Frames'] - offset
+                e['PT.Clip.Start_Seconds'] = event['PT.Clip.Start_Seconds'] - offset_sec
+                e['PT.Clip.Finish_Seconds'] = event['PT.Clip.Finish_Seconds'] - offset_sec
                 out_events.append(e)
 
         return dict(events=out_events)

@@ -1,8 +1,9 @@
 import ptulsconv
 import json
 import sys
+import os.path
 
-def fmp_dump(data, output):
+def fmp_dump(data, input_file_name, output):
     from xml.etree.ElementTree import TreeBuilder, ElementTree, tostring
     doc = TreeBuilder(element_factory=None)
 
@@ -14,6 +15,8 @@ def fmp_dump(data, output):
                  (['Reel'], 'Reel', str),
                  (['PT.Clip.Start'], 'Start', str),
                  (['PT.Clip.Finish'], 'Finish', str),
+                 (['PT.Clip.Start_Seconds'], 'Start Seconds', float),
+                 (['PT.Clip.Finish_Seconds'], 'Finish Seconds', float),
                  (['PT.Clip.Start_Frames'], 'Start Frames', int),
                  (['PT.Clip.Finish_Frames'], 'Finish Frames', int),
                  (['P'], 'Priority', int),
@@ -45,7 +48,7 @@ def fmp_dump(data, output):
     doc.end('PRODUCT')
 
     doc.start('DATABASE', {'DATEFORMAT': 'MM/dd/yy', 'LAYOUT':'summary', 'TIMEFORMAT':'hh:mm:ss',
-                           'RECORDS': str(len(data['events'])), 'NAME': 'OUTPUT'})
+                           'RECORDS': str(len(data['events'])), 'NAME': os.path.basename(input_file_name)})
     doc.end('DATABASE')
 
     doc.start('METADATA')
@@ -89,22 +92,22 @@ def convert(input_file, format='fmp', start=None, end=None, output=sys.stdout):
     with open(input_file, 'r') as file:
         ast = ptulsconv.protools_text_export_grammar.parse(file.read())
         dict_parser = ptulsconv.DictionaryParserVisitor()
-        raw_parsed = dict_parser.visit(ast)
+        parsed = dict_parser.visit(ast)
 
         tcxform = ptulsconv.transformations.TimecodeInterpreter()
         tagxform = ptulsconv.transformations.TagInterpreter()
 
-        parsed = tagxform.transform(tcxform.transform(raw_parsed))
+        parsed = tagxform.transform(tcxform.transform(parsed))
 
         if start is not None and end is not None:
 
             start_fs = tcxform.convert_time(start,
-                                            frame_rate=raw_parsed['header']['timecode_format'],
-                                            drop_frame=raw_parsed['header']['timecode_drop_frame'])['frame_count']
+                                            frame_rate=parsed['header']['timecode_format'],
+                                            drop_frame=parsed['header']['timecode_drop_frame'])['frame_count']
 
             end_fs = tcxform.convert_time(end,
-                                            frame_rate=raw_parsed['header']['timecode_format'],
-                                            drop_frame=raw_parsed['header']['timecode_drop_frame'])['frame_count']
+                                            frame_rate=parsed['header']['timecode_format'],
+                                            drop_frame=parsed['header']['timecode_drop_frame'])['frame_count']
 
             subclipxform = ptulsconv.transformations.SubclipOfSequence(start=start_fs, end=end_fs)
             parsed = subclipxform.transform(parsed)
@@ -112,5 +115,5 @@ def convert(input_file, format='fmp', start=None, end=None, output=sys.stdout):
         if format == 'json':
             json.dump(parsed, output)
         elif format == 'fmp':
-            fmp_dump(parsed, output)
+            fmp_dump(parsed, input_file, output)
 

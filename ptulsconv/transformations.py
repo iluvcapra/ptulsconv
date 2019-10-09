@@ -189,13 +189,13 @@ class TagInterpreter(Transformation):
         for marker in markers:
             marker_name_tags = self.parse_tags(marker['name'])
             marker_comment_tags = self.parse_tags(marker['comments'])
-            effective_tags = marker_name_tags['tags'].update(marker_comment_tags['tags']) or dict()
+            effective_tags = marker_name_tags['tags']
+            effective_tags.update(marker_comment_tags['tags'])
 
             if marker['location_decoded']['frame_count'] <= time:
                 retval.update(effective_tags)
             else:
                 break
-
         return retval
 
     def parse_tags(self, source):

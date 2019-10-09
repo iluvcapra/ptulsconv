@@ -121,9 +121,10 @@ class TagInterpreter(Transformation):
         def generic_visit(self, node, visited_children):
             return visited_children or node
 
-    def __init__(self, ignore_muted=True):
+    def __init__(self, ignore_muted=True, show_progress=False):
         self.visitor = TagInterpreter.TagListVisitor()
         self.ignore_muted = ignore_muted
+        self.show_progress = show_progress
 
     def transform(self, input_dict: dict) -> dict:
         transformed = list()
@@ -132,8 +133,12 @@ class TagInterpreter(Transformation):
         title_tags = self.parse_tags(input_dict['header']['session_name'], "<Session Name>")
         markers = sorted(input_dict['markers'], key=lambda m: m['location_decoded']['frame_count'])
 
+        if self.show_progress:
+            track_iter = tqdm(input_dict['tracks'], desc="Reading tracks...", unit='Track')
+        else:
+            track_iter = input_dict['tracks']
 
-        for track in tqdm(input_dict['tracks'], desc="Reading tracks...", unit='Track'):
+        for track in track_iter:
             if 'Muted' in track['state'] and self.ignore_muted:
                 continue
 
@@ -210,13 +215,18 @@ class TagInterpreter(Transformation):
                 break
         return retval
 
+    def report(self, mesg, *args):
+        print(mesg % ( args) , file=sys.stderr)
+        sys.stderr.write("\033[F")
+        sys.stderr.write("\033[K")
+
     def parse_tags(self, source, context_str=None):
         try:
             parse_tree = self.tag_grammar.parse(source)
             return self.visitor.visit(parse_tree)
         except IncompleteParseError as e:
             if context_str is not None:
-                print("Error reading tags in: ", context_str, file=sys.stderr)
+                self.report("Error reading tags in: ")
 
             trimmed_source = source[:e.pos]
             parse_tree = self.tag_grammar.parse(trimmed_source)

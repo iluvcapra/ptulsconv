@@ -12,6 +12,10 @@ def fmp_dump(data, output):
                  (['Sc'], 'Scene', str),
                  (['Ver'], 'Version', str),
                  (['Reel'], 'Reel', str),
+                 (['PT.Clip.Start'], 'Start', str),
+                 (['PT.Clip.Finish'], 'Finish', str),
+                 (['PT.Clip.Start_Frames'], 'Start Frames', int),
+                 (['PT.Clip.Finish_Frames'], 'Finish Frames', int),
                  (['P'], 'Priority', int),
                  (['QN'], 'Cue Number', str),
                  (['Char', 'PT.Track.Name'], 'Charater Name', str),
@@ -67,7 +71,7 @@ def fmp_dump(data, output):
             doc.start('DATA')
             for key_attempt in field[0]:
                 if key_attempt in event.keys():
-                    doc.data(event[key_attempt])
+                    doc.data(str(event[key_attempt]))
                     break
             doc.end('DATA')
             doc.end('COL')
@@ -81,18 +85,32 @@ def fmp_dump(data, output):
 
 
 
-def convert(input_file, format='fmp', output=sys.stdout):
+def convert(input_file, format='fmp', start=None, end=None, output=sys.stdout):
     with open(input_file, 'r') as file:
         ast = ptulsconv.protools_text_export_grammar.parse(file.read())
         dict_parser = ptulsconv.DictionaryParserVisitor()
-        parsed = dict_parser.visit(ast)
+        raw_parsed = dict_parser.visit(ast)
 
         tcxform = ptulsconv.transformations.TimecodeInterpreter()
         tagxform = ptulsconv.transformations.TagInterpreter()
 
-        final = tagxform.transform( tcxform.transform(parsed) )
+        parsed = tagxform.transform(tcxform.transform(raw_parsed))
+
+        if start is not None and end is not None:
+
+            start_fs = tcxform.convert_time(start,
+                                            frame_rate=raw_parsed['header']['timecode_format'],
+                                            drop_frame=raw_parsed['header']['timecode_drop_frame'])['frame_count']
+
+            end_fs = tcxform.convert_time(end,
+                                            frame_rate=raw_parsed['header']['timecode_format'],
+                                            drop_frame=raw_parsed['header']['timecode_drop_frame'])['frame_count']
+
+            subclipxform = ptulsconv.transformations.SubclipOfSequence(start=start_fs, end=end_fs)
+            parsed = subclipxform.transform(parsed)
+
         if format == 'json':
-            json.dump(final, output)
+            json.dump(parsed, output)
         elif format == 'fmp':
-            fmp_dump(final, output)
+            fmp_dump(parsed, output)
 

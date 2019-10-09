@@ -56,7 +56,7 @@ class TimecodeInterpreter(Transformation):
         return dict(frame_count=frame_count, logical_fps=lfps, drop_frame=drop_frame)
 
 
-class TagInterpreter:
+class TagInterpreter(Transformation):
     tag_grammar = Grammar(
         r"""
         document  = modifier? line? word_sep? tag_list?
@@ -153,8 +153,10 @@ class TagInterpreter:
                     event['PT.Session.Name'] = title_tags['line']
                     event['PT.Clip.Number'] = clip['event']
                     event['event_name'] = clip_tags['line']
+                    event['PT.Clip.Start'] = clip['start_time']
+                    event['PT.Clip.Finish'] = clip['end_time']
                     event['PT.Clip.Start_Frames'] = clip_start
-                    event['PT.Clip.End_Frames'] = clip['end_time_decoded']['frame_count']
+                    event['PT.Clip.Finish_Frames'] = clip['end_time_decoded']['frame_count']
                     transformed.append(event)
 
                 elif clip_tags['mode'] == 'Append':
@@ -200,5 +202,21 @@ class TagInterpreter:
         parse_tree = self.tag_grammar.parse(source)
         return self.visitor.visit(parse_tree)
 
+class SubclipOfSequence(Transformation):
+
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+
+    def transform(self, input_dict: dict) -> dict:
+        out_events = []
+        for event in input_dict['events']:
+            if self.start <= event['PT.Clip.Start_Frames'] <= self.end:
+                e = event
+                e['PT.Clip.Start_Frames'] = event['PT.Clip.Start_Frames'] - self.start
+                e['PT.Clip.Finish_Frames'] = event['PT.Clip.Finish_Frames'] - self.start
+                out_events.append(e)
+
+        return dict(events=out_events)
 
 

@@ -4,6 +4,7 @@ import sys
 from xml.etree.ElementTree import TreeBuilder, tostring
 import ptulsconv
 
+from tqdm import tqdm
 
 def fmp_dump(data, input_file_name, output):
     doc = TreeBuilder(element_factory=None)

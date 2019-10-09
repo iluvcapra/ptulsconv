@@ -4,6 +4,7 @@ from parsimonious.exceptions import IncompleteParseError
 import math
 import sys
 
+from tqdm import tqdm
 
 class Transformation:
     def transform(self, input_dict) -> dict:
@@ -131,7 +132,8 @@ class TagInterpreter(Transformation):
         title_tags = self.parse_tags(input_dict['header']['session_name'], "<Session Name>")
         markers = sorted(input_dict['markers'], key=lambda m: m['location_decoded']['frame_count'])
 
-        for track in input_dict['tracks']:
+
+        for track in tqdm(input_dict['tracks'], desc="Reading tracks...", unit='Track'):
             if 'Muted' in track['state'] and self.ignore_muted:
                 continue
 

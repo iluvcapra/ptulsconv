@@ -2,9 +2,8 @@ from parsimonious.nodes import NodeVisitor, Node
 
 
 class DictionaryParserVisitor(NodeVisitor):
-    
-    @staticmethod
-    def visit_document(node: Node, visited_children) -> dict:
+
+    def visit_document(self, node: Node, visited_children) -> dict:
         files = next(iter(visited_children[1]), None)
         clips = next(iter(visited_children[2]), None)
         plugins = next(iter(visited_children[3]), None)

@@ -149,12 +149,12 @@ class TagInterpreter:
 
                     event.update(clip_tags['tags'])
 
-                    event['track_name'] = track_tags['line']
-                    event['session_name'] = title_tags['line']
-                    event['event_number'] = clip['event']
+                    event['PT.Track.Name'] = track_tags['line']
+                    event['PT.Session.Name'] = title_tags['line']
+                    event['PT.Clip.Number'] = clip['event']
                     event['event_name'] = clip_tags['line']
-                    event['event_start_time'] = clip_start
-                    event['event_end_time'] = clip['end_time_decoded']['frame_count']
+                    event['PT.Clip.Start_Frames'] = clip_start
+                    event['PT.Clip.End_Frames'] = clip['end_time_decoded']['frame_count']
                     transformed.append(event)
 
                 elif clip_tags['mode'] == 'Append':
@@ -162,7 +162,7 @@ class TagInterpreter:
 
                     transformed[-1].update(clip_tags['tags'])
                     transformed[-1]['event_name'] = transformed[-1]['event_name'] + " " + clip_tags['line']
-                    transformed[-1]['event_end_time'] = clip['end_time_decoded']['frame_count']
+                    transformed[-1]['PT.Clip.End_Frames'] = clip['end_time_decoded']['frame_count']
 
                 elif clip_tags['mode'] == 'Timespan':
                     rule = dict(start_time=clip_start,

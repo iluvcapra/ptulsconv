@@ -21,7 +21,7 @@ def fmp_dump(data, input_file_name, output):
                  (['PT.Clip.Finish_Frames'], 'Finish Frames', int),
                  (['P'], 'Priority', int),
                  (['QN'], 'Cue Number', str),
-                 (['Char', 'PT.Track.Name'], 'Charater Name', str),
+                 (['Char', 'PT.Track.Name'], 'Character Name', str),
                  (['Actor'], 'Actor Name', str),
                  (['CN'], 'Character Number', str),
                  (['R'], 'Reason', str),
@@ -47,7 +47,7 @@ def fmp_dump(data, input_file_name, output):
     doc.start('PRODUCT', {'NAME': 'ptulsconv', 'VERSION': '0.0.1'})
     doc.end('PRODUCT')
 
-    doc.start('DATABASE', {'DATEFORMAT': 'MM/dd/yy', 'LAYOUT':'summary', 'TIMEFORMAT':'hh:mm:ss',
+    doc.start('DATABASE', {'DATEFORMAT': 'MM/dd/yy', 'LAYOUT': 'summary', 'TIMEFORMAT': 'hh:mm:ss',
                            'RECORDS': str(len(data['events'])), 'NAME': os.path.basename(input_file_name)})
     doc.end('DATABASE')
 

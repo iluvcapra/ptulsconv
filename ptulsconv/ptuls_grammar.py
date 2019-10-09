@@ -14,13 +14,13 @@ protools_text_export_grammar = Grammar(
 
     files_section        = files_header files_column_header file_record* block_ending
     files_header         = "F I L E S  I N  S E S S I O N" rs
-    files_column_header  = "Filename     " fs "Location" rs
+    files_column_header  = "Filename" isp fs "Location" rs
     file_record          = string_value fs string_value rs
 
     clips_section        = clips_header clips_column_header clip_record* block_ending
     clips_header         = "O N L I N E  C L I P S  I N  S E S S I O N" rs
     clips_column_header  = string_value fs string_value rs
-    clip_record          = string_value fs string_value fs "[" integer_value "]" rs
+    clip_record          = string_value fs string_value (fs "[" integer_value "]")? rs
 
     plugin_listing       = plugin_header plugin_column_header plugin_record* block_ending
     plugin_header        = "P L U G - I N S  L I S T I N G" rs

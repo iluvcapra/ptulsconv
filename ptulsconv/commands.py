@@ -24,7 +24,7 @@ def fmp_dump(data, output):
                  (['R'], 'Reason', str),
                  (['Rq'], 'Requested by', str),
                  (['Spot'], 'Spot', str),
-                 (['event_name', 'Line'], 'Line', str),
+                 (['PT.Clip.Name', 'Line'], 'Line', str),
                  (['Shot'], 'Shot', str),
                  (['Note'], 'Note', str),
                  (['Mins'], 'Time Budget Mins', float),

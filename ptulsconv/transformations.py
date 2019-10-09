@@ -152,7 +152,7 @@ class TagInterpreter(Transformation):
                     event['PT.Track.Name'] = track_tags['line']
                     event['PT.Session.Name'] = title_tags['line']
                     event['PT.Clip.Number'] = clip['event']
-                    event['event_name'] = clip_tags['line']
+                    event['PT.Clip.Name'] = clip_tags['line']
                     event['PT.Clip.Start'] = clip['start_time']
                     event['PT.Clip.Finish'] = clip['end_time']
                     event['PT.Clip.Start_Frames'] = clip_start

@@ -114,13 +114,91 @@ class TagInterpreter:
         def generic_visit(self, node, visited_children):
             return visited_children or node
 
-    def __init__(self):
-        pass
+    def __init__(self, ignore_muted = True):
+        self.visitor = TagInterpreter.TagListVisitor()
+        self.ignore_muted = ignore_muted
+
+    def transform(self, input_dict: dict) -> dict:
+        transformed = list()
+        timespan_rules = list()
+
+        title_tags = self.parse_tags(input_dict['header']['session_name'])
+        markers = sorted(input_dict['markers'], key=lambda m: m['location_decoded']['frame_count'])
+
+        for track in input_dict['tracks']:
+            if 'Muted' in track['state'] and self.ignore_muted:
+                continue
+
+            track_tags = self.parse_tags(track['name'])
+            comment_tags = self.parse_tags(track['comments'])
+            track_context_tags = track_tags['tags']
+            track_context_tags.update(comment_tags['tags'])
+
+            for clip in track['clips']:
+                if clip['state'] == 'Muted' and self.ignore_muted:
+                    continue
+
+                clip_tags = self.parse_tags(clip['clip_name'])
+                clip_start = clip['start_time_decoded']['frame_count']
+                if clip_tags['mode'] == 'Normal':
+                    event = dict()
+                    event.update(title_tags['tags'])
+                    event.update(track_context_tags)
+                    event.update(self.effective_timespan_tags_at_time(timespan_rules, clip_start))
+                    event.update(self.effective_marker_tags_at_time(markers, clip_start))
+
+                    event.update(clip_tags['tags'])
+
+                    event['track_name'] = track_tags['line']
+                    event['session_name'] = title_tags['line']
+                    event['event_number'] = clip['event']
+                    event['event_name'] = clip_tags['line']
+                    event['event_start_time'] = clip_start
+                    event['event_end_time'] = clip['end_time_decoded']['frame_count']
+                    transformed.append(event)
+
+                elif clip_tags['mode'] == 'Append':
+                    assert len(transformed) > 0, "First clip is in '&'-Append mode, fatal error."
+
+                    transformed[-1].update(clip_tags['tags'])
+                    transformed[-1]['event_name'] = transformed[-1]['event_name'] + " " + clip_tags['line']
+                    transformed[-1]['event_end_time'] = clip['end_time_decoded']['frame_count']
+
+                elif clip_tags['mode'] == 'Timespan':
+                    rule = dict(start_time=clip_start,
+                                end_time=clip['end_time_decoded']['frame_count'],
+                                tags=clip_tags['tags'])
+                    timespan_rules.append(rule)
+
+        return dict(events=transformed)
+
+    def effective_timespan_tags_at_time(self, rules, time):
+        retval = dict()
+
+        for rule in rules:
+            if rule['start_time'] <= time <= rule['end_time']:
+                retval.update(rule['tags'])
+
+        return retval
+
+    def effective_marker_tags_at_time(self, markers, time):
+        retval = dict()
+
+        for marker in markers:
+            marker_name_tags = self.parse_tags(marker['name'])
+            marker_comment_tags = self.parse_tags(marker['comments'])
+            effective_tags = marker_name_tags['tags'].update(marker_comment_tags['tags']) or dict()
+
+            if marker['location_decoded']['frame_count'] <= time:
+                retval.update(effective_tags)
+            else:
+                break
+
+        return retval
 
     def parse_tags(self, source):
         parse_tree = self.tag_grammar.parse(source)
-        v = TagInterpreter.TagListVisitor()
-        return v.visit(parse_tree)
+        return self.visitor.visit(parse_tree)
 
 
 

@@ -50,7 +50,7 @@ def fmp_dump(data, input_file_name, output):
     doc.data('0')
     doc.end('ERRORCODE')
 
-    doc.start('PRODUCT', {'NAME': 'ptulsconv', 'VERSION': '0.0.1'})
+    doc.start('PRODUCT', {'NAME': ptulsconv.__name__, 'VERSION': ptulsconv.__version__})
     doc.end('PRODUCT')
 
     doc.start('DATABASE', {'DATEFORMAT': 'MM/dd/yy', 'LAYOUT': 'summary', 'TIMEFORMAT': 'hh:mm:ss',

@@ -1,19 +1,15 @@
+import io
 import json
 import os.path
 import sys
 from xml.etree.ElementTree import TreeBuilder, tostring
 import ptulsconv
 
-from tqdm import tqdm
-
-def fmp_dump(data, input_file_name, output):
-    doc = TreeBuilder(element_factory=None)
-
-    # field_map maps tags in the text export to fields in FMPXMLRESULT
-    #  - tuple field 0 is a list of tags, the first tag with contents will be used as source
-    #  - tuple field 1 is the field in FMPXMLRESULT
-    #  - tuple field 2 the constructor/type of the field
-    field_map = ((['Title', 'PT.Session.Name'], 'Title', str),
+# field_map maps tags in the text export to fields in FMPXMLRESULT
+#  - tuple field 0 is a list of tags, the first tag with contents will be used as source
+#  - tuple field 1 is the field in FMPXMLRESULT
+#  - tuple field 2 the constructor/type of the field
+adr_field_map = ((['Title', 'PT.Session.Name'], 'Title', str),
                  (['Supv'], 'Supervisor', str),
                  (['Client'], 'Client', str),
                  (['Sc'], 'Scene', str),
@@ -44,6 +40,9 @@ def fmp_dump(data, input_file_name, output):
                  (['ADLIB'], 'Adlib', str),
                  (['OPT'], 'Optional', str))
 
+def fmp_dump(data, input_file_name, output):
+    doc = TreeBuilder(element_factory=None)
+
     doc.start('FMPXMLRESULT', {'xmlns': 'http://www.filemaker.com/fmpxmlresult'})
 
     doc.start('ERRORCODE')
@@ -58,24 +57,20 @@ def fmp_dump(data, input_file_name, output):
     doc.end('DATABASE')
 
     doc.start('METADATA')
-    for field in field_map:
+    for field in adr_field_map:
         tp = field[2]
         ft = 'TEXT'
         if tp is int or tp is float:
             ft = 'NUMBER'
 
-        doc.start('FIELD', {'EMPTYOK': 'YES',
-                            'MAXREPEAT': '1',
-                            'NAME': field[1],
-                            'TYPE': ft})
-
+        doc.start('FIELD', {'EMPTYOK': 'YES', 'MAXREPEAT': '1', 'NAME': field[1], 'TYPE': ft})
         doc.end('FIELD')
     doc.end('METADATA')
 
     doc.start('RESULTSET', {'FOUND': str(len(data['events']))})
     for event in data['events']:
         doc.start('ROW')
-        for field in field_map:
+        for field in adr_field_map:
             doc.start('COL')
             doc.start('DATA')
             for key_attempt in field[0]:
@@ -91,6 +86,24 @@ def fmp_dump(data, input_file_name, output):
     docelem = doc.close()
     xmlstr = tostring(docelem, encoding='unicode', method='xml')
     output.write(xmlstr)
+
+
+def dump_field_map(field_map_name, output=sys.stdout):
+    output.write("# Map of Tag fields to XML output columns\n")
+    output.write("# (in order of precedence)\n")
+    output.write("# \n")
+    field_map = []
+    if field_map_name == 'ADR':
+        field_map = adr_field_map
+        output.write("# ADR Table Fields\n")
+
+    output.write("# \n")
+    output.write("# Tag Name                 | FMPXMLRESULT Column  | Type    \n")
+    output.write("# -------------------------+----------------------+---------\n")
+
+    for field in field_map:
+        for tag in field[0]:
+            output.write("# %25s| %20s | %8s\n" % (tag[:25], field[1][:20], field[2].__name__))
 
 
 def convert(input_file, output_format='fmpxml', start=None, end=None, output=sys.stdout):

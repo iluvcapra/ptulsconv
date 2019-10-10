@@ -61,10 +61,10 @@ The row output for this clip will contain columns for the values:
 
 These fields can be defined in the clip name in three ways:
 * `$NAME=VALUE` creates a field named `NAME` with a one-word value `VALUE`.
-* `{NAME=VALUE}` creates a field named `NAME` with the value `VALUE`. `VALUE` in this case may contain spaces or any chartacter
-up to the closing bracket.
-* `[NAME]` creates a field named `NAME` with a value `NAME`. This can be used to create a boolean-valued field; in the CSV 
-output, clips with the field will have it, and clips without will have the column with an empty value.
+* `{NAME=VALUE}` creates a field named `NAME` with the value `VALUE`. `VALUE` in this case may contain spaces or any 
+    character up to the closing bracket.
+* `[NAME]` creates a field named `NAME` with a value `NAME`. This can be used to create a boolean-valued field; in the 
+    output, clips with the field will have it, and clips without will have the column with an empty value.
 
 For example, if two clips are named:
 
@@ -104,7 +104,7 @@ field `Sc` with that value.
 
 ### Using `&` to Combine Clips
 
-A clip name beginning with `&` will have its parsed clip name appended to the preceding cue, and the fields of following 
+A clip name beginning with "&" will have its parsed clip name appended to the preceding cue, and the fields of following 
 cues will be applied (later clips having precedence). The clips need not be touching, and the clips will be combined 
 into a single row of the output. The start time of the first clip will become the start time of the row, and the finish 
 time of the last clip will become the finish time of the row.

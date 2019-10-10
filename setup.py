@@ -29,7 +29,7 @@ setup(name='ptulsconv',
           "Topic :: Text Processing :: Markup :: XML"],
       packages=['ptulsconv'],
       keywords='text-processing parsers film tv editing editorial',
-      install_requires=['parsimonious'],
+      install_requires=['parsimonious','tqdm'],
       entry_points={
           'console_scripts': [
               'ptulsconv = ptulsconv.__main__:main'

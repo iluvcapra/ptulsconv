@@ -5,6 +5,8 @@ import sys
 from xml.etree.ElementTree import TreeBuilder, tostring
 import ptulsconv
 
+from .reporting import print_section_header_style, print_status_style
+
 # field_map maps tags in the text export to fields in FMPXMLRESULT
 #  - tuple field 0 is a list of tags, the first tag with contents will be used as source
 #  - tuple field 1 is the field in FMPXMLRESULT
@@ -107,17 +109,27 @@ def dump_field_map(field_map_name, output=sys.stdout):
             output.write("# %-24s-> %-20s | %-8s| %-7i\n" % (tag[:24], field[1][:20], field[2].__name__, n+1 ))
 
 
-def convert(input_file, output_format='fmpxml', start=None, end=None, progress=False, include_muted=False,
-            output=sys.stdout):
+def convert(input_file, output_format='fmpxml', start=None, end=None,
+            progress=False, include_muted=False,
+            output=sys.stdout, log_output=sys.stderr):
+
     with open(input_file, 'r') as file:
+        print_section_header_style('Parsing')
         ast = ptulsconv.protools_text_export_grammar.parse(file.read())
         dict_parser = ptulsconv.DictionaryParserVisitor()
         parsed = dict_parser.visit(ast)
 
-        tcxform = ptulsconv.transformations.TimecodeInterpreter()
-        tagxform = ptulsconv.transformations.TagInterpreter(show_progress=progress, ignore_muted=(not include_muted))
+        print_status_style('Session title: %s' % parsed['header']['session_name'])
+        print_status_style('Session timecode format: %f' % parsed['header']['timecode_format'])
+        print_status_style('Fount %i tracks' % len(parsed['tracks']))
+        print_status_style('Found %i markers' % len(parsed['markers']))
 
-        parsed = tagxform.transform(tcxform.transform(parsed))
+        tcxform = ptulsconv.transformations.TimecodeInterpreter()
+        tagxform = ptulsconv.transformations.TagInterpreter(show_progress=progress, ignore_muted=(not include_muted),
+                                                            log_output=log_output)
+
+        parsed = tcxform.transform(parsed)
+        parsed = tagxform.transform(parsed)
 
         if start is not None and end is not None:
             start_fs = tcxform.convert_time(start,

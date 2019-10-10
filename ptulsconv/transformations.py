@@ -3,6 +3,7 @@ from parsimonious import Grammar, NodeVisitor
 from parsimonious.exceptions import IncompleteParseError
 import math
 import sys
+from .reporting import print_advisory_tagging_error, print_section_header_style, print_status_style
 
 from tqdm import tqdm
 
@@ -17,18 +18,26 @@ class TimecodeInterpreter(Transformation):
         self.apply_session_start = False
 
     def transform(self, input_dict: dict) -> dict:
+        print_section_header_style('Converting Timecodes')
+
         retval = super().transform(input_dict)
         rate = input_dict['header']['timecode_format']
         start_tc = self.convert_time(input_dict['header']['start_timecode'], rate,
                                      drop_frame=input_dict['header']['timecode_drop_frame'])
 
         retval['header']['start_timecode_decoded'] = start_tc
+        print_status_style('Converted start timecode.')
+
         retval['tracks'] = self.convert_tracks(input_dict['tracks'], timecode_rate=rate,
                                                drop_frame=retval['header']['timecode_drop_frame'])
+
+        print_status_style('Converted clip timecodes for %i tracks.' % len(retval['tracks']))
 
         for marker in retval['markers']:
             marker['location_decoded'] = self.convert_time(marker['location'], rate,
                                                            drop_frame=retval['header']['timecode_drop_frame'])
+
+        print_status_style('Converted %i markers.' % len(retval['markers']))
 
         return retval
 
@@ -121,16 +130,19 @@ class TagInterpreter(Transformation):
         def generic_visit(self, node, visited_children):
             return visited_children or node
 
-    def __init__(self, ignore_muted=True, show_progress=False):
+    def __init__(self, ignore_muted=True, show_progress=False, log_output=sys.stderr):
         self.visitor = TagInterpreter.TagListVisitor()
         self.ignore_muted = ignore_muted
         self.show_progress = show_progress
+        self.log_output = log_output
 
     def transform(self, input_dict: dict) -> dict:
         transformed = list()
         timespan_rules = list()
 
-        title_tags = self.parse_tags(input_dict['header']['session_name'], "<Session Name>")
+        print_section_header_style('Parsing Tags')
+
+        title_tags = self.parse_tags(input_dict['header']['session_name'])
         markers = sorted(input_dict['markers'], key=lambda m: m['location_decoded']['frame_count'])
 
         if self.show_progress:
@@ -142,8 +154,8 @@ class TagInterpreter(Transformation):
             if 'Muted' in track['state'] and self.ignore_muted:
                 continue
 
-            track_tags = self.parse_tags(track['name'], "<Track %s>" % (track['name']))
-            comment_tags = self.parse_tags(track['comments'], "<Track %s>" % (track['name']))
+            track_tags = self.parse_tags(track['name'], parent_track_name=track['name'])
+            comment_tags = self.parse_tags(track['comments'], parent_track_name=track['name'])
             track_context_tags = track_tags['tags']
             track_context_tags.update(comment_tags['tags'])
 
@@ -151,8 +163,7 @@ class TagInterpreter(Transformation):
                 if clip['state'] == 'Muted' and self.ignore_muted:
                     continue
 
-                clip_tags = self.parse_tags(clip['clip_name'],
-                                            "<Track %s/Clip event number %i at %s>" % (track['name'], clip['event'], clip['start_time']))
+                clip_tags = self.parse_tags(clip['clip_name'], parent_track_name=track['name'], clip_time=clip['start_time'])
                 clip_start = clip['start_time_decoded']['frame_count']
                 if clip_tags['mode'] == 'Normal':
                     event = dict()
@@ -189,6 +200,7 @@ class TagInterpreter(Transformation):
                                 tags=clip_tags['tags'])
                     timespan_rules.append(rule)
 
+        print_status_style('Processed %i clips' % len(transformed))
         return dict(header=input_dict['header'], events=transformed)
 
     def effective_timespan_tags_at_time(_, rules, time) -> dict:
@@ -204,8 +216,8 @@ class TagInterpreter(Transformation):
         retval = dict()
 
         for marker in markers:
-            marker_name_tags = self.parse_tags(marker['name'], "Marker %i" % (marker['number']))
-            marker_comment_tags = self.parse_tags(marker['comments'], "Marker %i" % (marker['number']))
+            marker_name_tags = self.parse_tags(marker['name'], marker_index=marker['number'])
+            marker_comment_tags = self.parse_tags(marker['comments'], marker_index=marker['number'])
             effective_tags = marker_name_tags['tags']
             effective_tags.update(marker_comment_tags['tags'])
 
@@ -215,24 +227,18 @@ class TagInterpreter(Transformation):
                 break
         return retval
 
-    def report(self, mesg, *args):
-        print(mesg % ( args) , file=sys.stderr)
-        sys.stderr.write("\033[F")
-        sys.stderr.write("\033[K")
-
-    def parse_tags(self, source, context_str=None):
+    def parse_tags(self, source, parent_track_name=None, clip_time=None, marker_index=None):
         try:
             parse_tree = self.tag_grammar.parse(source)
             return self.visitor.visit(parse_tree)
         except IncompleteParseError as e:
-            if context_str is not None:
-                self.report("Error reading tags in: ")
+            print_advisory_tagging_error(failed_string=source,
+                                         parent_track_name=parent_track_name,
+                                         clip_time=clip_time, position=e.pos)
 
             trimmed_source = source[:e.pos]
             parse_tree = self.tag_grammar.parse(trimmed_source)
             return self.visitor.visit(parse_tree)
-
-
 
 
 class SubclipOfSequence(Transformation):

@@ -45,7 +45,7 @@ protools_text_export_grammar = Grammar(
     
     track_state_list     = (track_state " ")*
     
-    track_state          = "Solo" / "Muted" / "Inactive"
+    track_state          = "Solo" / "Muted" / "Inactive" / "Hidden"
     
     track_clip_entry     = integer_value isp fs 
                            integer_value isp fs 

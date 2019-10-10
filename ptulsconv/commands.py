@@ -99,12 +99,12 @@ def dump_field_map(field_map_name, output=sys.stdout):
         output.write("# ADR Table Fields\n")
 
     output.write("# \n")
-    output.write("# Tag Name                 | FMPXMLRESULT Column  | Type    \n")
-    output.write("# -------------------------+----------------------+---------\n")
+    output.write("# Tag Name                 | FMPXMLRESULT Column  | Type    | Column \n")
+    output.write("# -------------------------+----------------------+---------+--------\n")
 
-    for field in field_map:
+    for n, field in enumerate(field_map):
         for tag in field[0]:
-            output.write("# %25s| %20s | %8s\n" % (tag[:25], field[1][:20], field[2].__name__))
+            output.write("# %-24s-> %-20s | %-8s| %-7i\n" % (tag[:24], field[1][:20], field[2].__name__, n+1 ))
 
 
 def convert(input_file, output_format='fmpxml', start=None, end=None, progress=False, include_muted=False,

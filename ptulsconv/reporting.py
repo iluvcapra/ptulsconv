@@ -24,7 +24,7 @@ def print_advisory_tagging_error(failed_string, position, parent_track_name=None
         sys.stderr.write(" ! \033[33;1mTagging error: \033[0m")
         ok_string = failed_string[:position]
         not_ok_string = failed_string[position:]
-        sys.stderr.write("\033[102;30;1m%s\033[101m%s\033[0m\n" % (ok_string, not_ok_string))
+        sys.stderr.write("\033[32m\"%s\033[31;1m%s\"\033[0m\n" % (ok_string, not_ok_string))
 
         if parent_track_name is not None:
             sys.stderr.write(" !   > On track \"%s\"\n" % (parent_track_name))

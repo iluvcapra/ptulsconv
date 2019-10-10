@@ -61,7 +61,7 @@ def main():
         raise e
     except Exception as e:
         print_fatal_error("Error trying to convert file")
-        raise e
+        print("\033[31m" + e.__repr__() + "\033[0m", file=sys.stderr)
 
 
 if __name__ == "__main__":

@@ -54,10 +54,7 @@
     <ListElem>
       <AvProp id="ATTR" name="OMFI:ATTB:Kind" type="int32">1</AvProp>
       <AvProp id="ATTR" name="OMFI:ATTB:Name" type="string">_ATN_CRM_LENGTH</AvProp>
-      <AvProp id="ATTR" name="OMFI:ATTB:IntAttribute" type="int32">
-	<xsl:value-of select="number(fmp:COL[12]) - number(fmp:COL[11])" />
-
-</AvProp>
+      <AvProp id="ATTR" name="OMFI:ATTB:IntAttribute" type="int32">1</AvProp>
     </ListElem>
     <ListElem/>
   </List>

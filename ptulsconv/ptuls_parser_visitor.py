@@ -40,7 +40,7 @@ class DictionaryParserVisitor(NodeVisitor):
 
     @staticmethod
     def visit_clips_section(node, visited_children):
-        channel = next(iter(visited_children[2][5]), 1)
+        channel = next(iter(visited_children[2][3]), 1)
 
         return list(map(lambda child: dict(clip_name=child[0], file=child[2], channel=channel),
                         visited_children[2]))

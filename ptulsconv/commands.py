@@ -40,6 +40,7 @@ adr_field_map = ((['Title', 'PT.Session.Name'], 'Title', str),
                  (['ADLIB'], 'Adlib', str),
                  (['OPT'], 'Optional', str))
 
+
 def fmp_dump(data, input_file_name, output):
     doc = TreeBuilder(element_factory=None)
 
@@ -106,14 +107,15 @@ def dump_field_map(field_map_name, output=sys.stdout):
             output.write("# %25s| %20s | %8s\n" % (tag[:25], field[1][:20], field[2].__name__))
 
 
-def convert(input_file, output_format='fmpxml', start=None, end=None, progress=False, include_muted=False, output=sys.stdout):
+def convert(input_file, output_format='fmpxml', start=None, end=None, progress=False, include_muted=False,
+            output=sys.stdout):
     with open(input_file, 'r') as file:
         ast = ptulsconv.protools_text_export_grammar.parse(file.read())
         dict_parser = ptulsconv.DictionaryParserVisitor()
         parsed = dict_parser.visit(ast)
 
         tcxform = ptulsconv.transformations.TimecodeInterpreter()
-        tagxform = ptulsconv.transformations.TagInterpreter(show_progress=progress, ignore_muted=(not include_muted) )
+        tagxform = ptulsconv.transformations.TagInterpreter(show_progress=progress, ignore_muted=(not include_muted))
 
         parsed = tagxform.transform(tcxform.transform(parsed))
 

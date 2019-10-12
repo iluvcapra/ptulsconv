@@ -1,0 +1,100 @@
+SESSION NAME:	Tag Tests
+SAMPLE RATE:	48000.000000
+BIT DEPTH:	24-bit
+SESSION START TIMECODE:	01:00:00:00
+TIMECODE FORMAT:	23.976 Frame
+# OF AUDIO TRACKS:	8
+# OF AUDIO CLIPS:	0
+# OF AUDIO FILES:	0
+
+
+P L U G - I N S  L I S T I N G
+MANUFACTURER            	PLUG-IN NAME            	VERSION         	FORMAT          	STEMS                   	NUMBER OF INSTANCES
+
+
+T R A C K  L I S T I N G
+TRACK NAME:	Audio 1
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	Clip Name {X=300}             	   01:00:00:00	   01:00:05:03	   00:00:05:03	Unmuted
+
+
+TRACK NAME:	Audio 2 $A=1
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	Lorem ipsum {X=301}           	   01:00:00:00	   01:00:05:03	   00:00:05:03	Unmuted
+1       	2       	Dolor sic amet {X=302}        	   01:00:10:00	   01:00:20:00	   00:00:10:00	Unmuted
+1       	3       	& the rain in spain [ABC]     	   01:00:20:00	   01:00:25:00	   00:00:05:00	Unmuted
+
+
+TRACK NAME:	Audio 3 $A=2
+COMMENTS:	{B=100}
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	A                             	   01:00:15:00	   01:00:25:00	   00:00:10:00	Unmuted
+1       	2       	& B                           	   01:00:25:00	   01:00:35:00	   00:00:10:00	Unmuted
+1       	3       	& C                           	   01:00:35:00	   01:00:45:00	   00:00:10:00	Unmuted
+
+
+TRACK NAME:	Audio 4 $A=3
+COMMENTS:	$A=4
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	Silver Bridge                 	   01:00:00:00	   01:00:05:00	   00:00:05:00	Unmuted
+
+
+TRACK NAME:	Audio 5
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	@ {D=100}                     	   01:00:00:00	   01:00:10:00	   00:00:10:00	Unmuted
+1       	2       	@ {D=101}                     	   01:00:10:00	   01:00:20:00	   00:00:10:00	Unmuted
+1       	3       	@ {D=102}                     	   01:00:20:00	   01:00:30:00	   00:00:10:00	Unmuted
+
+
+TRACK NAME:	Audio 6
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	Region 02                     	   01:00:02:00	   01:00:03:00	   00:00:01:00	Unmuted
+1       	2       	Region 12                     	   01:00:12:00	   01:00:13:00	   00:00:01:00	Unmuted
+1       	3       	Region 22                     	   01:00:22:00	   01:00:23:00	   00:00:01:00	Unmuted
+
+
+TRACK NAME:	Audio 7
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	@ {D=200} {E=101}             	   01:00:00:00	   01:00:10:00	   00:00:10:00	Unmuted
+
+
+TRACK NAME:	Audio 8
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	Region 04                     	   01:00:04:00	   01:00:05:00	   00:00:01:00	Unmuted
+
+
+M A R K E R S  L I S T I N G
+#   	LOCATION     	TIME REFERENCE    	UNITS    	NAME                             	COMMENTS
+3   	01:00:05:00  	240240            	Samples  	Marker $M=0                      	
+1   	01:00:10:00  	480480            	Samples  	$M=1                             	
+2   	01:00:22:00  	1057056           	Samples  	$M=2                             	

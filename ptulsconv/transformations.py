@@ -191,8 +191,11 @@ class TagInterpreter(Transformation):
                     assert len(transformed) > 0, "First clip is in '&'-Append mode, fatal error."
 
                     transformed[-1].update(clip_tags['tags'])
-                    transformed[-1]['event_name'] = transformed[-1]['event_name'] + " " + clip_tags['line']
-                    transformed[-1]['PT.Clip.End_Frames'] = clip['end_time_decoded']['frame_count']
+                    transformed[-1]['PT.Clip.Name'] = transformed[-1]['PT.Clip.Name'] + " " + clip_tags['line']
+                    transformed[-1]['PT.Clip.Finish_Frames'] = clip['end_time_decoded']['frame_count']
+                    transformed[-1]['PT.Clip.Finish'] = clip['end_time']
+                    transformed[-1]['PT.Clip.Finish_Seconds'] = clip['end_time_decoded']['frame_count'] / input_dict['header'][
+                        'timecode_format']
 
                 elif clip_tags['mode'] == 'Timespan':
                     rule = dict(start_time=clip_start,

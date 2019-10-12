@@ -1,6 +1,6 @@
 from ptulsconv.commands import convert, dump_field_map
-from ptulsconv import __version__, __author__
-from optparse import OptionParser
+from ptulsconv import __name__, __version__, __author__
+from optparse import OptionParser, OptionGroup
 from .reporting import print_status_style, print_banner_style, print_section_header_style, print_fatal_error
 import datetime
 import sys
@@ -8,6 +8,7 @@ import sys
 def main():
     parser = OptionParser()
     parser.usage = "ptulsconv TEXT_EXPORT.txt"
+
     parser.add_option('-i', dest='in_time', help="Don't output events occurring before this timecode, and offset"
                                                  " all events relative to this timecode.", metavar='TC')
     parser.add_option('-o', dest='out_time', help="Don't output events occurring after this timecode.", metavar='TC')
@@ -16,13 +17,13 @@ def main():
     parser.add_option('-m', '--include-muted', default=False, action='store_true', dest='include_muted',
                       help='Read muted clips.')
 
-    parser.add_option('--show-tags', dest='show_tags',
+    parser.add_option('--show-available-tags', dest='show_tags',
                       action='store_true',
                       default=False, help='Display tag mappings for the FMP XML output style and exit.')
 
     (options, args) = parser.parse_args(sys.argv)
 
-    print_banner_style("ptulsconv %s (c) 2019 %s. All rights reserved." % (__version__, __author__))
+    print_banner_style("%s %s (c) 2019 %s. All rights reserved." % (__name__, __version__, __author__))
 
     print_section_header_style("Startup")
     print_status_style("This run started %s" % (datetime.datetime.now().isoformat() ) )

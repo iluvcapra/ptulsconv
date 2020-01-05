@@ -18,6 +18,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install setuptools wheel twine
     - name: Install parsimonious
+      run: |
         pip install parsimonious
     - name: Build and publish
       env:

@@ -24,12 +24,13 @@ setup(name='ptulsconv',
           'Topic :: Multimedia',
           'Topic :: Multimedia :: Sound/Audio',
           "Programming Language :: Python :: 3.7",
+          "Programming Language :: Python :: 3.8",
           "Development Status :: 4 - Beta",
           "Topic :: Text Processing :: Filters",
           "Topic :: Text Processing :: Markup :: XML"],
       packages=['ptulsconv'],
       keywords='text-processing parsers film tv editing editorial',
-      install_requires=['parsimonious','tqdm'],
+      install_requires=['parsimonious', 'tqdm'],
       entry_points={
           'console_scripts': [
               'ptulsconv = ptulsconv.__main__:main'

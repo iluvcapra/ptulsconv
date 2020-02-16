@@ -1,14 +1,23 @@
 .\" Manpage for ptulsconv
 .\" Contact https://github.com/iluvcapra/ptulsconv
-.TH man 1 "12 Feb 2020" "0.3.3" "ptulsconv man page"
+.TH ptulsconv 1 "12 Feb 2020" "0.3.3" "ptulsconv man page"
 .SH NAME
-ptulsconv \- convert Avid Pro Tools text exports
+.BR "ptulsconv" " \- convert 
+.IR "Avid Pro Tools" " text exports"
 .SH SYNOPSIS
 ptulsconv [OPTIONS] Export.txt
 .SH DESCRIPTION
 Description
 .SH OPTIONS
-Options
+.IP "-h, --help"
+show a help message and exit
+.TP 
+.RI "-i " "TC"
+Don't output events before this timecode, and offset all remaining
+events to start at this timecode.
+.TP 
+.RI "-o " "TC"
+Don't output events occurring after this timecode.
 .SH SEE ALSO
 See Also
 .SH AUTHOR

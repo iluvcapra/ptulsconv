@@ -1,5 +1,8 @@
 [![Build Status](https://travis-ci.com/iluvcapra/ptulsconv.svg?branch=master)](https://travis-ci.com/iluvcapra/ptulsconv)
  ![](https://img.shields.io/github/license/iluvcapra/ptulsconv.svg) ![](https://img.shields.io/pypi/pyversions/ptulsconv.svg) [![](https://img.shields.io/pypi/v/ptulsconv.svg)](https://pypi.org/project/ptulsconv/) ![](https://img.shields.io/pypi/wheel/ptulsconv.svg)
+ 
+ ![Upload Python Package](https://github.com/iluvcapra/ptulsconv/workflows/Upload%20Python%20Package/badge.svg)
+ 
 # ptulsconv
 Read Pro Tools text exports and generate XML, JSON, reports
 

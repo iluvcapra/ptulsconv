@@ -1,9 +1,11 @@
-from ptulsconv.commands import convert, dump_field_map
+from ptulsconv.commands import convert, dump_field_map, dump_xform_options
 from ptulsconv import __name__, __version__, __author__
 from optparse import OptionParser, OptionGroup
 from .reporting import print_status_style, print_banner_style, print_section_header_style, print_fatal_error
 import datetime
 import sys
+
+import traceback
 
 def main():
     parser = OptionParser()
@@ -21,15 +23,25 @@ def main():
                       action='store_true',
                       default=False, help='Display tag mappings for the FMP XML output style and exit.')
 
+    parser.add_option('--show-available-transforms', dest='show_transforms',
+                      action='store_true',
+                      default=False, help='Display available built-in XSLT transforms.')
+
+    parser.add_option('--xform', dest='xslt', help="Convert with built-is XSLT transform.",
+                      default=None, metavar='NAME')
     (options, args) = parser.parse_args(sys.argv)
 
-    print_banner_style("%s %s (c) 2019 %s. All rights reserved." % (__name__, __version__, __author__))
+    print_banner_style("%s %s (c) 2020 %s. All rights reserved." % (__name__, __version__, __author__))
 
     print_section_header_style("Startup")
     print_status_style("This run started %s" % (datetime.datetime.now().isoformat() ) )
 
     if options.show_tags:
         dump_field_map('ADR')
+        sys.exit(0)
+
+    if options.show_transforms:
+        dump_xform_options()
         sys.exit(0)
 
     if len(args) < 2:
@@ -55,7 +67,7 @@ def main():
 
     try:
         convert(input_file=args[1], start=options.in_time, end=options.out_time,
-                include_muted=options.include_muted,
+                include_muted=options.include_muted, xsl=options.xslt,
                 progress=False, output=sys.stdout, log_output=sys.stderr)
     except FileNotFoundError as e:
         print_fatal_error("Error trying to read input file")
@@ -63,6 +75,7 @@ def main():
     except Exception as e:
         print_fatal_error("Error trying to convert file")
         print("\033[31m" + e.__repr__() + "\033[0m", file=sys.stderr)
+        print(traceback.format_exc())
 
 
 if __name__ == "__main__":

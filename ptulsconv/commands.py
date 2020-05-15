@@ -1,8 +1,11 @@
 import io
 import json
+import os
 import os.path
 import sys
 from xml.etree.ElementTree import TreeBuilder, tostring
+import subprocess
+import pathlib
 import ptulsconv
 
 from .reporting import print_section_header_style, print_status_style
@@ -91,6 +94,21 @@ def fmp_dump(data, input_file_name, output):
     output.write(xmlstr)
 
 
+import glob
+
+xslt_path = os.path.join(pathlib.Path(__file__).parent.absolute(), 'xslt')
+
+def xform_options():
+    return glob.glob(os.path.join(xslt_path, "*.xsl"))
+
+def dump_xform_options(output=sys.stdout):
+    print("# Available transforms:", file=output)
+    print("# Transform dir: %s" % (xslt_path), file=output)
+    for f in xform_options():
+        base = os.path.basename(f)
+        name, _ = os.path.splitext(base)
+        print("#    " + name, file=output)
+
 def dump_field_map(field_map_name, output=sys.stdout):
     output.write("# Map of Tag fields to XML output columns\n")
     output.write("# (in order of precedence)\n")
@@ -106,13 +124,28 @@ def dump_field_map(field_map_name, output=sys.stdout):
 
     for n, field in enumerate(field_map):
         for tag in field[0]:
-            output.write("# %-24s-> %-20s | %-8s| %-7i\n" % (tag[:24], field[1][:20], field[2].__name__, n+1 ))
+            output.write("# %-24s-> %-20s | %-8s| %-7i\n" % (tag[:24], field[1][:20], field[2].__name__, n + 1))
+
+
+def fmp_transformed_dump(data, input_file, xsl_name, output):
+    pipe = io.StringIO()
+    print_status_style("Generating base XML")
+    fmp_dump(data, input_file, pipe)
+
+    strdata = pipe.getvalue()
+    print_status_style("Base XML size %i" % (len(strdata)))
+
+    print_status_style("Running xsltproc")
+
+    xsl_path = os.path.join(pathlib.Path(__file__).parent.absolute(), 'xslt', xsl_name + ".xsl")
+    print_status_style("Using xsl: %s" % (xsl_path))
+    result = subprocess.run(['xsltproc', xsl_path, '-'], input=strdata, text=True,
+                            stdout=output, shell=False, check=True)
 
 
 def convert(input_file, output_format='fmpxml', start=None, end=None,
-            progress=False, include_muted=False,
+            progress=False, include_muted=False, xsl=None,
             output=sys.stdout, log_output=sys.stderr):
-
     with open(input_file, 'r') as file:
         print_section_header_style('Parsing')
         ast = ptulsconv.protools_text_export_grammar.parse(file.read())
@@ -146,4 +179,9 @@ def convert(input_file, output_format='fmpxml', start=None, end=None,
         if output_format == 'json':
             json.dump(parsed, output)
         elif output_format == 'fmpxml':
-            fmp_dump(parsed, input_file, output)
+            if xsl is None:
+                fmp_dump(parsed, input_file, output)
+            else:
+                print_section_header_style("Performing XSL Translation")
+                print_status_style("Using builtin translation: %s" % (xsl))
+                fmp_transformed_dump(parsed, input_file, xsl, output)

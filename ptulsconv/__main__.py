@@ -17,7 +17,10 @@ def main():
     # parser.add_option('-P', '--progress', default=False, action='store_true', dest='show_progress',
     #                   help='Show progress bar.')
     parser.add_option('-m', '--include-muted', default=False, action='store_true', dest='include_muted',
-                      help='Read muted clips.')
+                      help='Include muted clips.')
+
+    parser.add_option('--xform', dest='xslt', help="Convert with built-is XSLT transform.",
+                      default=None, metavar='NAME')
 
     parser.add_option('--show-available-tags', dest='show_tags',
                       action='store_true',
@@ -27,8 +30,7 @@ def main():
                       action='store_true',
                       default=False, help='Display available built-in XSLT transforms.')
 
-    parser.add_option('--xform', dest='xslt', help="Convert with built-is XSLT transform.",
-                      default=None, metavar='NAME')
+
     (options, args) = parser.parse_args(sys.argv)
 
     print_banner_style("%s %s (c) 2020 %s. All rights reserved." % (__name__, __version__, __author__))

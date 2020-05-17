@@ -11,31 +11,38 @@ def main():
     parser = OptionParser()
     parser.usage = "ptulsconv TEXT_EXPORT.txt"
 
-    parser.add_option('-i', dest='in_time', help="Don't output events occurring before this timecode.", metavar='TC')
-    parser.add_option('-o', dest='out_time', help="Don't output events occurring after this timecode.", metavar='TC')
+    filter_opts = OptionGroup(title='Filtering Options', parser=parser)
+
+    filter_opts.add_option('-i', dest='in_time', help="Don't output events occurring before this timecode.", metavar='TC')
+    filter_opts.add_option('-o', dest='out_time', help="Don't output events occurring after this timecode.", metavar='TC')
     # parser.add_option('-P', '--progress', default=False, action='store_true', dest='show_progress',
     #                   help='Show progress bar.')
-    parser.add_option('-m', '--include-muted', default=False, action='store_true', dest='include_muted',
+    filter_opts.add_option('-m', '--include-muted', default=False, action='store_true', dest='include_muted',
                       help='Include muted clips.')
 
-    parser.add_option('-R', '--reel', dest='select_reel', help="Output only events in reel N, and recalculate start "
+    filter_opts.add_option('-R', '--reel', dest='select_reel', help="Output only events in reel N, and recalculate start "
                                                                " times relative to that reel's start time.",
                                                                default=None, metavar='N')
 
-    parser.add_option('--json', default=False, action='store_true', dest='write_json',
-                      help='Output a JSON document instead of XML.')
+    parser.add_option_group(filter_opts)
 
-    parser.add_option('--xform', dest='xslt', help="Convert with built-is XSLT transform.",
+    output_opts = OptionGroup(title="Output Options", parser=parser)
+    output_opts.add_option('--json', default=False, action='store_true', dest='write_json',
+                      help='Output a JSON document instead of XML. If this option is enabled, --xform with have no'
+                           'effect')
+
+    output_opts.add_option('--xform', dest='xslt', help="Convert with built-is XSLT transform.",
                       default=None, metavar='NAME')
 
-    parser.add_option('--show-available-tags', dest='show_tags',
+    output_opts.add_option('--show-available-tags', dest='show_tags',
                       action='store_true',
                       default=False, help='Display tag mappings for the FMP XML output style and exit.')
 
-    parser.add_option('--show-available-transforms', dest='show_transforms',
+    output_opts.add_option('--show-available-transforms', dest='show_transforms',
                       action='store_true',
                       default=False, help='Display available built-in XSLT transforms.')
 
+    parser.add_option_group(output_opts)
 
     (options, args) = parser.parse_args(sys.argv)
 

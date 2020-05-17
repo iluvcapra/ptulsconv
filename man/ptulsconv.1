@@ -15,14 +15,16 @@ an XML file for import into Filemaker Pro.
 show a help message and exit.
 .TP 
 .RI "-i " "TC"
-Don't output events before this timecode, and offset all remaining
-events to start at this timecode.
+Drop events before this timecode.
 .TP 
 .RI "-o " "TC"
-Don't output events occurring after this timecode.
+Drop events after this timecode.
 .TP
 .RI "-m "
 Include muted clips.
+.TP
+.RI "--json "
+Output a JSON document instead of XML. (--xform will have no effect.)
 .TP
 .RI "--xform " "NAME"
 Convert the output with a built-in output transform.

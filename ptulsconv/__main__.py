@@ -31,8 +31,8 @@ def main():
 
     output_opts = OptionGroup(title="Output Options", parser=parser)
     output_opts.add_option('--json', default=False, action='store_true', dest='write_json',
-                           help='Output a JSON document instead of XML. If this option is enabled, --xform will have no'
-                                'effect.')
+                           help='Output a JSON document instead of XML. If this option is enabled, --xform will have '
+                                'no effect.')
 
     output_opts.add_option('--xform', dest='xslt', help="Convert with built-is XSLT transform.",
                            default=None, metavar='NAME')

@@ -11,13 +11,19 @@ def main():
     parser = OptionParser()
     parser.usage = "ptulsconv TEXT_EXPORT.txt"
 
-    parser.add_option('-i', dest='in_time', help="Don't output events occurring before this timecode, and offset"
-                                                 " all events relative to this timecode.", metavar='TC')
+    parser.add_option('-i', dest='in_time', help="Don't output events occurring before this timecode.", metavar='TC')
     parser.add_option('-o', dest='out_time', help="Don't output events occurring after this timecode.", metavar='TC')
     # parser.add_option('-P', '--progress', default=False, action='store_true', dest='show_progress',
     #                   help='Show progress bar.')
     parser.add_option('-m', '--include-muted', default=False, action='store_true', dest='include_muted',
                       help='Include muted clips.')
+
+    parser.add_option('-R', '--reel', dest='select_reel', help="Output only events in reel N, and recalculate start "
+                                                               " times relative to that reel's start time.",
+                                                               default=None, metavar='N')
+
+    parser.add_option('--json', default=False, action='store_true', dest='write_json',
+                      help='Output a JSON document instead of XML.')
 
     parser.add_option('--xform', dest='xslt', help="Convert with built-is XSLT transform.",
                       default=None, metavar='NAME')
@@ -68,8 +74,12 @@ def main():
         print_status_style("Muted regions are ignored.")
 
     try:
-        convert(input_file=args[1], start=options.in_time, end=options.out_time,
-                include_muted=options.include_muted, xsl=options.xslt,
+        output_format = 'fmpxml'
+        if options.write_json:
+            output_format = 'json'
+
+        convert(input_file=args[1], output_format=output_format, start=options.in_time, end=options.out_time,
+                include_muted=options.include_muted, xsl=options.xslt, select_reel=options.select_reel,
                 progress=False, output=sys.stdout, log_output=sys.stderr)
     except FileNotFoundError as e:
         print_fatal_error("Error trying to read input file")

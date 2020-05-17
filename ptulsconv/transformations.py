@@ -7,6 +7,7 @@ from .reporting import print_advisory_tagging_error, print_section_header_style,
 
 from tqdm import tqdm
 
+
 class Transformation:
     def transform(self, input_dict) -> dict:
         return input_dict
@@ -163,7 +164,8 @@ class TagInterpreter(Transformation):
                 if clip['state'] == 'Muted' and self.ignore_muted:
                     continue
 
-                clip_tags = self.parse_tags(clip['clip_name'], parent_track_name=track['name'], clip_time=clip['start_time'])
+                clip_tags = self.parse_tags(clip['clip_name'], parent_track_name=track['name'],
+                                            clip_time=clip['start_time'])
                 clip_start = clip['start_time_decoded']['frame_count']
                 if clip_tags['mode'] == 'Normal':
                     event = dict()
@@ -176,6 +178,7 @@ class TagInterpreter(Transformation):
 
                     event['PT.Track.Name'] = track_tags['line']
                     event['PT.Session.Name'] = title_tags['line']
+                    event['PT.Session.TimecodeFormat'] = input_dict['header']['timecode_format']
                     event['PT.Clip.Number'] = clip['event']
                     event['PT.Clip.Name'] = clip_tags['line']
                     event['PT.Clip.Start'] = clip['start_time']
@@ -194,11 +197,14 @@ class TagInterpreter(Transformation):
                     transformed[-1]['PT.Clip.Name'] = transformed[-1]['PT.Clip.Name'] + " " + clip_tags['line']
                     transformed[-1]['PT.Clip.Finish_Frames'] = clip['end_time_decoded']['frame_count']
                     transformed[-1]['PT.Clip.Finish'] = clip['end_time']
-                    transformed[-1]['PT.Clip.Finish_Seconds'] = clip['end_time_decoded']['frame_count'] / input_dict['header'][
-                        'timecode_format']
+                    transformed[-1]['PT.Clip.Finish_Seconds'] = clip['end_time_decoded']['frame_count'] / \
+                                                                input_dict['header']['timecode_format']
+
 
                 elif clip_tags['mode'] == 'Timespan':
-                    rule = dict(start_time=clip_start,
+                    rule = dict(start_time_literal=clip['start_time'],
+                                start_time=clip_start,
+                                start_time_seconds=clip_start / input_dict['header']['timecode_format'],
                                 end_time=clip['end_time_decoded']['frame_count'],
                                 tags=clip_tags['tags'])
                     timespan_rules.append(rule)
@@ -211,7 +217,17 @@ class TagInterpreter(Transformation):
 
         for rule in rules:
             if rule['start_time'] <= time <= rule['end_time']:
+                tag_keys = list(rule['tags'].keys())
+                tag_times = dict()
+                for key in tag_keys:
+                    key: str
+                    time_value = rule['start_time']
+                    tag_times["Timespan." + key + ".Start_Frames"] = time_value
+                    tag_times["Timespan." + key + ".Start"] = rule['start_time_literal']
+                    tag_times["Timespan." + key + ".Start_Seconds"] = rule['start_time_seconds']
+
                 retval.update(rule['tags'])
+                retval.update(tag_times)
 
         return retval
 
@@ -244,6 +260,26 @@ class TagInterpreter(Transformation):
             return self.visitor.visit(parse_tree)
 
 
+class SelectReel(Transformation):
+
+    def __init__(self, reel_num):
+        self.reel_num = reel_num
+
+    def transform(self, input_dict) -> dict:
+        out_events = []
+        for event in input_dict['events']:
+            if event['Reel'] == str(self.reel_num):
+                offset = event.get('Timespan.Reel.Start_Frames', 0)
+                offset_sec = event.get('Timespan.Reel.Start_Seconds', 0.)
+                event['PT.Clip.Start_Frames'] -= offset
+                event['PT.Clip.Finish_Frames'] -= offset
+                event['PT.Clip.Start_Seconds'] -= offset_sec
+                event['PT.Clip.Finish_Seconds'] -= offset_sec
+                out_events.append(event)
+
+        return dict(header=input_dict['header'], events=out_events)
+
+
 class SubclipOfSequence(Transformation):
 
     def __init__(self, start, end):
@@ -252,8 +288,8 @@ class SubclipOfSequence(Transformation):
 
     def transform(self, input_dict: dict) -> dict:
         out_events = []
-        offset = self.start
-        offset_sec = self.start / input_dict['header']['timecode_format']
+        offset = 0 #self.start
+        offset_sec = 0. #self.start / input_dict['header']['timecode_format']
         for event in input_dict['events']:
             if self.start <= event['PT.Clip.Start_Frames'] <= self.end:
                 e = event
@@ -263,4 +299,4 @@ class SubclipOfSequence(Transformation):
                 e['PT.Clip.Finish_Seconds'] = event['PT.Clip.Finish_Seconds'] - offset_sec
                 out_events.append(e)
 
-        return dict(events=out_events)
+        return dict(header=input_dict['header'], events=out_events)

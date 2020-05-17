@@ -139,11 +139,11 @@ def fmp_transformed_dump(data, input_file, xsl_name, output):
 
     xsl_path = os.path.join(pathlib.Path(__file__).parent.absolute(), 'xslt', xsl_name + ".xsl")
     print_status_style("Using xsl: %s" % (xsl_path))
-    result = subprocess.run(['xsltproc', xsl_path, '-'], input=strdata, text=True,
+    subprocess.run(['xsltproc', xsl_path, '-'], input=strdata, text=True,
                             stdout=output, shell=False, check=True)
 
 
-def convert(input_file, output_format='fmpxml', start=None, end=None,
+def convert(input_file, output_format='fmpxml', start=None, end=None, select_reel=None,
             progress=False, include_muted=False, xsl=None,
             output=sys.stdout, log_output=sys.stderr):
     with open(input_file, 'r') as file:
@@ -175,6 +175,11 @@ def convert(input_file, output_format='fmpxml', start=None, end=None,
 
             subclipxform = ptulsconv.transformations.SubclipOfSequence(start=start_fs, end=end_fs)
             parsed = subclipxform.transform(parsed)
+
+        if select_reel is not None:
+            reel_xform = ptulsconv.transformations.SelectReel(reel_num=select_reel)
+            parsed = reel_xform.transform(parsed)
+
 
         if output_format == 'json':
             json.dump(parsed, output)

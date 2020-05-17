@@ -3,7 +3,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                xmlns:fmp="http://www.filemaker.com/fmpxmlresult">
 
-<xsl:output method="text" encoding="CP1252"/>
+<xsl:output method="text" encoding="windows-1252"/>
 <xsl:template match="/">
 
 <xsl:for-each select="/fmp:FMPXMLRESULT/fmp:RESULTSET/fmp:ROW">

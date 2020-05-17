@@ -7,40 +7,43 @@ import sys
 
 import traceback
 
+
 def main():
     parser = OptionParser()
     parser.usage = "ptulsconv TEXT_EXPORT.txt"
 
     filter_opts = OptionGroup(title='Filtering Options', parser=parser)
 
-    filter_opts.add_option('-i', dest='in_time', help="Don't output events occurring before this timecode.", metavar='TC')
-    filter_opts.add_option('-o', dest='out_time', help="Don't output events occurring after this timecode.", metavar='TC')
+    filter_opts.add_option('-i', dest='in_time', help="Don't output events occurring before this timecode.",
+                           metavar='TC')
+    filter_opts.add_option('-o', dest='out_time', help="Don't output events occurring after this timecode.",
+                           metavar='TC')
     # parser.add_option('-P', '--progress', default=False, action='store_true', dest='show_progress',
     #                   help='Show progress bar.')
     filter_opts.add_option('-m', '--include-muted', default=False, action='store_true', dest='include_muted',
-                      help='Include muted clips.')
+                           help='Include muted clips.')
 
-    filter_opts.add_option('-R', '--reel', dest='select_reel', help="Output only events in reel N, and recalculate start "
-                                                               " times relative to that reel's start time.",
-                                                               default=None, metavar='N')
+    filter_opts.add_option('-R', '--reel', dest='select_reel', help="Output only events in reel N, and recalculate "
+                                                                    " start times relative to that reel's start time.",
+                           default=None, metavar='N')
 
     parser.add_option_group(filter_opts)
 
     output_opts = OptionGroup(title="Output Options", parser=parser)
     output_opts.add_option('--json', default=False, action='store_true', dest='write_json',
-                      help='Output a JSON document instead of XML. If this option is enabled, --xform with have no'
-                           'effect')
+                           help='Output a JSON document instead of XML. If this option is enabled, --xform will have no'
+                                'effect.')
 
     output_opts.add_option('--xform', dest='xslt', help="Convert with built-is XSLT transform.",
-                      default=None, metavar='NAME')
+                           default=None, metavar='NAME')
 
     output_opts.add_option('--show-available-tags', dest='show_tags',
-                      action='store_true',
-                      default=False, help='Display tag mappings for the FMP XML output style and exit.')
+                           action='store_true',
+                           default=False, help='Display tag mappings for the FMP XML output style and exit.')
 
     output_opts.add_option('--show-available-transforms', dest='show_transforms',
-                      action='store_true',
-                      default=False, help='Display available built-in XSLT transforms.')
+                           action='store_true',
+                           default=False, help='Display available built-in XSLT transforms.')
 
     parser.add_option_group(output_opts)
 
@@ -49,7 +52,7 @@ def main():
     print_banner_style("%s %s (c) 2020 %s. All rights reserved." % (__name__, __version__, __author__))
 
     print_section_header_style("Startup")
-    print_status_style("This run started %s" % (datetime.datetime.now().isoformat() ) )
+    print_status_style("This run started %s" % (datetime.datetime.now().isoformat()))
 
     if options.show_tags:
         dump_field_map('ADR')

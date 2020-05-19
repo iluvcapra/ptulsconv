@@ -37,8 +37,16 @@
       <AvProp id="ATTR" name="OMFI:ATTB:Kind" type="int32">2</AvProp>
       <AvProp id="ATTR" name="OMFI:ATTB:Name" type="string">_ATN_CRM_COM</AvProp>
       <AvProp id="ATTR" name="OMFI:ATTB:StringAttribute" type="string">
-	<xsl:value-of select="concat(fmp:COL[15]/fmp:DATA, ': ', fmp:COL[21]/fmp:DATA)"/>
-	[Reason: <xsl:value-of select="fmp:COL[18]/fmp:DATA" />]</AvProp>
+	<xsl:value-of select="concat('(',fmp:COL[14]/fmp:DATA,') ',fmp:COL[15]/fmp:DATA, ': ', fmp:COL[21]/fmp:DATA, ' ')"/>
+        <xsl:choose>
+          <xsl:when test="fmp:COL[18]/fmp:DATA != ''">[Reason: <xsl:value-of select="fmp:COL[18]/fmp:DATA" />]
+          </xsl:when>
+          <xsl:otherwise> </xsl:otherwise>
+        </xsl:choose>
+        <xsl:choose>
+          <xsl:when test="fmp:COL[23]/fmp:DATA != ''">[Note: <xsl:value-of select="fmp:COL[23]/fmp:DATA" />]</xsl:when>
+        </xsl:choose>
+      </AvProp>
     </ListElem>
     <ListElem>
       <AvProp id="ATTR" name="OMFI:ATTB:Kind" type="int32">2</AvProp>

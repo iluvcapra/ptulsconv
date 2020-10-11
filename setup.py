@@ -32,7 +32,7 @@ setup(name='ptulsconv',
       keywords='text-processing parsers film tv editing editorial',
       install_requires=['parsimonious', 'tqdm'],
       package_data={
-          "": ["*.xsl"]
+          "ptulsconv": ["xslt/*.xsl"]
       },
       entry_points={
           'console_scripts': [

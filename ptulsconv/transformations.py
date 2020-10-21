@@ -175,28 +175,9 @@ class TagInterpreter(Transformation):
 
                 clip_tags = self.parse_tags(clip['clip_name'], parent_track_name=track['name'],
                                             clip_time=clip['start_time'])
-                # clip_start = clip['start_time_decoded']['frame_count']
-                if clip_tags['mode'] == 'Normal':
-                    event = dict()
-                    event.update(self.title_tags['tags'])
-                    event.update(track_context_tags)
-                    event.update(self.effective_timespan_tags_at_time(clip['start_time_decoded']['frame_count']))
-                    event.update(self.effective_marker_tags_at_time(clip['start_time_decoded']['frame_count']))
-                    event.update(self.effective_movie_at_time(clip['start_time_decoded']['frame_count']))
-                    event.update(clip_tags['tags'])
 
-                    event['PT.Track.Name'] = track_tags['line']
-                    event['PT.Session.Name'] = self.title_tags['line']
-                    event['PT.Session.TimecodeFormat'] = input_dict['header']['timecode_format']
-                    event['PT.Clip.Number'] = clip['event']
-                    event['PT.Clip.Name'] = clip_tags['line']
-                    event['PT.Clip.Start'] = clip['start_time']
-                    event['PT.Clip.Finish'] = clip['end_time']
-                    event['PT.Clip.Start_Frames'] = clip['start_time_decoded']['frame_count']
-                    event['PT.Clip.Finish_Frames'] = clip['end_time_decoded']['frame_count']
-                    event['PT.Clip.Start_Seconds'] = clip['start_time_decoded']['frame_count'] / input_dict['header']['timecode_format']
-                    event['PT.Clip.Finish_Seconds'] = clip['end_time_decoded']['frame_count'] / input_dict['header'][
-                        'timecode_format']
+                if clip_tags['mode'] == 'Normal':
+                    event = self.decorate_event(clip, clip_tags, input_dict, track_context_tags, track_tags)
                     self.transformed.append(event)
 
                 elif clip_tags['mode'] == 'Append':
@@ -226,6 +207,29 @@ class TagInterpreter(Transformation):
 
         print_status_style('Processed %i clips' % len(self.transformed))
         return dict(header=input_dict['header'], events=self.transformed)
+
+    def decorate_event(self, clip, clip_tags, input_dict, track_context_tags, track_tags):
+        event = dict()
+        event.update(self.title_tags['tags'])
+        event.update(track_context_tags)
+        event.update(self.effective_timespan_tags_at_time(clip['start_time_decoded']['frame_count']))
+        event.update(self.effective_marker_tags_at_time(clip['start_time_decoded']['frame_count']))
+        event.update(self.effective_movie_at_time(clip['start_time_decoded']['frame_count']))
+        event.update(clip_tags['tags'])
+        event['PT.Track.Name'] = track_tags['line']
+        event['PT.Session.Name'] = self.title_tags['line']
+        event['PT.Session.TimecodeFormat'] = input_dict['header']['timecode_format']
+        event['PT.Clip.Number'] = clip['event']
+        event['PT.Clip.Name'] = clip_tags['line']
+        event['PT.Clip.Start'] = clip['start_time']
+        event['PT.Clip.Finish'] = clip['end_time']
+        event['PT.Clip.Start_Frames'] = clip['start_time_decoded']['frame_count']
+        event['PT.Clip.Finish_Frames'] = clip['end_time_decoded']['frame_count']
+        event['PT.Clip.Start_Seconds'] = clip['start_time_decoded']['frame_count'] / input_dict['header'][
+            'timecode_format']
+        event['PT.Clip.Finish_Seconds'] = clip['end_time_decoded']['frame_count'] / input_dict['header'][
+            'timecode_format']
+        return event
 
     def effective_movie_at_time(self, time) -> dict:
         retval = dict()

@@ -180,9 +180,9 @@ class TagInterpreter(Transformation):
                     event = dict()
                     event.update(self.title_tags['tags'])
                     event.update(track_context_tags)
-                    event.update(self.effective_timespan_tags_at_time(clip['start_time']))
-                    event.update(self.effective_marker_tags_at_time(clip['start_time']))
-                    event.update(self.effective_movie_at_time(clip['start_time']))
+                    event.update(self.effective_timespan_tags_at_time(clip['start_time_decoded']['frame_count']))
+                    event.update(self.effective_marker_tags_at_time(clip['start_time_decoded']['frame_count']))
+                    event.update(self.effective_movie_at_time(clip['start_time_decoded']['frame_count']))
                     event.update(clip_tags['tags'])
 
                     event['PT.Track.Name'] = track_tags['line']
@@ -194,7 +194,7 @@ class TagInterpreter(Transformation):
                     event['PT.Clip.Finish'] = clip['end_time']
                     event['PT.Clip.Start_Frames'] = clip['start_time_decoded']['frame_count']
                     event['PT.Clip.Finish_Frames'] = clip['end_time_decoded']['frame_count']
-                    event['PT.Clip.Start_Seconds'] = clip['start_time'] / input_dict['header']['timecode_format']
+                    event['PT.Clip.Start_Seconds'] = clip['start_time_decoded']['frame_count'] / input_dict['header']['timecode_format']
                     event['PT.Clip.Finish_Seconds'] = clip['end_time_decoded']['frame_count'] / input_dict['header'][
                         'timecode_format']
                     self.transformed.append(event)

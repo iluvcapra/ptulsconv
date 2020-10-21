@@ -105,6 +105,8 @@ class TagInterpreter(Transformation):
                 return 'Timespan'
             elif node.text.startswith('&'):
                 return 'Append'
+            elif node.text.startswith('!'):
+                return 'Movie'
             else:
                 return 'Normal'
 
@@ -137,14 +139,21 @@ class TagInterpreter(Transformation):
         self.show_progress = show_progress
         self.log_output = log_output
 
+        self.transformed = list()
+        self.timespan_rules = list()
+        self.movie_rules = list()
+        self.title_tags = {}
+        self.markers = list()
+
     def transform(self, input_dict: dict) -> dict:
-        transformed = list()
-        timespan_rules = list()
+        self.transformed = list()
+        self.timespan_rules = list()
+        self.movie_rules = list()
 
         print_section_header_style('Parsing Tags')
 
-        title_tags = self.parse_tags(input_dict['header']['session_name'])
-        markers = sorted(input_dict['markers'], key=lambda m: m['location_decoded']['frame_count'])
+        self.title_tags = self.parse_tags(input_dict['header']['session_name'])
+        self.markers = sorted(input_dict['markers'], key=lambda m: m['location_decoded']['frame_count'])
 
         if self.show_progress:
             track_iter = tqdm(input_dict['tracks'], desc="Reading tracks...", unit='Track')
@@ -166,56 +175,73 @@ class TagInterpreter(Transformation):
 
                 clip_tags = self.parse_tags(clip['clip_name'], parent_track_name=track['name'],
                                             clip_time=clip['start_time'])
-                clip_start = clip['start_time_decoded']['frame_count']
+                # clip_start = clip['start_time_decoded']['frame_count']
                 if clip_tags['mode'] == 'Normal':
                     event = dict()
-                    event.update(title_tags['tags'])
+                    event.update(self.title_tags['tags'])
                     event.update(track_context_tags)
-                    event.update(self.effective_timespan_tags_at_time(timespan_rules, clip_start))
-                    event.update(self.effective_marker_tags_at_time(markers, clip_start))
-
+                    event.update(self.effective_timespan_tags_at_time(clip['start_time']))
+                    event.update(self.effective_marker_tags_at_time(clip['start_time']))
+                    event.update(self.effective_movie_at_time(clip['start_time']))
                     event.update(clip_tags['tags'])
 
                     event['PT.Track.Name'] = track_tags['line']
-                    event['PT.Session.Name'] = title_tags['line']
+                    event['PT.Session.Name'] = self.title_tags['line']
                     event['PT.Session.TimecodeFormat'] = input_dict['header']['timecode_format']
                     event['PT.Clip.Number'] = clip['event']
                     event['PT.Clip.Name'] = clip_tags['line']
                     event['PT.Clip.Start'] = clip['start_time']
                     event['PT.Clip.Finish'] = clip['end_time']
-                    event['PT.Clip.Start_Frames'] = clip_start
+                    event['PT.Clip.Start_Frames'] = clip['start_time_decoded']['frame_count']
                     event['PT.Clip.Finish_Frames'] = clip['end_time_decoded']['frame_count']
-                    event['PT.Clip.Start_Seconds'] = clip_start / input_dict['header']['timecode_format']
+                    event['PT.Clip.Start_Seconds'] = clip['start_time'] / input_dict['header']['timecode_format']
                     event['PT.Clip.Finish_Seconds'] = clip['end_time_decoded']['frame_count'] / input_dict['header'][
                         'timecode_format']
-                    transformed.append(event)
+                    self.transformed.append(event)
 
                 elif clip_tags['mode'] == 'Append':
-                    assert len(transformed) > 0, "First clip is in '&'-Append mode, fatal error."
+                    assert len(self.transformed) > 0, "First clip is in '&'-Append mode, fatal error."
 
-                    transformed[-1].update(clip_tags['tags'])
-                    transformed[-1]['PT.Clip.Name'] = transformed[-1]['PT.Clip.Name'] + " " + clip_tags['line']
-                    transformed[-1]['PT.Clip.Finish_Frames'] = clip['end_time_decoded']['frame_count']
-                    transformed[-1]['PT.Clip.Finish'] = clip['end_time']
-                    transformed[-1]['PT.Clip.Finish_Seconds'] = clip['end_time_decoded']['frame_count'] / \
-                                                                input_dict['header']['timecode_format']
-
+                    self.transformed[-1].update(clip_tags['tags'])
+                    self.transformed[-1]['PT.Clip.Name'] = self.transformed[-1]['PT.Clip.Name'] + " " + clip_tags[
+                        'line']
+                    self.transformed[-1]['PT.Clip.Finish_Frames'] = clip['end_time_decoded']['frame_count']
+                    self.transformed[-1]['PT.Clip.Finish'] = clip['end_time']
+                    self.transformed[-1]['PT.Clip.Finish_Seconds'] = \
+                        clip['end_time_decoded']['frame_count'] / input_dict['header']['timecode_format']
 
                 elif clip_tags['mode'] == 'Timespan':
-                    rule = dict(start_time_literal=clip['start_time'],
-                                start_time=clip_start,
-                                start_time_seconds=clip_start / input_dict['header']['timecode_format'],
-                                end_time=clip['end_time_decoded']['frame_count'],
-                                tags=clip_tags['tags'])
-                    timespan_rules.append(rule)
+                    rule = {'start_time_literal': clip['start_time'],
+                            'start_time': clip['start_time_decoded']['frame_count'],
+                            'start_time_seconds': clip['start_time_decoded']['frame_count'] / input_dict['header'][
+                                'timecode_format'], 'end_time': clip['end_time_decoded']['frame_count'],
+                            'tags': clip_tags['tags']}
+                    self.timespan_rules.append(rule)
 
-        print_status_style('Processed %i clips' % len(transformed))
-        return dict(header=input_dict['header'], events=transformed)
+                elif clip_tags['mode'] == 'Movie':
+                    rule = dict(movie_path=clip['filename'],
+                                start_time=clip['start_time_decoded']['frame_count'],
+                                end_time=clip['end_time_decoded']['frame_count'])
+                    self.movie_rules.append(rule)
 
-    def effective_timespan_tags_at_time(_, rules, time) -> dict:
+        print_status_style('Processed %i clips' % len(self.transformed))
+        return dict(header=input_dict['header'], events=self.transformed)
+
+    def effective_movie_at_time(self, time) -> dict:
         retval = dict()
 
-        for rule in rules:
+        for rule in reversed(self.movie_rules):
+            if rule['start_time'] <= time <= rule['end_time']:
+                retval['Movie.Filename'] = rule['filename']
+                retval['Movie.Start_Offset_Frames'] = time - rule['start_time']
+                break
+
+        return retval
+
+    def effective_timespan_tags_at_time(self, time) -> dict:
+        retval = dict()
+
+        for rule in self.timespan_rules:
             if rule['start_time'] <= time <= rule['end_time']:
                 tag_keys = list(rule['tags'].keys())
                 tag_times = dict()
@@ -231,10 +257,10 @@ class TagInterpreter(Transformation):
 
         return retval
 
-    def effective_marker_tags_at_time(self, markers, time):
+    def effective_marker_tags_at_time(self, time):
         retval = dict()
 
-        for marker in markers:
+        for marker in self.markers:
             marker_name_tags = self.parse_tags(marker['name'], marker_index=marker['number'])
             marker_comment_tags = self.parse_tags(marker['comments'], marker_index=marker['number'])
             effective_tags = marker_name_tags['tags']
@@ -288,8 +314,8 @@ class SubclipOfSequence(Transformation):
 
     def transform(self, input_dict: dict) -> dict:
         out_events = []
-        offset = 0 #self.start
-        offset_sec = 0. #self.start / input_dict['header']['timecode_format']
+        offset = 0  # self.start
+        offset_sec = 0.  # self.start / input_dict['header']['timecode_format']
         for event in input_dict['events']:
             if self.start <= event['PT.Clip.Start_Frames'] <= self.end:
                 e = event

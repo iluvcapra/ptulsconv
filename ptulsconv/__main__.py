@@ -29,6 +29,15 @@ def main():
 
     parser.add_option_group(filter_opts)
 
+    warn_options = OptionGroup(title="Warning and Validation Options", parser=parser)
+    warn_options.add_option('-W', action='store_true', dest='warnings',
+                            help='Generate warnings for common errors (missing code numbers etc.)')
+
+    warn_options.add_option('-S', action='store_true', dest='spelling',
+                            help='Check spelling and warn on misspellings.')
+
+    parser.add_option_group(warn_options)
+
     output_opts = OptionGroup(title="Output Options", parser=parser)
     output_opts.add_option('--json', default=False, action='store_true', dest='write_json',
                            help='Output a JSON document instead of XML. If this option is enabled, --xform will have '
@@ -90,7 +99,8 @@ def main():
 
         convert(input_file=args[1], output_format=output_format, start=options.in_time, end=options.out_time,
                 include_muted=options.include_muted, xsl=options.xslt, select_reel=options.select_reel,
-                progress=False, output=sys.stdout, log_output=sys.stderr)
+                progress=False, output=sys.stdout, log_output=sys.stderr,
+                warnings=options.warnings, spelling=options.spelling)
     except FileNotFoundError as e:
         print_fatal_error("Error trying to read input file")
         raise e

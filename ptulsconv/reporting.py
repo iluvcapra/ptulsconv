@@ -12,11 +12,20 @@ def print_section_header_style(str):
     else:
         sys.stderr.write("%s\n\n" % str)
 
+
 def print_status_style(str):
     if sys.stderr.isatty():
         sys.stderr.write("\033[3m - %s\033[0m\n" % str)
     else:
         sys.stderr.write(" - %s\n" % str)
+
+
+def print_warning(warning_string):
+    if sys.stderr.isatty():
+        sys.stderr.write("\033[3m - %s\033[0m\n" % warning_string)
+    else:
+        sys.stderr.write(" - %s\n" % warning_string)
+
 
 def print_advisory_tagging_error(failed_string, position, parent_track_name=None, clip_time=None):
     if sys.stderr.isatty():

@@ -7,8 +7,10 @@ from xml.etree.ElementTree import TreeBuilder, tostring
 import subprocess
 import pathlib
 import ptulsconv
+from itertools import chain
 
-from .reporting import print_section_header_style, print_status_style
+from .reporting import print_section_header_style, print_status_style, print_warning
+from .validations import *
 
 # field_map maps tags in the text export to fields in FMPXMLRESULT
 #  - tuple field 0 is a list of tags, the first tag with contents will be used as source
@@ -143,12 +145,12 @@ def fmp_transformed_dump(data, input_file, xsl_name, output):
     xsl_path = os.path.join(pathlib.Path(__file__).parent.absolute(), 'xslt', xsl_name + ".xsl")
     print_status_style("Using xsl: %s" % (xsl_path))
     subprocess.run(['xsltproc', xsl_path, '-'], input=strdata, text=True,
-                            stdout=output, shell=False, check=True)
+                   stdout=output, shell=False, check=True)
 
 
 def convert(input_file, output_format='fmpxml', start=None, end=None, select_reel=None,
             progress=False, include_muted=False, xsl=None,
-            output=sys.stdout, log_output=sys.stderr):
+            output=sys.stdout, log_output=sys.stderr, warnings=False, spelling=False):
     with open(input_file, 'r') as file:
         print_section_header_style('Parsing')
         ast = ptulsconv.protools_text_export_grammar.parse(file.read())
@@ -183,6 +185,16 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
             reel_xform = ptulsconv.transformations.SelectReel(reel_num=select_reel)
             parsed = reel_xform.transform(parsed)
 
+
+        if warnings:
+            for warning in chain(validate_unique_field(parsed, field='QN'),
+                                 validate_non_empty_field(parsed, field='QN'),
+                                 validate_non_empty_field(parsed, field='CN'),
+                                 validate_non_empty_field(parsed, field='Char'),
+                                 validate_dependent_value(parsed, key_field='CN', dependent_field='Char'),
+                                 validate_dependent_value(parsed, key_field='CN', dependent_field='Actor'),):
+
+                print_warning(warning.report_message())
 
         if output_format == 'json':
             json.dump(parsed, output)

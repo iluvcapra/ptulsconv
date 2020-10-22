@@ -43,7 +43,10 @@ adr_field_map = ((['Title', 'PT.Session.Name'], 'Title', str),
                  (['TBW'], 'To Be Written', str),
                  (['OMIT'], 'Omit', str),
                  (['ADLIB'], 'Adlib', str),
-                 (['OPT'], 'Optional', str))
+                 (['OPT'], 'Optional', str),
+                 (['Movie.Filename'], 'Movie', str),
+                 (['Movie.Start_Offset_Frames'], 'Movie Frames', int),
+                 )
 
 
 def fmp_dump(data, input_file_name, output):

@@ -84,7 +84,7 @@ class TagInterpreter(Transformation):
         tag_junk       = word word_sep?
         word           = ~"[^ \[\{\$][^ ]*"
         word_sep       = ~" +"
-        modifier       = ("@" / "&") word_sep?
+        modifier       = ("@" / "&" / "!") word_sep?
         """
     )
 
@@ -200,7 +200,8 @@ class TagInterpreter(Transformation):
                     self.timespan_rules.append(rule)
 
                 elif clip_tags['mode'] == 'Movie':
-                    rule = dict(movie_path=clip['filename'],
+                    print_status_style("Movie Clip tags: {}".format(clip_tags))
+                    rule = dict(movie_path=clip_tags['tags']['Movie'],
                                 start_time=clip['start_time_decoded']['frame_count'],
                                 end_time=clip['end_time_decoded']['frame_count'])
                     self.movie_rules.append(rule)
@@ -210,11 +211,12 @@ class TagInterpreter(Transformation):
 
     def decorate_event(self, clip, clip_tags, input_dict, track_context_tags, track_tags):
         event = dict()
+        start_frame = clip['start_time_decoded']['frame_count']
         event.update(self.title_tags['tags'])
         event.update(track_context_tags)
-        event.update(self.effective_timespan_tags_at_time(clip['start_time_decoded']['frame_count']))
-        event.update(self.effective_marker_tags_at_time(clip['start_time_decoded']['frame_count']))
-        event.update(self.effective_movie_at_time(clip['start_time_decoded']['frame_count']))
+        event.update(self.effective_timespan_tags_at_time(start_frame))
+        event.update(self.effective_marker_tags_at_time(start_frame))
+        event.update(self.effective_movie_at_time(start_frame))
         event.update(clip_tags['tags'])
         event['PT.Track.Name'] = track_tags['line']
         event['PT.Session.Name'] = self.title_tags['line']
@@ -223,9 +225,9 @@ class TagInterpreter(Transformation):
         event['PT.Clip.Name'] = clip_tags['line']
         event['PT.Clip.Start'] = clip['start_time']
         event['PT.Clip.Finish'] = clip['end_time']
-        event['PT.Clip.Start_Frames'] = clip['start_time_decoded']['frame_count']
+        event['PT.Clip.Start_Frames'] = start_frame
         event['PT.Clip.Finish_Frames'] = clip['end_time_decoded']['frame_count']
-        event['PT.Clip.Start_Seconds'] = clip['start_time_decoded']['frame_count'] / input_dict['header'][
+        event['PT.Clip.Start_Seconds'] = start_frame / input_dict['header'][
             'timecode_format']
         event['PT.Clip.Finish_Seconds'] = clip['end_time_decoded']['frame_count'] / input_dict['header'][
             'timecode_format']
@@ -236,8 +238,10 @@ class TagInterpreter(Transformation):
 
         for rule in reversed(self.movie_rules):
             if rule['start_time'] <= time <= rule['end_time']:
-                retval['Movie.Filename'] = rule['filename']
+                retval['Movie.Filename'] = rule['movie_path']
                 retval['Movie.Start_Offset_Frames'] = time - rule['start_time']
+                retval['Movie.Start_Offset_Seconds'] = (time - rule['start_time'] ) / input_dict['header'][
+            'timecode_format']
                 break
 
         return retval

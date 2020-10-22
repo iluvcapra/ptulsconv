@@ -45,7 +45,7 @@ adr_field_map = ((['Title', 'PT.Session.Name'], 'Title', str),
                  (['ADLIB'], 'Adlib', str),
                  (['OPT'], 'Optional', str),
                  (['Movie.Filename'], 'Movie', str),
-                 (['Movie.Start_Offset_Frames'], 'Movie Frames', int),
+                 (['Movie.Start_Offset_Seconds'], 'Movie Seconds', float),
                  )
 
 

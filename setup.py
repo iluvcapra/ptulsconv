@@ -30,7 +30,7 @@ setup(name='ptulsconv',
           "Topic :: Text Processing :: Markup :: XML"],
       packages=['ptulsconv'],
       keywords='text-processing parsers film tv editing editorial',
-      install_requires=['parsimonious', 'tqdm'],
+      install_requires=['parsimonious', 'tqdm', 'reportlab'],
       package_data={
           "ptulsconv": ["xslt/*.xsl"]
       },

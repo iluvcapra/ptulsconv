@@ -200,6 +200,8 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
 
         if output_format == 'json':
             json.dump(parsed, output)
+        elif output_format == 'full':
+            print("Sorry, the `full` output type is not yet supported.")
         elif output_format == 'fmpxml':
             if xsl is None:
                 fmp_dump(parsed, input_file, output)

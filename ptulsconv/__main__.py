@@ -18,43 +18,43 @@ def main():
                            metavar='TC')
     filter_opts.add_option('-o', dest='out_time', help="Don't output events occurring after this timecode.",
                            metavar='TC')
-    # parser.add_option('-P', '--progress', default=False, action='store_true', dest='show_progress',
-    #                   help='Show progress bar.')
     filter_opts.add_option('-m', '--include-muted', default=False, action='store_true', dest='include_muted',
                            help='Include muted clips.')
 
-    filter_opts.add_option('-R', '--reel', dest='select_reel', help="Output only events in reel N, and recalculate "
+    filter_opts.add_option('-r', '--reel', dest='select_reel', help="Output only events in reel N, and recalculate "
                                                                     " start times relative to that reel's start time.",
                            default=None, metavar='N')
 
     parser.add_option_group(filter_opts)
 
-    warn_options = OptionGroup(title="Warning and Validation Options", parser=parser)
-    warn_options.add_option('-W', action='store_true', dest='warnings',
-                            help='Generate warnings for common errors (missing code numbers etc.)')
+    parser.add_option('-f', '--format', dest='output_format', metavar='FMT',
+                      choices=['fmpxml', 'json', 'full'], default='fmpxml',
+                      help='Set output format, `fmpxml`, `json`, or `full`. Default '
+                           'is `fmpxml`.')
 
-    warn_options.add_option('-S', action='store_true', dest='spelling',
-                            help='Check spelling and warn on misspellings.')
+    parser.add_option('-x', '--xsl', dest='xslt', metavar='XML', default=None,
+                      help='Output XML with given transform. (Overrides -f to '
+                           '`fmpxml`.)')
+
+    warn_options = OptionGroup(title="Warning and Validation Options", parser=parser)
+    warn_options.add_option('-w', action='store_true', dest='warnings',
+                            help='Generate warnings for common errors (missing code numbers etc.)')
 
     parser.add_option_group(warn_options)
 
-    output_opts = OptionGroup(title="Output Options", parser=parser)
-    output_opts.add_option('--json', default=False, action='store_true', dest='write_json',
-                           help='Output a JSON document instead of XML. If this option is enabled, --xform will have '
-                                'no effect.')
+    informational_options = OptionGroup(title="Informational Options", parser=parser,
+                                        description='Print useful information and exit without processing '
+                                        'input files.')
 
-    output_opts.add_option('--xform', dest='xslt', help="Convert with built-is XSLT transform.",
-                           default=None, metavar='NAME')
-
-    output_opts.add_option('--show-available-tags', dest='show_tags',
+    informational_options.add_option('--show-available-tags', dest='show_tags',
                            action='store_true',
                            default=False, help='Display tag mappings for the FMP XML output style and exit.')
 
-    output_opts.add_option('--show-available-transforms', dest='show_transforms',
+    informational_options.add_option('--show-available-transforms', dest='show_transforms',
                            action='store_true',
                            default=False, help='Display available built-in XSLT transforms.')
 
-    parser.add_option_group(output_opts)
+    parser.add_option_group(informational_options)
 
     (options, args) = parser.parse_args(sys.argv)
 
@@ -93,14 +93,14 @@ def main():
         print_status_style("Muted regions are ignored.")
 
     try:
-        output_format = 'fmpxml'
-        if options.write_json:
-            output_format = 'json'
+        output_format = options.output_format
+        if options.xslt is not None:
+            output_format = 'fmpxml'
 
         convert(input_file=args[1], output_format=output_format, start=options.in_time, end=options.out_time,
                 include_muted=options.include_muted, xsl=options.xslt, select_reel=options.select_reel,
                 progress=False, output=sys.stdout, log_output=sys.stderr,
-                warnings=options.warnings, spelling=options.spelling)
+                warnings=options.warnings, spelling=False)
     except FileNotFoundError as e:
         print_fatal_error("Error trying to read input file")
         raise e

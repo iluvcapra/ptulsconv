@@ -191,8 +191,10 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
                                  validate_non_empty_field(parsed, field='QN'),
                                  validate_non_empty_field(parsed, field='CN'),
                                  validate_non_empty_field(parsed, field='Char'),
-                                 validate_dependent_value(parsed, key_field='CN', dependent_field='Char'),
-                                 validate_dependent_value(parsed, key_field='CN', dependent_field='Actor'),):
+                                 validate_dependent_value(parsed, key_field='CN',
+                                                          dependent_field='Char'),
+                                 validate_dependent_value(parsed, key_field='CN',
+                                                          dependent_field='Actor'),):
 
                 print_warning(warning.report_message())
 

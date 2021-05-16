@@ -56,7 +56,7 @@ def fmp_dump(data, input_file_name, output):
 
     doc.start('FMPXMLRESULT', {'xmlns': 'http://www.filemaker.com/fmpxmlresult'})
 
-    doc.start('ERRORCODE')
+    doc.start('ERRORCODE', {})
     doc.data('0')
     doc.end('ERRORCODE')
 
@@ -67,7 +67,7 @@ def fmp_dump(data, input_file_name, output):
                            'RECORDS': str(len(data['events'])), 'NAME': os.path.basename(input_file_name)})
     doc.end('DATABASE')
 
-    doc.start('METADATA')
+    doc.start('METADATA', {})
     for field in adr_field_map:
         tp = field[2]
         ft = 'TEXT'
@@ -80,10 +80,10 @@ def fmp_dump(data, input_file_name, output):
 
     doc.start('RESULTSET', {'FOUND': str(len(data['events']))})
     for event in data['events']:
-        doc.start('ROW')
+        doc.start('ROW', {})
         for field in adr_field_map:
-            doc.start('COL')
-            doc.start('DATA')
+            doc.start('COL', {})
+            doc.start('DATA', {})
             for key_attempt in field[0]:
                 if key_attempt in event.keys():
                     doc.data(str(event[key_attempt]))

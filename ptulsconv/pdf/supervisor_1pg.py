@@ -83,7 +83,9 @@ def draw_prompt(canvas, rect, prompt= ""):
     style.leftIndent = 1.5 * inch
     style.rightIndent = 1.5 * inch
 
-    block.draw_flowable(canvas, prompt, draw_baselines=True)
+    p = Paragraph(prompt, style)
+
+    block.draw_flowable(canvas, p, draw_baselines=True)
 
     rect.draw_border(canvas, 'max_y')
 

@@ -2,15 +2,17 @@ import io
 import json
 import os
 import os.path
-import sys
-from xml.etree.ElementTree import TreeBuilder, tostring
-import subprocess
 import pathlib
-import ptulsconv
+import subprocess
+import sys
 from itertools import chain
+from xml.etree.ElementTree import TreeBuilder, tostring
 
+import ptulsconv
 from .reporting import print_section_header_style, print_status_style, print_warning
 from .validations import *
+
+from ptulsconv.pdf.supervisor_1pg import output_report as output_supervisor_1pg
 
 # field_map maps tags in the text export to fields in FMPXMLRESULT
 #  - tuple field 0 is a list of tags, the first tag with contents will be used as source
@@ -202,6 +204,7 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
             json.dump(parsed, output)
         elif output_format == 'full':
             print("Sorry, the `full` output type is not yet supported.")
+            output_supervisor_1pg()
         elif output_format == 'fmpxml':
             if xsl is None:
                 fmp_dump(parsed, input_file, output)

@@ -53,6 +53,19 @@ adr_field_map = ((['Title', 'PT.Session.Name'], 'Title', str),
                  )
 
 
+def normalize_record_keys(records):
+    for record in records['events']:
+        for field in adr_field_map:
+            spot_keys = field[0]
+            output_key = field[1]
+            field_type = field[2]
+            for attempt_key in spot_keys:
+                if attempt_key in record.keys():
+                    record[output_key] = field_type(record[attempt_key])
+
+    return records
+
+
 def fmp_dump(data, input_file_name, output):
     doc = TreeBuilder(element_factory=None)
 
@@ -201,10 +214,10 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
                 print_warning(warning.report_message())
 
         if output_format == 'json':
-            json.dump(parsed, output)
+            json.dump(normalize_record_keys(parsed), output)
         elif output_format == 'full':
             print("Sorry, the `full` output type is not yet supported.")
-            output_supervisor_1pg()
+            output_supervisor_1pg(normalize_record_keys(parsed))
         elif output_format == 'fmpxml':
             if xsl is None:
                 fmp_dump(parsed, input_file, output)

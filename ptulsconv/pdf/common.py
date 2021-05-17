@@ -1,5 +1,6 @@
 from reportlab.pdfbase.pdfmetrics import (getAscent, getDescent)
 
+
 class GRect:
     def __init__(self, x, y, width, height, debug_name=None):
         self.x = x

@@ -12,65 +12,85 @@ from reportlab.platypus import Paragraph
 from .common import GRect
 
 
-def draw_header_block(canvas, rect):
-    rect.draw_text_cell(canvas, "CUE002", "Helvetica", 44, vertical_align='m')
+def draw_header_block(canvas, rect, record):
+    rect.draw_text_cell(canvas, record['Cue Number'], "Helvetica", 44, vertical_align='m')
 
 
-def draw_title_block(canvas, rect):
+def draw_title_block(canvas, rect, record):
     (supervisor, client,), title = rect.divide_y([16., 16., ])
-    title.draw_text_cell(canvas, "This is the title", "Futura", 18, inset_y=2.)
-    client.draw_text_cell(canvas, "This is the client", "Futura", 11, inset_y=2.)
-    supervisor.draw_text_cell(canvas, "This is the supervisor", "Futura", 11, inset_y=2.)
+    title.draw_text_cell(canvas, record['Title'], "Futura", 18, inset_y=2.)
+    client.draw_text_cell(canvas, record.get('Client',''), "Futura", 11, inset_y=2.)
+    supervisor.draw_text_cell(canvas, record.get('Supervisor',''), "Futura", 11, inset_y=2.)
 
 
-def draw_character_row(canvas, rect):
+def draw_character_row(canvas, rect, record):
     label_frame, value_frame = rect.split_x(1.25 * inch)
     label_frame.draw_text_cell(canvas, "CHARACTER", "Futura", 10, force_baseline=9.)
-    value_frame.draw_text_cell(canvas, "1 / Luke Skywalker / Mark Hamill", "Futura", 12, force_baseline=9.)
+    line = "%s / %s " % (record['Character Number'], record['Character Name'])
+    if 'Actor Name' in record.keys():
+        line = line + " / " + record['Actor Name']
+    value_frame.draw_text_cell(canvas, line , "Futura", 12, force_baseline=9.)
     rect.draw_border(canvas, ['min_y', 'max_y'])
 
 
-def draw_cue_number_block(canvas, rect):
+def draw_cue_number_block(canvas, rect, record):
     (label_frame, number_frame,), aux_frame = rect.divide_y([0.20 * inch, 0.375 * inch], direction='d')
-    label_frame.draw_text_cell(canvas, "CUE NUMBER", "Futura", 10, inset_y=5., vertical_align='t')
-    number_frame.draw_text_cell(canvas, "CUE1001", "Futura", 14, inset_x=10., inset_y=2., draw_baseline=True)
-    aux_frame.draw_text_cell(canvas, "TV OPT ADLIB EFF", "Futura", 10, inset_x=10., inset_y=2., vertical_align='t')
+    label_frame.draw_text_cell(canvas, "CUE NUMBER", "Futura", 10,
+                               inset_y=5., vertical_align='t')
+    number_frame.draw_text_cell(canvas, record['Cue Number'], "Futura", 14,
+                                inset_x=10., inset_y=2., draw_baseline=True)
+
+    tags = ['TV', 'OPT', 'ADLIB', 'EFF', 'TBW', 'OMIT']
+    tag_field = ""
+    for tag in tags:
+        if tag in record.keys():
+            tag_field = tag_field + tag + " "
+
+    aux_frame.draw_text_cell(canvas, tag_field, "Futura", 10,
+                             inset_x=10., inset_y=2., vertical_align='t')
     rect.draw_border(canvas, 'max_x')
 
 
-def draw_timecode_block(canvas, rect):
+def draw_timecode_block(canvas, rect, record):
     (in_label_frame, in_frame, out_label_frame, out_frame), _ = rect.divide_y(
         [0.20 * inch, 0.25 * inch, 0.20 * inch, 0.25 * inch], direction='d')
 
-    in_label_frame.draw_text_cell(canvas, "IN", "Futura", 10, vertical_align='t', inset_y=5., inset_x=5.)
-    in_frame.draw_text_cell(canvas, "01:00:00:00", "Futura", 14, inset_x=10., inset_y=2., draw_baseline=True)
-    out_label_frame.draw_text_cell(canvas, "OUT", "Futura", 10, vertical_align='t', inset_y=5., inset_x=5.)
-    out_frame.draw_text_cell(canvas, "01:01:00:00", "Futura", 14, inset_x=10., inset_y=2., draw_baseline=True)
+    in_label_frame.draw_text_cell(canvas, "IN", "Futura", 10,
+                                  vertical_align='t', inset_y=5., inset_x=5.)
+    in_frame.draw_text_cell(canvas, record['PT.Clip.Start'], "Futura", 14,
+                            inset_x=10., inset_y=2., draw_baseline=True)
+    out_label_frame.draw_text_cell(canvas, "OUT", "Futura", 10,
+                                   vertical_align='t', inset_y=5., inset_x=5.)
+    out_frame.draw_text_cell(canvas, record['PT.Clip.Finish'], "Futura", 14,
+                             inset_x=10., inset_y=2., draw_baseline=True)
 
     rect.draw_border(canvas, 'max_x')
 
 
-def draw_reason_block(canvas, rect):
+def draw_reason_block(canvas, rect, record):
     reason_cell, notes_cell = rect.split_y(24., direction='d')
     reason_label, reason_value = reason_cell.split_x(.75 * inch)
     notes_label, notes_value = notes_cell.split_x(.75 * inch)
 
-    reason_label.draw_text_cell(canvas, "Reason:", "Futura", 12, inset_x=5., inset_y=5., vertical_align='b')
-    reason_value.draw_text_cell(canvas, "Low level", "Futura", 12, inset_x=5., inset_y=5., draw_baseline=True,
+    reason_label.draw_text_cell(canvas, "Reason:", "Futura", 12,
+                                inset_x=5., inset_y=5., vertical_align='b')
+    reason_value.draw_text_cell(canvas, record.get("Reason", ""), "Futura", 12,
+                                inset_x=5., inset_y=5., draw_baseline=True,
                                 vertical_align='b')
-    notes_label.draw_text_cell(canvas, "Note:", "Futura", 12, inset_x=5., inset_y=5., vertical_align='t')
+    notes_label.draw_text_cell(canvas, "Note:", "Futura", 12,
+                                inset_x=5., inset_y=5., vertical_align='t')
 
     style = getSampleStyleSheet()['BodyText']
     style.fontName = 'Futura'
     style.fontSize = 12
     style.leading = 14
 
-    p = Paragraph("""This is a long note line, for use during spotting to elaborate on a cue's justification.""", style)
+    p = Paragraph(record.get("Note", ""), style)
 
     notes_value.draw_flowable(canvas, p, draw_baselines=True, inset_x=5., inset_y=5.)
 
 
-def draw_prompt(canvas, rect, prompt= ""):
+def draw_prompt(canvas, rect, prompt=""):
     label, block = rect.split_y(0.20 * inch, direction='d')
 
     label.draw_text_cell(canvas, "PROMPT", "Futura", 10, vertical_align='t', inset_y=5., inset_x=0.)
@@ -165,36 +185,52 @@ def draw_footer(canvas, rect):
                         font_size=10., inset_y=2.)
 
 
-def output_report():
-    page = GRect(0, 0, letter[0], letter[1])
+def create_report_for_character(records):
 
+    outfile = records[0]['CN'] + '_' + records[0]['Character Name'] + '.pdf'
+    assert outfile is not None
+    assert outfile[-4:] == '.pdf', "Output file must have 'pdf' extension!"
+
+    pdfmetrics.registerFont(TTFont('Futura', 'Futura.ttc'))
+
+    page: GRect = GRect(0, 0, letter[0], letter[1])
     page = page.inset(inch * 0.5)
-
     (header_row, char_row, data_row, prompt_row, notes_row, takes_row), footer = \
-        page.divide_y([0.875 * inch, 0.375 * inch, inch, 3.0 * inch, 1.5 * inch, 3 * inch], direction= 'd')
+        page.divide_y([0.875 * inch, 0.375 * inch, inch, 3.0 * inch, 1.5 * inch, 3 * inch], direction='d')
 
     cue_header_block, title_header_block = header_row.split_x(4.0 * inch)
     (cue_number_block, timecode_block), reason_block = data_row.divide_x([1.5 * inch, 1.5 * inch])
     (take_grid_block), aux_block = takes_row.split_x(5.25 * inch)
 
-    pdfmetrics.registerFont(TTFont('Futura', 'Futura.ttc') )
+    c = Canvas(outfile, pagesize=letter)
 
-    c = Canvas("out.pdf", pagesize=letter)
+    for record in records:
+        draw_header_block(c, cue_header_block, record)
+        draw_title_block(c, title_header_block, record)
+        draw_character_row(c, char_row, record)
+        draw_cue_number_block(c, cue_number_block, record)
+        draw_timecode_block(c, timecode_block, record)
+        draw_reason_block(c, reason_block, record)
 
-    draw_header_block(c, cue_header_block)
-    draw_title_block(c, title_header_block)
-    draw_character_row(c, char_row)
-    draw_cue_number_block(c, cue_number_block)
-    draw_timecode_block(c, timecode_block)
-    draw_reason_block(c, reason_block)
+        draw_prompt(c, prompt_row, prompt=record['Line'])
+        draw_notes(c, notes_row, note="")
 
-    draw_prompt(c, prompt_row)
-    draw_notes(c, notes_row)
+        draw_take_grid(c, take_grid_block)
+        draw_aux_block(c, aux_block)
 
-    draw_take_grid(c, take_grid_block)
-    draw_aux_block(c, aux_block)
+        draw_footer(c, footer)
 
-    draw_footer(c, footer)
+        c.showPage()
 
-    c.showPage()
     c.save()
+
+
+def output_report(records):
+
+    events = sorted(records['events'], key=lambda x: x['PT.Clip.Start_Frames'])
+    character_numbers = set([x['CN'] for x in events])
+
+    for n in character_numbers:
+        create_report_for_character([e for e in events if e['CN'] == n])
+
+

@@ -186,7 +186,6 @@ def draw_footer(canvas, rect, record, report_date, line_no, total_lines):
     spotting_name = record.get('Spotting', [])
     pages_s = ["Line %i of %i" % (line_no, total_lines)]
     footer_s = " - ".join(report_date_s + spotting_name + pages_s)
-
     rect.draw_text_cell(canvas, footer_s, font_name="Futura", font_size=10., inset_y=2.)
 
 

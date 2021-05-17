@@ -126,12 +126,12 @@ def dump_field_map(field_map_name, output=sys.stdout):
         output.write("# ADR Table Fields\n")
 
     output.write("# \n")
-    output.write("# Tag Name                 | FMPXMLRESULT Column  | Type    | Column \n")
-    output.write("# -------------------------+----------------------+---------+--------\n")
+    output.write("# Tag Name                    | FMPXMLRESULT Column  | Type    | Column \n")
+    output.write("# ----------------------------+----------------------+---------+--------\n")
 
     for n, field in enumerate(field_map):
         for tag in field[0]:
-            output.write("# %-24s-> %-20s | %-8s| %-7i\n" % (tag[:24], field[1][:20], field[2].__name__, n + 1))
+            output.write("# %-27s-> %-20s | %-8s| %-7i\n" % (tag[:27], field[1][:20], field[2].__name__, n + 1))
 
 
 def fmp_transformed_dump(data, input_file, xsl_name, output):

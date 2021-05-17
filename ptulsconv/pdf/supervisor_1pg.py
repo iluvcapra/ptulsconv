@@ -13,6 +13,7 @@ from .common import GRect
 
 import datetime
 
+
 def draw_header_block(canvas, rect, record):
     rect.draw_text_cell(canvas, record['Cue Number'], "Helvetica", 44, vertical_align='m')
 
@@ -20,8 +21,8 @@ def draw_header_block(canvas, rect, record):
 def draw_title_block(canvas, rect, record):
     (supervisor, client,), title = rect.divide_y([16., 16., ])
     title.draw_text_cell(canvas, record['Title'], "Futura", 18, inset_y=2.)
-    client.draw_text_cell(canvas, record.get('Client',''), "Futura", 11, inset_y=2.)
-    supervisor.draw_text_cell(canvas, record.get('Supervisor',''), "Futura", 11, inset_y=2.)
+    client.draw_text_cell(canvas, record.get('Client', ''), "Futura", 11, inset_y=2.)
+    supervisor.draw_text_cell(canvas, record.get('Supervisor', ''), "Futura", 11, inset_y=2.)
 
 
 def draw_character_row(canvas, rect, record):
@@ -30,7 +31,7 @@ def draw_character_row(canvas, rect, record):
     line = "%s / %s " % (record['Character Number'], record['Character Name'])
     if 'Actor Name' in record.keys():
         line = line + " / " + record['Actor Name']
-    value_frame.draw_text_cell(canvas, line , "Futura", 12, force_baseline=9.)
+    value_frame.draw_text_cell(canvas, line, "Futura", 12, force_baseline=9.)
     rect.draw_border(canvas, ['min_y', 'max_y'])
 
 
@@ -79,7 +80,7 @@ def draw_reason_block(canvas, rect, record):
                                 inset_x=5., inset_y=5., draw_baseline=True,
                                 vertical_align='b')
     notes_label.draw_text_cell(canvas, "Note:", "Futura", 12,
-                                inset_x=5., inset_y=5., vertical_align='t')
+                               inset_x=5., inset_y=5., vertical_align='t')
 
     style = getSampleStyleSheet()['BodyText']
     style.fontName = 'Futura'
@@ -172,7 +173,8 @@ def draw_aux_block(canvas, rect, recording_time_sec_this_line, recording_time_se
     content_rect = rect.inset_xy(10., 10.)
     lines, last_line = content_rect.divide_y([12., 12., 24., 24., 24., 24.], direction='d')
 
-    lines[0].draw_text_cell(canvas, "Time for this line: %.1f mins" % (recording_time_sec_this_line / 60.), "Futura", 9.)
+    lines[0].draw_text_cell(canvas,
+                            "Time for this line: %.1f mins" % (recording_time_sec_this_line / 60.), "Futura", 9.)
     lines[1].draw_text_cell(canvas, "Running time: %03.1f mins" % (recording_time_sec / 60.), "Futura", 9.)
     lines[2].draw_text_cell(canvas, "Actual Start: ______________", "Futura", 9., vertical_align='b')
     lines[3].draw_text_cell(canvas, "Record Date: ______________", "Futura", 9., vertical_align='b')
@@ -241,5 +243,3 @@ def output_report(records):
 
     for n in character_numbers:
         create_report_for_character([e for e in events if e['CN'] == n], report_date)
-
-

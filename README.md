@@ -4,7 +4,7 @@
  ![Upload Python Package](https://github.com/iluvcapra/ptulsconv/workflows/Upload%20Python%20Package/badge.svg)
  
 # ptulsconv
-Read Pro Tools text exports and generate XML, JSON, reports
+Read Pro Tools text exports and generate XML, JSON, PDF reports.
 
 ## Quick Example
 
@@ -87,7 +87,7 @@ The output will contain the range:
 
 ### Fields in Track Names and Markers
 
-Fields set in track names, and in track comments, will be applied to *each* clip on that track. If a track comment 
+Fields set in track names, and in track comments, will be applied to each clip on that track. If a track comment 
 contains the text `{Dept=Foley}` for example, every clip on that track will have a "Foley" value in a "Dept" column.
 
 Likewise, fields set on the session name will apply to all clips in the session.

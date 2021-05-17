@@ -11,6 +11,7 @@ from reportlab.platypus import Paragraph
 
 from .common import GRect
 
+import datetime
 
 def draw_header_block(canvas, rect, record):
     rect.draw_text_cell(canvas, record['Cue Number'], "Helvetica", 44, vertical_align='m')
@@ -165,27 +166,31 @@ def draw_take_grid(canvas, rect):
     canvas.restoreState()
 
 
-def draw_aux_block(canvas, rect):
+def draw_aux_block(canvas, rect, recording_time_sec_this_line, recording_time_sec):
     rect.draw_border(canvas, 'min_x')
 
     content_rect = rect.inset_xy(10., 10.)
     lines, last_line = content_rect.divide_y([12., 12., 24., 24., 24., 24.], direction='d')
 
-    lines[0].draw_text_cell(canvas, "Time for this line: 6 mins", "Futura", 9.)
-    lines[1].draw_text_cell(canvas, "Running time: 6 mins", "Futura", 9.)
+    lines[0].draw_text_cell(canvas, "Time for this line: %.1f mins" % (recording_time_sec_this_line / 60.), "Futura", 9.)
+    lines[1].draw_text_cell(canvas, "Running time: %03.1f mins" % (recording_time_sec / 60.), "Futura", 9.)
     lines[2].draw_text_cell(canvas, "Actual Start: ______________", "Futura", 9., vertical_align='b')
     lines[3].draw_text_cell(canvas, "Record Date: ______________", "Futura", 9., vertical_align='b')
     lines[4].draw_text_cell(canvas, "Engineer: ______________", "Futura", 9., vertical_align='b')
     lines[5].draw_text_cell(canvas, "Location: ______________", "Futura", 9., vertical_align='b')
 
 
-def draw_footer(canvas, rect):
+def draw_footer(canvas, rect, record, report_date, line_no, total_lines):
     rect.draw_border(canvas, 'max_y')
-    rect.draw_text_cell(canvas, "2021-01-01 19:14:21 - Spotting: 2021-01-01 - Page 1 of 1", font_name="Futura",
-                        font_size=10., inset_y=2.)
+    report_date_s = [report_date.strftime("%c")]
+    spotting_name = record.get('Spotting', [])
+    pages_s = ["Line %i of %i" % (line_no, total_lines)]
+    footer_s = " - ".join(report_date_s + spotting_name + pages_s)
+
+    rect.draw_text_cell(canvas, footer_s, font_name="Futura", font_size=10., inset_y=2.)
 
 
-def create_report_for_character(records):
+def create_report_for_character(records, report_date):
 
     outfile = records[0]['CN'] + '_' + records[0]['Character Name'] + '.pdf'
     assert outfile is not None
@@ -204,21 +209,26 @@ def create_report_for_character(records):
 
     c = Canvas(outfile, pagesize=letter)
 
+    recording_time_sec = 0.0
+    total_lines = len(records)
+    line_n = 1
     for record in records:
+        recording_time_sec_this_line: float = record.get('Time Budget Mins', 6.0) * 60.0
+        recording_time_sec = recording_time_sec + recording_time_sec_this_line
+
         draw_header_block(c, cue_header_block, record)
         draw_title_block(c, title_header_block, record)
         draw_character_row(c, char_row, record)
         draw_cue_number_block(c, cue_number_block, record)
         draw_timecode_block(c, timecode_block, record)
         draw_reason_block(c, reason_block, record)
-
         draw_prompt(c, prompt_row, prompt=record['Line'])
         draw_notes(c, notes_row, note="")
-
         draw_take_grid(c, take_grid_block)
-        draw_aux_block(c, aux_block)
+        draw_aux_block(c, aux_block, recording_time_sec_this_line, recording_time_sec)
 
-        draw_footer(c, footer)
+        draw_footer(c, footer, record, report_date, line_no=line_n, total_lines=total_lines)
+        line_n = line_n + 1
 
         c.showPage()
 
@@ -226,11 +236,11 @@ def create_report_for_character(records):
 
 
 def output_report(records):
-
+    report_date = datetime.datetime.now()
     events = sorted(records['events'], key=lambda x: x['PT.Clip.Start_Frames'])
     character_numbers = set([x['CN'] for x in events])
 
     for n in character_numbers:
-        create_report_for_character([e for e in events if e['CN'] == n])
+        create_report_for_character([e for e in events if e['CN'] == n], report_date)
 
 

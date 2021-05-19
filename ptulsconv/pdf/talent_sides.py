@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
+
 from .common import GRect, draw_title_block
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 
-from reportlab.platypus import BaseDocTemplate, Paragraph, Spacer, KeepTogether, Table, HRFlowable, \
-    SimpleDocTemplate, PageTemplate, Frame
+from reportlab.platypus import BaseDocTemplate, Paragraph, Spacer, \
+    KeepTogether, Table, HRFlowable, PageTemplate, Frame
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 
@@ -56,6 +58,8 @@ def output_report(records):
             data_block = [[Paragraph(line['Cue Number'], number_style),
                            Paragraph(line['PT.Clip.Start'] + " - " + line['PT.Clip.Finish'], number_style)
                            ]]
+# RIGHTWARDS ARRO→W
+# Unicode: U+2192, UTF-8: E2 86 92
             story.append(
                 KeepTogether(
                     [HRFlowable(width='100%', color=colors.black),

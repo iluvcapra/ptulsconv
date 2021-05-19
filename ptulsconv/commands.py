@@ -14,6 +14,7 @@ from .validations import *
 
 from ptulsconv.pdf.supervisor_1pg import output_report as output_supervisor_1pg
 from ptulsconv.pdf.line_count import output_report as output_line_count
+from ptulsconv.pdf.talent_sides import output_report as output_talent_sides
 
 # field_map maps tags in the text export to fields in FMPXMLRESULT
 #  - tuple field 0 is a list of tags, the first tag with contents will be used as source
@@ -220,6 +221,7 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
             print("Sorry, the `full` output type is not yet supported.")
             normalized_records = normalize_record_keys(parsed)
             output_supervisor_1pg(normalized_records)
+            output_talent_sides(normalized_records)
             output_line_count(normalized_records)
         elif output_format == 'fmpxml':
             if xsl is None:

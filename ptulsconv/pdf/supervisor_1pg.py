@@ -9,21 +9,13 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph
 
-from .common import GRect
+from .common import GRect, draw_title_block
 
 import datetime
 
 
 def draw_header_block(canvas, rect, record):
     rect.draw_text_cell(canvas, record['Cue Number'], "Helvetica", 44, vertical_align='m')
-
-
-def draw_title_block(canvas, rect, record):
-    (supervisor, client,), title = rect.divide_y([16., 16., ])
-    title.draw_text_cell(canvas, record['Title'], "Futura", 18, inset_y=2.)
-    client.draw_text_cell(canvas, record.get('Client', ''), "Futura", 11, inset_y=2.)
-    supervisor.draw_text_cell(canvas, record.get('Supervisor', ''), "Futura", 11, inset_y=2.)
-
 
 def draw_character_row(canvas, rect, record):
     label_frame, value_frame = rect.split_x(1.25 * inch)

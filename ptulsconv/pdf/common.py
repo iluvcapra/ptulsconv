@@ -1,6 +1,13 @@
 from reportlab.pdfbase.pdfmetrics import (getAscent, getDescent)
 
 
+def draw_title_block(canvas, rect, record):
+    (supervisor, client,), title = rect.divide_y([16., 16., ])
+    title.draw_text_cell(canvas, record['Title'], "Futura", 18, inset_y=2.)
+    client.draw_text_cell(canvas, record.get('Client', ''), "Futura", 11, inset_y=2.)
+    supervisor.draw_text_cell(canvas, record.get('Supervisor', ''), "Futura", 11, inset_y=2.)
+
+
 class GRect:
     def __init__(self, x, y, width, height, debug_name=None):
         self.x = x
@@ -52,7 +59,7 @@ class GRect:
             return (GRect(self.min_x, self.min_y, at, self.height),
                     GRect(self.min_x + at, self.y, self.width - at, self.height))
 
-    def split_y(self, at, direction='u') :
+    def split_y(self, at, direction='u'):
         if at >= self.height:
             return None, self
         elif at <= 0:
@@ -189,4 +196,3 @@ class GRect:
                 y = y - leading
 
         canvas.restoreState()
-

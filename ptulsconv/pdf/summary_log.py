@@ -57,7 +57,7 @@ def build_story(lines):
         time_data = time_format(line.get('Time Budget Mins', 0.))
 
         if 'Priority' in line.keys():
-            time_data = time_data + "<br />" + "P:" + int(line['Priority'])
+            time_data = time_data + "<br />" + "P: " + int(line['Priority'])
 
         aux_data_field = build_aux_data_field(line)
 

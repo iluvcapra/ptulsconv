@@ -52,7 +52,7 @@ class GRect:
             return (GRect(self.min_x, self.min_y, at, self.height),
                     GRect(self.min_x + at, self.y, self.width - at, self.height))
 
-    def split_y(self, at, direction='u'):
+    def split_y(self, at, direction='u') :
         if at >= self.height:
             return None, self
         elif at <= 0:

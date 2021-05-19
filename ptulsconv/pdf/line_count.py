@@ -10,7 +10,7 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph, Table, TableStyle
 
-from .common import GRect
+from .common import GRect, time_format, NumberedCanvas
 
 import datetime
 
@@ -25,14 +25,6 @@ def build_columns(records, show_priorities = False):
             return ""
         else:
             return str(l)
-
-    def time_format(mins):
-        if mins < 60.:
-            return "%im" % round(mins)
-        else:
-            m = round(mins)
-            hh, mm = divmod(m, 60)
-            return "%ih%im" % (hh, mm)
 
     columns.append({
         'heading': '#',
@@ -180,7 +172,7 @@ def output_report(records):
     page = page.inset(inch * 0.5)
     title_box, table_box = page.split_y(inch, 'd')
 
-    c = Canvas('Line Count.pdf', pagesize=(letter[1], letter[0]))
+    c = NumberedCanvas('Line Count.pdf', pagesize=(letter[1], letter[0]))
     c.setFont('Futura', 18.)
     c.drawCentredString(title_box.center_x, title_box.center_y, "Line Count")
 

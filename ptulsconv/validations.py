@@ -10,6 +10,11 @@ class ValidationError:
     def report_message(self):
         return f"{self.message}: event at {self.event['PT.Clip.Start']} on track {self.event['PT.Track.Name']}"
 
+def validate_unique_count(input_dict, field='Title', count=1):
+    values = set(list(map(lambda e: e[field], input_dict['events'])))
+    if len(values) > count:
+        yield ValidationError(message="Field {} has too many values (max={}): {}".format(field, count, values))
+
 def validate_value(input_dict, key_field, predicate):
     for event in input_dict['events']:
         val = event[key_field]

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .common import GRect, draw_title_block
+from .common import GRect, draw_title_block, NumberedCanvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 
@@ -69,4 +69,4 @@ def output_report(records):
                 )
             )
 
-        doc.build(story)
+        doc.build(story, canvasmaker=NumberedCanvas)

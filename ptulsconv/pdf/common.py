@@ -1,6 +1,51 @@
 from reportlab.pdfbase.pdfmetrics import (getAscent, getDescent)
+from reportlab.lib.units import inch
+from reportlab.pdfgen import canvas
+import datetime
 
+# This is from https://code.activestate.com/recipes/576832/ for
+# generating page count messages
+class NumberedCanvas(canvas.Canvas):
+    def __init__(self, *args, **kwargs):
+        canvas.Canvas.__init__(self, *args, **kwargs)
+        self._saved_page_states = []
+        self._report_date = datetime.datetime.now()
 
+    def showPage(self):
+        self._saved_page_states.append(dict(self.__dict__))
+        self._startPage()
+
+    def save(self):
+        """add page info to each page (page x of y)"""
+        num_pages = len(self._saved_page_states)
+        for state in self._saved_page_states:
+            self.__dict__.update(state)
+            self.draw_page_number(num_pages)
+            canvas.Canvas.showPage(self)
+        canvas.Canvas.save(self)
+
+    def draw_page_number(self, page_count):
+        self.saveState()
+        self.setFont("Futura", 10)
+        self.drawString(0.5 * inch, 0.5 * inch, "Page %d of %d" % (self._pageNumber, page_count))
+        right_edge = self._pagesize[0] - 0.5 * inch
+        self.drawRightString(right_edge, 0.5 * inch, self._report_date.strftime("%c"))
+        topline = self.beginPath()
+        topline.moveTo(0.5 * inch, 0.75 * inch)
+        topline.lineTo(right_edge, 0.75 * inch)
+        self.setLineWidth(0.5)
+        self.drawPath(topline)
+        self.restoreState()
+
+def time_format(mins):
+    if mins < 60.:
+        return "%im" % round(mins)
+    else:
+        m = round(mins)
+        hh, mm = divmod(m, 60)
+        return "%ih%im" % (hh, mm)
+
+## draws the title block inside the given rect
 def draw_title_block(canvas, rect, record):
     (supervisor, client,), title = rect.divide_y([16., 16., ])
     title.draw_text_cell(canvas, record['Title'], "Futura", 18, inset_y=2.)
@@ -56,8 +101,12 @@ class GRect:
         elif at <= 0:
             return self, None
         else:
-            return (GRect(self.min_x, self.min_y, at, self.height),
-                    GRect(self.min_x + at, self.y, self.width - at, self.height))
+            if direction == 'l':
+                return (GRect(self.min_x, self.min_y, at, self.height),
+                        GRect(self.min_x + at, self.y, self.width - at, self.height))
+            else:
+                return (GRect(self.max_x - at, self.y, at, self.height),
+                        GRect(self.min_x, self.y, self.width - at, self.height))
 
     def split_y(self, at, direction='u'):
         if at >= self.height:

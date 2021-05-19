@@ -15,6 +15,7 @@ from .validations import *
 from ptulsconv.pdf.supervisor_1pg import output_report as output_supervisor_1pg
 from ptulsconv.pdf.line_count import output_report as output_line_count
 from ptulsconv.pdf.talent_sides import output_report as output_talent_sides
+from ptulsconv.pdf.summary_log import output_report as output_summary
 
 # field_map maps tags in the text export to fields in FMPXMLRESULT
 #  - tuple field 0 is a list of tags, the first tag with contents will be used as source
@@ -208,10 +209,14 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
                                  validate_non_empty_field(parsed, field='QN'),
                                  validate_non_empty_field(parsed, field='CN'),
                                  validate_non_empty_field(parsed, field='Char'),
+                                 validate_non_empty_field(parsed, field='Title'),
                                  validate_dependent_value(parsed, key_field='CN',
                                                           dependent_field='Char'),
                                  validate_dependent_value(parsed, key_field='CN',
-                                                          dependent_field='Actor'),):
+                                                          dependent_field='Actor'),
+                                 validate_unique_count(parsed, field='Title', count=1),
+                                 validate_unique_count(parsed, field='Spotting', count=1),
+                                 validate_unique_count(parsed, field='Supervisor', count=1)):
 
                 print_warning(warning.report_message())
 
@@ -220,9 +225,12 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
         elif output_format == 'full':
             print("Sorry, the `full` output type is not yet supported.")
             normalized_records = normalize_record_keys(parsed)
+
             output_supervisor_1pg(normalized_records)
             output_talent_sides(normalized_records)
             output_line_count(normalized_records)
+            output_summary(normalized_records)
+
         elif output_format == 'fmpxml':
             if xsl is None:
                 fmp_dump(parsed, input_file, output)

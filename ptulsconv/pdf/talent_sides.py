@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .common import GRect, draw_title_block, NumberedCanvas
+from .common import GRect, draw_header_footer, ReportCanvas, make_doc_template
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 
@@ -11,10 +11,10 @@ from reportlab.lib import colors
 
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-
-page_box = GRect(inch * 0.5, inch * 0.5, letter[0] - inch, letter[1] - inch)
-title_box, page_box = page_box.split_y(0.875 * inch, 'd')
-header_block, title_block = title_box.split_x(inch * 4.)
+#
+# page_box = GRect(inch * 0.5, inch * 0.5, letter[0] - inch, letter[1] - inch)
+# title_box, page_box = page_box.split_y(0.875 * inch, 'd')
+# header_block, title_block = title_box.split_x(inch * 4.)
 
 
 def output_report(records):
@@ -25,17 +25,14 @@ def output_report(records):
         lines = [line for line in records['events']
                  if 'Omit' not in line.keys() and line['Character Number'] == n]
 
-        page_template = PageTemplate(id="Main",
-                                     frames=[Frame(page_box.min_x, page_box.min_y, page_box.width, page_box.height)],
-                                     onPage=lambda canv, _: draw_title_block(canv, title_block, lines[0]))
-
         sorted(lines, key=lambda line: line['PT.Clip.Start_Seconds'])
 
-        doc = BaseDocTemplate("%s_%s_%s_Script.pdf" % (lines[0]['Title'], n, lines[0]['Character Name']),
-                              pagesize=letter, leftMargin=0.5 * inch,
-                              rightMargin=0.5 * inch, topMargin=0.5 * inch, bottomMargin=0.5 * inch)
+        title = "%s (%s) %s ADR Script" % (lines[0]['Title'], lines[0]['Character Name'], n)
+        filename = "%s_%s_%s_ADR Script.pdf" % (lines[0]['Title'], n, lines[0]['Character Name'])
 
-        doc.addPageTemplates([page_template])
+        doc = make_doc_template(page_size=letter, filename=filename, document_title=title,
+                                record=lines[0], document_header=lines[0]['Character Name'])
+
         story = []
 
         prompt_style = getSampleStyleSheet()['Normal']
@@ -58,7 +55,7 @@ def output_report(records):
             data_block = [[Paragraph(line['Cue Number'], number_style),
                            Paragraph(line['PT.Clip.Start'] + " - " + line['PT.Clip.Finish'], number_style)
                            ]]
-# RIGHTWARDS ARRO→W
+# RIGHTWARDS ARROW →
 # Unicode: U+2192, UTF-8: E2 86 92
             story.append(
                 KeepTogether(
@@ -69,4 +66,4 @@ def output_report(records):
                 )
             )
 
-        doc.build(story, canvasmaker=NumberedCanvas)
+        doc.build(story)

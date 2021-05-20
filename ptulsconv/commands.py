@@ -144,12 +144,12 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
             output_line_count(parsed)
             output_summary(parsed)
 
-            os.mkdir("Supervisor Logs")
+            os.makedirs("Supervisor Logs", exist_ok=True)
             os.chdir("Supervisor Logs")
             output_supervisor_1pg(parsed)
 
             os.chdir("..")
-            os.mkdir("Talent Scripts")
+            os.makedirs("Talent Scripts", exist_ok=True)
             os.chdir("Talent Scripts")
             output_talent_sides(parsed)
 

@@ -9,7 +9,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph
 
-from .common import GRect, draw_title_block
+from .common import GRect
 
 import datetime
 
@@ -200,7 +200,11 @@ def create_report_for_character(records, report_date):
     (cue_number_block, timecode_block), reason_block = data_row.divide_x([1.5 * inch, 1.5 * inch])
     (take_grid_block), aux_block = takes_row.split_x(5.25 * inch)
 
-    c = Canvas(outfile, pagesize=letter)
+    c = Canvas(outfile, pagesize=letter,)
+
+    c.setTitle("%s %s (%s) Supervisor's Log" % (records[0]['Title'], records[0]['Character Name'],
+                                                records[0]['Character Number']))
+    c.setAuthor(records[0]['Supervisor'])
 
     recording_time_sec = 0.0
     total_lines = len(records)
@@ -210,7 +214,8 @@ def create_report_for_character(records, report_date):
         recording_time_sec = recording_time_sec + recording_time_sec_this_line
 
         draw_header_block(c, cue_header_block, record)
-        draw_title_block(c, title_header_block, record)
+        # FIXME: Draw the title
+        #draw_title_box(c, title_header_block, record)
         draw_character_row(c, char_row, record)
         draw_cue_number_block(c, cue_number_block, record)
         draw_timecode_block(c, timecode_block, record)

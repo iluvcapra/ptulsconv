@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .common import GRect, draw_title_block, time_format, NumberedCanvas
+from .common import GRect, draw_header_footer, time_format, make_doc_template
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter, landscape, portrait
 
@@ -86,28 +86,14 @@ def build_story(lines):
 
 
 def output_report(records):
-    page_size = portrait(letter)
-    page_box = GRect(inch * 0.5, inch * 0.5, page_size[0] - inch, page_size[1] - inch)
-    title_box, page_box = page_box.split_y(0.875 * inch, 'd')
-    footer_box, page_box = page_box.split_y(0.25 * inch, 'u')
-
-    title_block, header_block = title_box.split_x(inch * 4., direction='r')
-
-    pdfmetrics.registerFont(TTFont('Futura', 'Futura.ttc'))
-
-    page_template = PageTemplate(id="Main",
-                                 frames=[Frame(page_box.min_x, page_box.min_y, page_box.width, page_box.height)],
-                                 onPage=lambda canvas, _: draw_title_block(canvas, title_block, lines[0]))
-
     lines = sorted(records['events'], key=lambda line: line['PT.Clip.Start_Seconds'])
 
-    doc = BaseDocTemplate("%s Summary.pdf" % records['events'][0]['Title'],
-                          pagesize=page_size, leftMargin=0.5 * inch,
-                          rightMargin=0.5 * inch, topMargin=0.5 * inch,
-                          bottomMargin=0.5 * inch)
+    title = "%s ADR Report" % (lines[0]['Title'])
+    filename = title + ".pdf"
 
-    doc.addPageTemplates([page_template])
+    doc = make_doc_template(portrait(letter), filename=filename, document_title=title,
+                            record=lines[0], document_header='ADR Report')
 
     story = build_story(lines)
 
-    doc.build(story, canvasmaker=NumberedCanvas)
+    doc.build(story)

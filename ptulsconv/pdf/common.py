@@ -2,7 +2,7 @@ from reportlab.pdfbase.pdfmetrics import (getAscent, getDescent)
 from reportlab.lib.units import inch
 from reportlab.pdfgen import canvas
 import datetime
-
+from reportlab.platypus.doctemplate import BaseDocTemplate, Frame, PageTemplate
 
 # This is from https://code.activestate.com/recipes/576832/ for
 # generating page count messages
@@ -30,13 +30,49 @@ class ReportCanvas(canvas.Canvas):
         self.setFont("Futura", 10)
         self.drawString(0.5 * inch, 0.5 * inch, "Page %d of %d" % (self._pageNumber, page_count))
         right_edge = self._pagesize[0] - 0.5 * inch
-        self.drawRightString(right_edge, 0.5 * inch, self._report_date.strftime("%c"))
+        self.drawRightString(right_edge, 0.5 * inch, self._report_date.strftime("%m/%d/%Y %H:%M"))
+
         top_line = self.beginPath()
         top_line.moveTo(0.5 * inch, 0.75 * inch)
         top_line.lineTo(right_edge, 0.75 * inch)
         self.setLineWidth(0.5)
         self.drawPath(top_line)
         self.restoreState()
+
+
+class ADRDocTemplate(BaseDocTemplate):
+    def build(self, flowables, filename=None, canvasmaker=ReportCanvas):
+        BaseDocTemplate.build(self, flowables, filename, canvasmaker)
+
+
+def make_doc_template(page_size, filename, document_title, record, document_header = ""):
+    left_margin = right_margin = top_margin = bottom_margin = 0.5 * inch
+    page_box = GRect(0., 0., page_size[0], page_size[1])
+    _, page_box = page_box.split_x(left_margin, direction='r')
+    _, page_box = page_box.split_x(right_margin, direction='l')
+    _, page_box = page_box.split_y(bottom_margin, direction='u')
+    _, page_box = page_box.split_y(top_margin, direction='d')
+
+    footer_box, page_box = page_box.split_y(0.25 * inch, direction='u')
+    header_box, page_box = page_box.split_y(0.75 * inch, direction='d')
+    title_box, report_box = header_box.split_x(4. * inch, direction='r')
+
+    page_template = PageTemplate(id="Main",
+                                 frames=[Frame(page_box.min_x, page_box.min_y, page_box.width, page_box.height)],
+                                 onPage=lambda c, _: draw_header_footer(c, title_box, report_box, footer_box, record,
+                                                                        doc_title=document_header))
+
+    doc = ADRDocTemplate(filename,
+                         title=document_title,
+                         author=record.get('Supervisor', ""),
+                         pagesize=page_size,
+                         leftMargin=left_margin, rightMargin=right_margin,
+                         topMargin=top_margin, bottomMargin=bottom_margin)
+
+    doc.addPageTemplates([page_template])
+
+    return doc
+
 
 
 def time_format(mins):
@@ -48,12 +84,21 @@ def time_format(mins):
         return "%ih%im" % (hh, mm)
 
 
-# draws the title block inside the given rect
-def draw_title_block(a_canvas, rect, record):
-    (supervisor, client,), title = rect.divide_y([16., 16., ])
+def draw_header_footer(a_canvas, title_box, doc_title_box, footer_box, record, doc_title=""):
+
+    (supervisor, client,), title = title_box.divide_y([16., 16., ])
     title.draw_text_cell(a_canvas, record['Title'], "Futura", 18, inset_y=2.)
     client.draw_text_cell(a_canvas, record.get('Client', ''), "Futura", 11, inset_y=2.)
-    supervisor.draw_text_cell(a_canvas, record.get('Supervisor', ''), "Futura", 11, inset_y=2.)
+
+    (doc_title_cell, spotting_version_cell,), _ = doc_title_box.divide_y([18., 14], direction='d')
+
+    doc_title_cell.draw_text_cell(a_canvas, doc_title, 'Futura', 14., inset_y=2.)
+    if 'Spot' in record.keys():
+        spotting_version_cell.draw_text_cell(a_canvas, record['Spot'], 'Futura', 12., inset_y=2.)
+
+    a_canvas.setFont('Futura', 11.)
+    a_canvas.drawCentredString(footer_box.min_x + footer_box.width / 2., footer_box.min_y,
+                               record.get('Supervisor', 'Supervisor: ________________'))
 
 
 class GRect:

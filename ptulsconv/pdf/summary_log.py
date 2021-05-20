@@ -85,7 +85,6 @@ def build_story(lines):
     return story
 
 
-
 def output_report(records):
     page_size = portrait(letter)
     page_box = GRect(inch * 0.5, inch * 0.5, page_size[0] - inch, page_size[1] - inch)

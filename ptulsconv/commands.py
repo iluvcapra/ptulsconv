@@ -1,4 +1,5 @@
 import json
+import os
 
 import sys
 from itertools import chain
@@ -138,13 +139,19 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
 
         if output_format == 'json':
             json.dump(parsed, output)
-        elif output_format == 'full':
-            print("Sorry, the `full` output type is not yet supported.")
 
-            output_supervisor_1pg(parsed)
-            output_talent_sides(parsed)
+        elif output_format == 'full':
             output_line_count(parsed)
             output_summary(parsed)
+
+            os.mkdir("Supervisor Logs")
+            os.chdir("Supervisor Logs")
+            output_supervisor_1pg(parsed)
+
+            os.chdir("..")
+            os.mkdir("Talent Scripts")
+            os.chdir("Talent Scripts")
+            output_talent_sides(parsed)
 
         elif output_format == 'fmpxml':
             if xsl is None:

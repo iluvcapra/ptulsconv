@@ -3,9 +3,10 @@ from reportlab.lib.units import inch
 from reportlab.pdfgen import canvas
 import datetime
 
+
 # This is from https://code.activestate.com/recipes/576832/ for
 # generating page count messages
-class NumberedCanvas(canvas.Canvas):
+class ReportCanvas(canvas.Canvas):
     def __init__(self, *args, **kwargs):
         canvas.Canvas.__init__(self, *args, **kwargs)
         self._saved_page_states = []
@@ -30,12 +31,13 @@ class NumberedCanvas(canvas.Canvas):
         self.drawString(0.5 * inch, 0.5 * inch, "Page %d of %d" % (self._pageNumber, page_count))
         right_edge = self._pagesize[0] - 0.5 * inch
         self.drawRightString(right_edge, 0.5 * inch, self._report_date.strftime("%c"))
-        topline = self.beginPath()
-        topline.moveTo(0.5 * inch, 0.75 * inch)
-        topline.lineTo(right_edge, 0.75 * inch)
+        top_line = self.beginPath()
+        top_line.moveTo(0.5 * inch, 0.75 * inch)
+        top_line.lineTo(right_edge, 0.75 * inch)
         self.setLineWidth(0.5)
-        self.drawPath(topline)
+        self.drawPath(top_line)
         self.restoreState()
+
 
 def time_format(mins):
     if mins < 60.:
@@ -45,12 +47,13 @@ def time_format(mins):
         hh, mm = divmod(m, 60)
         return "%ih%im" % (hh, mm)
 
-## draws the title block inside the given rect
-def draw_title_block(canvas, rect, record):
+
+# draws the title block inside the given rect
+def draw_title_block(a_canvas, rect, record):
     (supervisor, client,), title = rect.divide_y([16., 16., ])
-    title.draw_text_cell(canvas, record['Title'], "Futura", 18, inset_y=2.)
-    client.draw_text_cell(canvas, record.get('Client', ''), "Futura", 11, inset_y=2.)
-    supervisor.draw_text_cell(canvas, record.get('Supervisor', ''), "Futura", 11, inset_y=2.)
+    title.draw_text_cell(a_canvas, record['Title'], "Futura", 18, inset_y=2.)
+    client.draw_text_cell(a_canvas, record.get('Client', ''), "Futura", 11, inset_y=2.)
+    supervisor.draw_text_cell(a_canvas, record.get('Supervisor', ''), "Futura", 11, inset_y=2.)
 
 
 class GRect:
@@ -130,12 +133,12 @@ class GRect:
     def __repr__(self):
         return "<GRect x=%f y=%f width=%f height=%f>" % (self.x, self.y, self.width, self.height)
 
-    def divide_x(self, x_list, reverse=False):
+    def divide_x(self, x_list, direction='l'):
         ret_list = list()
 
         rem = self
         for item in x_list:
-            s, rem = rem.split_x(item)
+            s, rem = rem.split_x(item, direction)
             ret_list.append(s)
 
         return ret_list, rem
@@ -150,14 +153,14 @@ class GRect:
 
         return ret_list, rem
 
-    def draw_debug(self, canvas):
-        canvas.saveState()
-        canvas.setFont("Courier", 8)
-        canvas.rect(self.x, self.y, self.width, self.height)
-        canvas.drawString(self.x, self.y, self.debug_name or self.__repr__())
-        canvas.restoreState()
+    def draw_debug(self, a_canvas):
+        a_canvas.saveState()
+        a_canvas.setFont("Courier", 8)
+        a_canvas.rect(self.x, self.y, self.width, self.height)
+        a_canvas.drawString(self.x, self.y, self.debug_name or self.__repr__())
+        a_canvas.restoreState()
 
-    def draw_border(self, canvas, edge):
+    def draw_border(self, a_canvas, edge):
 
         def draw_border_impl(en):
             if en == 'min_x':
@@ -171,10 +174,10 @@ class GRect:
             else:
                 return
 
-            s = canvas.beginPath()
+            s = a_canvas.beginPath()
             s.moveTo(*coordinates[0])
             s.lineTo(*coordinates[1])
-            canvas.drawPath(s)
+            a_canvas.drawPath(s)
 
         if type(edge) is str:
             edge = [edge]
@@ -182,9 +185,10 @@ class GRect:
         for e in edge:
             draw_border_impl(e)
 
-    def draw_text_cell(self, canvas, text, font_name, font_size, vertical_align='t', force_baseline=None, inset_x=0.,
+    def draw_text_cell(self, a_canvas, text, font_name, font_size,
+                       vertical_align='t', force_baseline=None, inset_x=0.,
                        inset_y=0., draw_baseline=False):
-        canvas.saveState()
+        a_canvas.saveState()
 
         inset_rect = self.inset_xy(inset_x, inset_y)
 
@@ -198,50 +202,51 @@ class GRect:
         if force_baseline is not None:
             y = self.min_y + force_baseline
 
-        cp = canvas.beginPath()
+        cp = a_canvas.beginPath()
         cp.rect(self.min_x, self.min_y, self.width, self.height)
-        canvas.clipPath(cp, stroke=0, fill=0)
+        a_canvas.clipPath(cp, stroke=0, fill=0)
 
-        canvas.setFont(font_name, font_size)
-        tx = canvas.beginText()
+        a_canvas.setFont(font_name, font_size)
+        tx = a_canvas.beginText()
         tx.setTextOrigin(inset_rect.min_x, y)
         tx.textLine(text)
-        canvas.drawText(tx)
+        a_canvas.drawText(tx)
 
         if draw_baseline:
-            canvas.setDash([3.0, 1.0, 2.0, 1.0])
-            canvas.setLineWidth(0.5)
-            bl = canvas.beginPath()
+            a_canvas.setDash([3.0, 1.0, 2.0, 1.0])
+            a_canvas.setLineWidth(0.5)
+            bl = a_canvas.beginPath()
             bl.moveTo(inset_rect.min_x, y - 1.)
             bl.lineTo(inset_rect.max_x, y - 1.)
-            canvas.drawPath(bl)
+            a_canvas.drawPath(bl)
 
-        canvas.restoreState()
+        a_canvas.restoreState()
 
-    def draw_flowable(self, canvas, flowable, inset_x=0., inset_y=0., draw_baselines=False):
-        canvas.saveState()
+    def draw_flowable(self, a_canvas, flowable, inset_x=0.,
+                      inset_y=0., draw_baselines=False):
+        a_canvas.saveState()
 
         inset_rect = self.inset_xy(inset_x, inset_y)
 
-        cp = canvas.beginPath()
+        cp = a_canvas.beginPath()
         cp.rect(self.min_x, self.min_y, self.width, self.height)
-        canvas.clipPath(cp, stroke=0, fill=0)
+        a_canvas.clipPath(cp, stroke=0, fill=0)
 
         w, h = flowable.wrap(inset_rect.width, inset_rect.height)
 
-        flowable.drawOn(canvas, inset_rect.x, inset_rect.max_y - h)
+        flowable.drawOn(a_canvas, inset_rect.x, inset_rect.max_y - h)
 
         if draw_baselines:
-            canvas.setDash([3.0, 1.0, 2.0, 1.0])
-            canvas.setLineWidth(0.5)
+            a_canvas.setDash([3.0, 1.0, 2.0, 1.0])
+            a_canvas.setLineWidth(0.5)
             leading = flowable.style.leading
 
             y = inset_rect.max_y - flowable.style.fontSize - 1.
             while y > inset_rect.min_x:
-                bl = canvas.beginPath()
+                bl = a_canvas.beginPath()
                 bl.moveTo(inset_rect.min_x, y)
                 bl.lineTo(inset_rect.max_x, y)
-                canvas.drawPath(bl)
+                a_canvas.drawPath(bl)
                 y = y - leading
 
-        canvas.restoreState()
+        a_canvas.restoreState()

@@ -3,15 +3,13 @@ import os.path
 import pathlib
 import subprocess
 import sys
-
-import ptulsconv as ptulsconv
-
-from xml.etree.ElementTree import TreeBuilder, tostring
-
-import io
+import glob
 
 
 def fmp_dump(data, input_file_name, output, adr_field_map):
+    from xml.etree.ElementTree import TreeBuilder, tostring
+    import ptulsconv
+
     doc = TreeBuilder(element_factory=None)
 
     doc.start('FMPXMLRESULT', {'xmlns': 'http://www.filemaker.com/fmpxmlresult'})
@@ -58,37 +56,38 @@ def fmp_dump(data, input_file_name, output, adr_field_map):
     xmlstr = tostring(docelem, encoding='unicode', method='xml')
     output.write(xmlstr)
 
-
-import glob
-
 xslt_path = os.path.join(pathlib.Path(__file__).parent.absolute(), 'xslt')
+
 
 def xform_options():
     return glob.glob(os.path.join(xslt_path, "*.xsl"))
 
+
 def dump_xform_options(output=sys.stdout):
     print("# Available transforms:", file=output)
-    print("# Transform dir: %s" % (xslt_path), file=output)
+    print("# Transform dir: %s" % xslt_path, file=output)
     for f in xform_options():
         base = os.path.basename(f)
         name, _ = os.path.splitext(base)
         print("#    " + name, file=output)
 
 
-def fmp_transformed_dump(data, input_file, xsl_name, output):
+def fmp_transformed_dump(data, input_file, xsl_name, output, adr_field_map):
     from ptulsconv.reporting import print_status_style
+    import io
 
     pipe = io.StringIO()
 
     print_status_style("Generating base XML")
-    fmp_dump(data, input_file, pipe)
+    fmp_dump(data, input_file, pipe, adr_field_map)
 
-    strdata = pipe.getvalue()
-    print_status_style("Base XML size %i" % (len(strdata)))
+    str_data = pipe.getvalue()
+    print_status_style("Base XML size %i" % (len(str_data)))
 
     print_status_style("Running xsltproc")
 
     xsl_path = os.path.join(pathlib.Path(__file__).parent.absolute(), 'xslt', xsl_name + ".xsl")
-    print_status_style("Using xsl: %s" % (xsl_path))
-    subprocess.run(['xsltproc', xsl_path, '-'], input=strdata, text=True,
+    print_status_style("Using xsl: %s" % xsl_path)
+    subprocess.run(['xsltproc', xsl_path, '-'],
+                   input=str_data, text=True,
                    stdout=output, shell=False, check=True)

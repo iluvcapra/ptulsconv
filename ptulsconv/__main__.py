@@ -1,4 +1,4 @@
-from ptulsconv.commands import convert, dump_field_map, dump_xform_options
+from ptulsconv.commands import convert, dump_field_map
 from ptulsconv import __name__, __version__, __author__
 from optparse import OptionParser, OptionGroup
 from .reporting import print_status_style, print_banner_style, print_section_header_style, print_fatal_error
@@ -37,8 +37,8 @@ def main():
                            '`fmpxml`.)')
 
     warn_options = OptionGroup(title="Warning and Validation Options", parser=parser)
-    warn_options.add_option('-w', action='store_true', dest='warnings',
-                            help='Generate warnings for common errors (missing code numbers etc.)')
+    warn_options.add_option('-W', action='store_false', dest='warnings', default=True,
+                            help='Suppress warnings for common errors (missing code numbers etc.)')
 
     parser.add_option_group(warn_options)
 

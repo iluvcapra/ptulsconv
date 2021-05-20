@@ -31,7 +31,7 @@ def output_report(records):
 
         sorted(lines, key=lambda line: line['PT.Clip.Start_Seconds'])
 
-        doc = BaseDocTemplate("%s_%s_Script.pdf" % (n, lines[0]['Character Name']),
+        doc = BaseDocTemplate("%s_%s_%s_Script.pdf" % (lines[0]['Title'], n, lines[0]['Character Name']),
                               pagesize=letter, leftMargin=0.5 * inch,
                               rightMargin=0.5 * inch, topMargin=0.5 * inch, bottomMargin=0.5 * inch)
 

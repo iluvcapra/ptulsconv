@@ -185,7 +185,7 @@ def draw_footer(canvas, rect, record, report_date, line_no, total_lines):
 
 def create_report_for_character(records, report_date):
 
-    outfile = records[0]['CN'] + '_' + records[0]['Character Name'] + '.pdf'
+    outfile = "%s_%s_%s_Log.pdf" % (records[0]['Title'], records[0]['Character Number'], records[0]['Character Name'],)
     assert outfile is not None
     assert outfile[-4:] == '.pdf', "Output file must have 'pdf' extension!"
 

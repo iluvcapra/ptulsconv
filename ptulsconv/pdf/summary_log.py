@@ -101,7 +101,7 @@ def output_report(records):
 
     lines = sorted(records['events'], key=lambda line: line['PT.Clip.Start_Seconds'])
 
-    doc = BaseDocTemplate("Summary.pdf",
+    doc = BaseDocTemplate("%s Summary.pdf" % records['events'][0]['Title'],
                           pagesize=page_size, leftMargin=0.5 * inch,
                           rightMargin=0.5 * inch, topMargin=0.5 * inch,
                           bottomMargin=0.5 * inch)

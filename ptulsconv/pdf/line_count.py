@@ -172,7 +172,7 @@ def output_report(records):
     page = page.inset(inch * 0.5)
     title_box, table_box = page.split_y(inch, 'd')
 
-    c = NumberedCanvas('Line Count.pdf', pagesize=(letter[1], letter[0]))
+    c = NumberedCanvas('%s Line Count.pdf' % records['events'][0]['Title'], pagesize=(letter[1], letter[0]))
     c.setFont('Futura', 18.)
     c.drawCentredString(title_box.center_x, title_box.center_y, "Line Count")
 

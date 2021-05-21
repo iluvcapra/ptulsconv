@@ -1,4 +1,3 @@
-ptulsconv~=0.6.0
 setuptools~=56.2.0
 reportlab~=3.5.67
 ffmpeg~=1.4

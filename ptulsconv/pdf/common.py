@@ -2,7 +2,9 @@ from reportlab.pdfbase.pdfmetrics import (getAscent, getDescent)
 from reportlab.lib.units import inch
 from reportlab.pdfgen import canvas
 import datetime
-from reportlab.platypus.doctemplate import BaseDocTemplate, Frame, PageTemplate
+from reportlab.platypus.doctemplate import BaseDocTemplate, PageTemplate
+from reportlab.platypus.frames import Frame
+
 
 # This is from https://code.activestate.com/recipes/576832/ for
 # generating page count messages
@@ -45,7 +47,7 @@ class ADRDocTemplate(BaseDocTemplate):
         BaseDocTemplate.build(self, flowables, filename, canvasmaker)
 
 
-def make_doc_template(page_size, filename, document_title, record, document_header = ""):
+def make_doc_template(page_size, filename, document_title, record, document_header=""):
     left_margin = right_margin = top_margin = bottom_margin = 0.5 * inch
     page_box = GRect(0., 0., page_size[0], page_size[1])
     _, page_box = page_box.split_x(left_margin, direction='r')
@@ -74,8 +76,7 @@ def make_doc_template(page_size, filename, document_title, record, document_head
     return doc
 
 
-
-def time_format(mins, zero_str = ""):
+def time_format(mins, zero_str=""):
     if mins == 0. and zero_str is not None:
         return zero_str
     elif mins < 60.:

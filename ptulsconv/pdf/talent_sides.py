@@ -59,8 +59,9 @@ def output_report(records):
 # Unicode: U+2192, UTF-8: E2 86 92
             story.append(
                 KeepTogether(
-                    [HRFlowable(width='100%', color=colors.black),
-                     Table(data=data_block, colWidths=[1.5 * inch, 6. * inch]),
+                    [HRFlowable(width='50%', color=colors.black),
+                     Table(data=data_block, colWidths=[1.5 * inch, 6. * inch],
+                           style=[('LEFTPADDING', (0, 0), (-1, -1), 0.)]),
                      Paragraph(line['Line'], prompt_style),
                      Spacer(1., inch * 1.5)]
                 )

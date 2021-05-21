@@ -53,6 +53,7 @@ adr_field_map = ((['Title', 'PT.Session.Name'], 'Title', str),
                  (['Movie.Start_Offset_Seconds'], 'Movie Seconds', float),
                  )
 
+
 def dump_field_map(field_map_name, output=sys.stdout):
     output.write("# Map of Tag fields to XML output columns\n")
     output.write("# (in order of precedence)\n")
@@ -69,6 +70,7 @@ def dump_field_map(field_map_name, output=sys.stdout):
     for n, field in enumerate(field_map):
         for tag in field[0]:
             output.write("# %-27s-> %-20s | %-8s| %-7i\n" % (tag[:27], field[1][:20], field[2].__name__, n + 1))
+
 
 def normalize_record_keys(records):
     for record in records['events']:

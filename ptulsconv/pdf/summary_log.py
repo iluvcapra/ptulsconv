@@ -41,6 +41,7 @@ def build_story(lines):
     scene_style = getSampleStyleSheet()['Normal']
     scene_style.fontName = 'Futura'
     scene_style.leftIndent = 0.
+    scene_style.leftPadding = 0.
     line_style = getSampleStyleSheet()['Normal']
     line_style.fontName = 'Futura'
 

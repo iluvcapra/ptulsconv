@@ -75,8 +75,10 @@ def make_doc_template(page_size, filename, document_title, record, document_head
 
 
 
-def time_format(mins):
-    if mins < 60.:
+def time_format(mins, zero_str = ""):
+    if mins == 0. and zero_str is not None:
+        return zero_str
+    elif mins < 60.:
         return "%im" % round(mins)
     else:
         m = round(mins)

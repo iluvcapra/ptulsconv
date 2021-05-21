@@ -5,6 +5,8 @@ import datetime
 from reportlab.platypus.doctemplate import BaseDocTemplate, PageTemplate
 from reportlab.platypus.frames import Frame
 
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 # This is from https://code.activestate.com/recipes/576832/ for
 # generating page count messages
@@ -64,6 +66,7 @@ def make_doc_template(page_size, filename, document_title, record, document_head
                                  onPage=lambda c, _: draw_header_footer(c, title_box, report_box, footer_box, record,
                                                                         doc_title=document_header))
 
+    pdfmetrics.registerFont(TTFont('Futura', 'Futura.ttc'))
     doc = ADRDocTemplate(filename,
                          title=document_title,
                          author=record.get('Supervisor', ""),

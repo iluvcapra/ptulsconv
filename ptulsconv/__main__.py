@@ -1,6 +1,7 @@
 from ptulsconv.commands import convert, dump_field_map
 from ptulsconv import __name__, __version__, __author__
 from optparse import OptionParser, OptionGroup
+from .xml.common import dump_xform_options
 from .reporting import print_status_style, print_banner_style, print_section_header_style, print_fatal_error
 import datetime
 import sys
@@ -100,7 +101,7 @@ def main():
         convert(input_file=args[1], output_format=output_format, start=options.in_time, end=options.out_time,
                 include_muted=options.include_muted, xsl=options.xslt, select_reel=options.select_reel,
                 progress=False, output=sys.stdout, log_output=sys.stderr,
-                warnings=options.warnings, spelling=False)
+                warnings=options.warnings)
     except FileNotFoundError as e:
         print_fatal_error("Error trying to read input file")
         raise e

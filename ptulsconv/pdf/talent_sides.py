@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from .common import GRect, draw_header_footer, ReportCanvas, make_doc_template
+from .common import make_doc_template
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 
-from reportlab.platypus import BaseDocTemplate, Paragraph, Spacer, \
-    KeepTogether, Table, HRFlowable, PageTemplate, Frame
+from reportlab.platypus import Paragraph, Spacer, KeepTogether, Table, HRFlowable
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 

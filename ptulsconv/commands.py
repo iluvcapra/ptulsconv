@@ -87,7 +87,7 @@ def normalize_record_keys(records):
 
 def convert(input_file, output_format='fmpxml', start=None, end=None, select_reel=None,
             progress=False, include_muted=False, xsl=None,
-            output=sys.stdout, log_output=sys.stderr, warnings=True, spelling=False):
+            output=sys.stdout, log_output=sys.stderr, warnings=True):
     with open(input_file, 'r') as file:
         print_section_header_style('Parsing')
         ast = ptulsconv.protools_text_export_grammar.parse(file.read())
@@ -160,5 +160,5 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
                 fmp_dump(parsed, input_file, output, adr_field_map)
             else:
                 print_section_header_style("Performing XSL Translation")
-                print_status_style("Using builtin translation: %s" % (xsl))
+                print_status_style("Using builtin translation: %s" % xsl)
                 fmp_transformed_dump(parsed, input_file, xsl, output)

@@ -1,30 +1,25 @@
-from reportlab.pdfgen.canvas import Canvas
-
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
 from reportlab.lib.units import inch
-from reportlab.lib.pagesizes import letter, landscape, portrait
+from reportlab.lib.pagesizes import letter, portrait
 from reportlab.lib import colors
 
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import Paragraph, Table, TableStyle
+from reportlab.platypus import Table
 
-from .common import GRect, time_format, ReportCanvas, make_doc_template
-
-import datetime
+from .common import time_format, make_doc_template
 
 
-def build_columns(records, show_priorities = False):
+def build_columns(records, show_priorities=False):
     columns = list()
     reel_numbers = sorted(set([x.get('Reel', None) for x in records['events'] if 'Reel' in x.keys()]))
 
-    def blank_len(iter):
-        l = len(iter)
-        if l == 0:
+    def blank_len(i):
+        length = len(i)
+        if length == 0:
             return ""
         else:
-            return str(l)
+            return str(length)
 
     num_column_width = 0.375 * inch
 
@@ -53,7 +48,7 @@ def build_columns(records, show_priorities = False):
     #     'width': 1.75 * inch
     # })
 
-    if True: #len(reel_numbers) > 0:
+    if len(reel_numbers) > 0:
         columns.append({
             'heading': 'RX',
             'value_getter': lambda recs: blank_len([r for r in recs if r.get('Reel', None) in ("", None)]),
@@ -96,17 +91,19 @@ def build_columns(records, show_priorities = False):
     columns.append({
         'heading': 'TV',
         'value_getter': lambda recs: blank_len([r for r in recs if 'TV' in r.keys()]),
-        'value_getter2': lambda recs: time_format(sum([r.get('Time Budget Mins', 0.) for r in recs if 'TV' in r.keys()])),
+        'value_getter2': lambda recs: time_format(sum([r.get('Time Budget Mins', 0.)
+                                                       for r in recs if 'TV' in r.keys()])),
         'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER'),
                                            ('LINEBEFORE', (col_index, 0), (col_index, -1), 1., colors.black),
-                                           ('LINEAFTER', (col_index, 0), (col_index, -1), .5, colors.gray),],
+                                           ('LINEAFTER', (col_index, 0), (col_index, -1), .5, colors.gray)],
         'width': num_column_width
     })
 
     columns.append({
         'heading': 'Opt',
         'value_getter': lambda recs: blank_len([r for r in recs if 'Optional' in r.keys()]),
-        'value_getter2': lambda recs: time_format(sum([r.get('Time Budget Mins', 0.) for r in recs if 'Optional' in r.keys()])),
+        'value_getter2': lambda recs: time_format(sum([r.get('Time Budget Mins', 0.)
+                                                       for r in recs if 'Optional' in r.keys()])),
         'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER'),
                                            ('LINEAFTER', (col_index, 0), (col_index, -1), .5, colors.gray)],
         'width': num_column_width
@@ -115,7 +112,8 @@ def build_columns(records, show_priorities = False):
     # columns.append({
     #     'heading': 'Eff',
     #     'value_getter': lambda recs: blank_len([r for r in recs if 'Effort' in r.keys()]),
-    #     'value_getter2': lambda recs: time_format(sum([r.get('Time Budget Mins',0.) for r in recs if 'Effort' in r.keys()])),
+    #     'value_getter2': lambda recs: time_format(sum([r.get('Time Budget Mins',0.)
+    #                                               for r in recs if 'Effort' in r.keys()])),
     #     'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER')],
     #     'width': 0.5 * inch
     # })
@@ -204,7 +202,7 @@ def populate_columns(records, columns):
 def output_report(records):
     columns = build_columns(records)
     data, style, columns_widths = populate_columns(records, columns)
-    style.append(('FONTNAME', [0, 0], (-1, -1), "Futura"))
+    style.append(('FONTNAME', (0, 0), (-1, -1), "Futura"))
     style.append(('FONTSIZE', (0, 0), (-1, -1), 9.))
     style.append(('LINEBELOW', (0, 0), (-1, 0), 1.0, colors.black))
     style.append(('LINEBELOW', (0, 1), (-1, -1), 0.25, colors.gray))

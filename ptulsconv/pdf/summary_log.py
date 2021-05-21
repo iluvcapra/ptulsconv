@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from .common import GRect, draw_header_footer, time_format, make_doc_template
+from .common import time_format, make_doc_template
 from reportlab.lib.units import inch
-from reportlab.lib.pagesizes import letter, landscape, portrait
+from reportlab.lib.pagesizes import letter, portrait
 
-from reportlab.platypus import BaseDocTemplate, Paragraph, Spacer, \
-    KeepTogether, Table, HRFlowable, PageTemplate, Frame
+from reportlab.platypus import Paragraph, Spacer, KeepTogether, Table
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
-
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
 
 
 def build_aux_data_field(line):
@@ -80,7 +76,8 @@ def build_story(lines):
                 Paragraph("<u>" + this_scene + "</u>", scene_style),
                 line_table]))
         else:
-            line_table.setStyle(table_style + [('LINEABOVE', (0, 0), (-1,0), .5, colors.gray)])
+            table_style.append(('LINEABOVE', (0, 0), (-1, 0), .5, colors.gray))
+            line_table.setStyle(table_style)
             story.append(KeepTogether([line_table]))
 
     return story

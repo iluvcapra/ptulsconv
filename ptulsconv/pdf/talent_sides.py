@@ -10,10 +10,6 @@ from reportlab.lib import colors
 
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-#
-# page_box = GRect(inch * 0.5, inch * 0.5, letter[0] - inch, letter[1] - inch)
-# title_box, page_box = page_box.split_y(0.875 * inch, 'd')
-# header_block, title_block = title_box.split_x(inch * 4.)
 
 
 def output_report(records):

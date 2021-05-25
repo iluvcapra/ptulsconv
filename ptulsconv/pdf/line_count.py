@@ -10,16 +10,9 @@ from reportlab.platypus import Table
 from .common import time_format, make_doc_template
 
 
-def build_columns(records, show_priorities=False):
+def build_columns(records, show_priorities=False, include_omitted=False):
     columns = list()
     reel_numbers = sorted(set([x['Reel'] for x in records['events'] if 'Reel' in x.keys()]))
-
-    def blank_len(i):
-        length = len(i)
-        if length == 0:
-            return ""
-        else:
-            return str(length)
 
     num_column_width = 0.375 * inch
 
@@ -54,7 +47,7 @@ def build_columns(records, show_priorities=False):
         for n in reel_numbers:
             columns.append({
                 'heading': n,
-                'value_getter': lambda recs, n1=n: blank_len([r for r in recs if r['Reel'] == n1]),
+                'value_getter': lambda recs, n1=n: len([r for r in recs if r['Reel'] == n1]),
                 'value_getter2': lambda recs, n1=n: time_format(sum([r.get('Time Budget Mins', 0.) for r in recs
                                                                if r['Reel'] == n1])),
                 'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER'),
@@ -66,7 +59,7 @@ def build_columns(records, show_priorities=False):
         for n in range(1, 6,):
             columns.append({
                 'heading': 'P%i' % n,
-                'value_getter': lambda recs: blank_len([r for r in recs if r.get('Priority', None) == n]),
+                'value_getter': lambda recs: len([r for r in recs if r.get('Priority', None) == n]),
                 'value_getter2': lambda recs: time_format(sum([r.get('Time Budget Mins', 0.)
                                                                for r in recs if r.get('Priority', None) == n])),
                 'style_getter': lambda col_index: [],
@@ -75,7 +68,7 @@ def build_columns(records, show_priorities=False):
 
         columns.append({
             'heading': '>P5',
-            'value_getter': lambda recs: blank_len([r for r in recs if r.get('Priority', 5) > 5]),
+            'value_getter': lambda recs: len([r for r in recs if r.get('Priority', 5) > 5]),
             'value_getter2': lambda recs: time_format(sum([r.get('Time Budget Mins', 0.)
                                                            for r in recs if r.get('Priority', 5) > 5])),
             'style_getter': lambda col_index: [],
@@ -84,7 +77,7 @@ def build_columns(records, show_priorities=False):
 
     columns.append({
         'heading': 'TV',
-        'value_getter': lambda recs: blank_len([r for r in recs if 'TV' in r.keys()]),
+        'value_getter': lambda recs: len([r for r in recs if 'TV' in r.keys()]),
         'value_getter2': lambda recs: time_format(sum([r.get('Time Budget Mins', 0.)
                                                        for r in recs if 'TV' in r.keys()])),
         'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER'),
@@ -95,7 +88,7 @@ def build_columns(records, show_priorities=False):
 
     columns.append({
         'heading': 'Opt',
-        'value_getter': lambda recs: blank_len([r for r in recs if 'Optional' in r.keys()]),
+        'value_getter': lambda recs: len([r for r in recs if 'Optional' in r.keys()]),
         'value_getter2': lambda recs: time_format(sum([r.get('Time Budget Mins', 0.)
                                                        for r in recs if 'Optional' in r.keys()])),
         'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER'),
@@ -105,12 +98,22 @@ def build_columns(records, show_priorities=False):
 
     columns.append({
         'heading': 'Eff',
-        'value_getter': lambda recs: blank_len([r for r in recs if 'Effort' in r.keys()]),
+        'value_getter': lambda recs: len([r for r in recs if 'Effort' in r.keys()]),
         'value_getter2': lambda recs: time_format(sum([r.get('Time Budget Mins',0.)
                                                   for r in recs if 'Effort' in r.keys()])),
         'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER')],
         'width': num_column_width
     })
+
+    if include_omitted:
+        columns.append({
+            'heading': 'Omit',
+            'value_getter': lambda recs: len([r for r in recs if 'Omitted' in r.keys()]),
+            'value_getter2': lambda recs: time_format(sum([r.get('Time Budget Mins', 0.)
+                                                           for r in recs if 'Omitted' in r.keys()])),
+            'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER')],
+            'width': num_column_width
+        })
 
     columns.append({
         'heading': 'Total',
@@ -125,7 +128,7 @@ def build_columns(records, show_priorities=False):
     return columns
 
 
-def populate_columns(records, columns):
+def populate_columns(records, columns, include_omitted, page_size):
     data = list()
     styles = list()
     columns_widths = list()
@@ -142,7 +145,10 @@ def populate_columns(records, columns):
 
     data.append(list(map(lambda x: x['heading'], columns)))
 
-    lines = [x for x in records['events'] if 'Omitted' not in x.keys()]
+    if include_omitted:
+        lines = [x for x in records['events']]
+    else:
+        lines = [x for x in records['events'] if 'Omitted' not in x.keys()]
 
     for n in sorted_character_numbers:
         char_records = list([x for x in lines if x['Character Number'] == n])
@@ -179,9 +185,9 @@ def populate_columns(records, columns):
     return data, styles, columns_widths
 
 
-def output_report(records):
-    columns = build_columns(records)
-    data, style, columns_widths = populate_columns(records, columns)
+def output_report(records, include_omitted=False, page_size=portrait(letter)):
+    columns = build_columns(records, include_omitted)
+    data, style, columns_widths = populate_columns(records, columns, include_omitted, page_size)
     style.append(('FONTNAME', (0, 0), (-1, -1), "Futura"))
     style.append(('FONTSIZE', (0, 0), (-1, -1), 9.))
     style.append(('LINEBELOW', (0, 0), (-1, 0), 1.0, colors.black))
@@ -191,9 +197,10 @@ def output_report(records):
 
     title = "%s Line Count" % (records['events'][0]['Title'])
     filename = title + '.pdf'
-    doc = make_doc_template(portrait(letter), filename=filename,
+    doc = make_doc_template(page_size=page_size, filename=filename,
                             document_title=title,
-                            record=records['events'][0], document_header='Line Count')
+                            record=records['events'][0],
+                            document_header='Line Count')
 
     table = Table(data=data, style=style, colWidths=columns_widths)
 

@@ -89,13 +89,14 @@ def build_story(lines):
     return story
 
 
-def output_report(records):
+def output_report(records, page_size=portrait(letter)):
     lines = sorted(records['events'], key=lambda line: line['PT.Clip.Start_Seconds'])
 
     title = "%s ADR Report" % (lines[0]['Title'])
     filename = title + ".pdf"
 
-    doc = make_doc_template(portrait(letter), filename=filename, document_title=title,
+    doc = make_doc_template(page_size=page_size,
+                            filename=filename, document_title=title,
                             record=lines[0], document_header='ADR Report')
 
     story = build_story(lines)

@@ -143,31 +143,34 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
         if output_format == 'json':
             json.dump(parsed, output)
 
-        elif output_format == 'full':
+        elif output_format == 'adr':
+
+            lines = [e for e in parsed['events'] if 'ADR' in e.keys()]
+
             print_section_header_style("Creating PDF Reports")
 
             print_status_style("Creating ADR Report")
-            output_summary(parsed)
+            output_summary(lines)
 
             print_status_style("Creating Line Count")
-            output_line_count(parsed)
+            output_line_count(lines)
 
             print_status_style("Creating Supervisor Logs directory and reports")
             os.makedirs("Supervisor Logs", exist_ok=True)
             os.chdir("Supervisor Logs")
-            output_supervisor_1pg(parsed)
+            output_supervisor_1pg(lines)
 
             os.chdir("..")
             print_status_style("Creating Director's Logs director and reports")
             os.makedirs("Director Logs", exist_ok=True)
             os.chdir("Director Logs")
-            output_summary(parsed, by_character=True)
+            output_summary(lines, by_character=True)
 
             os.chdir("..")
             print_status_style("Creating Scripts directory and reports")
             os.makedirs("Talent Scripts", exist_ok=True)
             os.chdir("Talent Scripts")
-            output_talent_sides(parsed)
+            output_talent_sides(lines)
 
         elif output_format == 'fmpxml':
             if xsl is None:

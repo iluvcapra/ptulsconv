@@ -11,9 +11,9 @@ from reportlab.lib.styles import getSampleStyleSheet
 from .common import time_format, make_doc_template
 
 
-def build_columns(records, show_priorities=False, include_omitted=False):
+def build_columns(lines, show_priorities=False, include_omitted=False):
     columns = list()
-    reel_numbers = sorted(set([x['Reel'] for x in records['events'] if 'Reel' in x.keys()]))
+    reel_numbers = sorted(set([x['Reel'] for x in lines if 'Reel' in x.keys()]))
 
     num_column_width = 0.375 * inch
 
@@ -129,12 +129,12 @@ def build_columns(records, show_priorities=False, include_omitted=False):
     return columns
 
 
-def populate_columns(records, columns, include_omitted, page_size):
+def populate_columns(lines, columns, include_omitted, page_size):
     data = list()
     styles = list()
     columns_widths = list()
 
-    sorted_character_numbers = sorted(set([x['Character Number'] for x in records['events']
+    sorted_character_numbers = sorted(set([x['Character Number'] for x in lines
                                           if 'Character Number' in x.keys()]),
                                       key=lambda x: str(x))
 
@@ -146,10 +146,8 @@ def populate_columns(records, columns, include_omitted, page_size):
 
     data.append(list(map(lambda x: x['heading'], columns)))
 
-    if include_omitted:
-        lines = [x for x in records['events']]
-    else:
-        lines = [x for x in records['events'] if 'Omitted' not in x.keys()]
+    if not include_omitted:
+        lines = [x for x in lines if 'Omitted' not in x.keys()]
 
     for n in sorted_character_numbers:
         char_records = list([x for x in lines if x['Character Number'] == n])
@@ -189,9 +187,9 @@ def populate_columns(records, columns, include_omitted, page_size):
 def build_header(column_widths):
     pass
 
-def output_report(records, include_omitted=False, page_size=portrait(letter)):
-    columns = build_columns(records, include_omitted)
-    data, style, columns_widths = populate_columns(records, columns, include_omitted, page_size)
+def output_report(lines, include_omitted=False, page_size=portrait(letter)):
+    columns = build_columns(lines, include_omitted)
+    data, style, columns_widths = populate_columns(lines, columns, include_omitted, page_size)
 
     style.append(('FONTNAME', (0, 0), (-1, -1), "Futura"))
     style.append(('FONTSIZE', (0, 0), (-1, -1), 9.))
@@ -200,11 +198,11 @@ def output_report(records, include_omitted=False, page_size=portrait(letter)):
 
     pdfmetrics.registerFont(TTFont('Futura', 'Futura.ttc'))
 
-    title = "%s Line Count" % (records['events'][0]['Title'])
+    title = "%s Line Count" % (lines[0]['Title'])
     filename = title + '.pdf'
     doc = make_doc_template(page_size=page_size, filename=filename,
                             document_title=title,
-                            record=records['events'][0],
+                            record=lines[0],
                             document_header='Line Count')
 
     #header_data, header_style, header_widths = build_header(columns_widths)

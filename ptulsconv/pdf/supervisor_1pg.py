@@ -236,10 +236,10 @@ def create_report_for_character(records, report_date):
     c.save()
 
 
-def output_report(records):
+def output_report(lines):
     report_date = datetime.datetime.now()
-    events = sorted(records['events'], key=lambda x: x['PT.Clip.Start_Frames'])
-    character_numbers = set([x['CN'] for x in events])
+    events = sorted(lines, key=lambda x: x['PT.Clip.Start_Frames'])
+    character_numbers = set([x['CN'] for x in lines])
 
     for n in character_numbers:
         create_report_for_character([e for e in events if e['CN'] == n], report_date)

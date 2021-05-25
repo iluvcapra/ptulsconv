@@ -56,16 +56,7 @@ def build_story(lines):
                        ('LEFTPADDING', (0, 0), (0, 0), 0.0),
                        ('BOTTOMPADDING', (0, 0), (-1, -1), 24.)]
 
-        # if 'Omitted' in line.keys():
-        #     cue_number_field = "<s>" + line['Cue Number'] + "</s><br /><font fontSize=7>" + \
-        #                        line['Character Name'] + "</font>"
-        #     table_style.append(('BACKGROUND', (0, 0), (-1, 0), colors.lightpink))
-        # elif 'Effort' in line.keys():
-        #     cue_number_field = "<s>" + line['Cue Number'] + "</s><br /><font fontSize=7>" + \
-        #                        line['Character Name'] + "</font>"
-        #     table_style.append(('BACKGROUND', (0, 0), (-1, 0), colors.lightgreen))
-        # else:
-        cue_number_field = line['Cue Number'] + "<br /><font fontSize=7>" + line['Character Name'] + "</font>"
+        cue_number_field = "%s<br /><font fontSize=7>%s</font>" % (line['Cue Number'], line['Character Name'])
 
         time_data = time_format(line.get('Time Budget Mins', 0.))
 
@@ -74,19 +65,7 @@ def build_story(lines):
 
         aux_data_field = build_aux_data_field(line)
 
-        tc_data = line['PT.Clip.Start'] + "<br />" + line['PT.Clip.Finish']
-
-        third_line = []
-        if 'Reel' in line.keys():
-            if line['Reel'][0:1] == 'R':
-                third_line.append("%s" % (line['Reel']))
-            else:
-                third_line.append("Reel %s" % (line['Reel']))
-        if 'Version' in line.keys():
-            third_line.append("(%s)" % line['Version'])
-
-        if len(third_line) > 0:
-            tc_data = tc_data + "<br/>" + " ".join(third_line)
+        tc_data = build_tc_data(line)
 
         line_table_data = [[Paragraph(cue_number_field, line_style),
                             Paragraph(tc_data, line_style),
@@ -112,8 +91,23 @@ def build_story(lines):
     return story
 
 
-def generate_report(page_size, records, character_number=None):
-    lines = records['events']
+def build_tc_data(line):
+    tc_data = line['PT.Clip.Start'] + "<br />" + line['PT.Clip.Finish']
+    third_line = []
+    if 'Reel' in line.keys():
+        if line['Reel'][0:1] == 'R':
+            third_line.append("%s" % (line['Reel']))
+        else:
+            third_line.append("Reel %s" % (line['Reel']))
+    if 'Version' in line.keys():
+        third_line.append("(%s)" % line['Version'])
+    if len(third_line) > 0:
+        tc_data = tc_data + "<br/>" + " ".join(third_line)
+    return tc_data
+
+
+def generate_report(page_size, lines, character_number=None, include_done=True,
+                    include_omitted=True):
     if character_number is not None:
         lines = [r for r in lines if r['Character Number'] == character_number]
         title = "%s ADR Report (%s)" % (lines[0]['Title'], lines[0]['Character Name'])
@@ -121,6 +115,12 @@ def generate_report(page_size, records, character_number=None):
     else:
         title = "%s ADR Report" % (lines[0]['Title'])
         document_header = 'ADR Report'
+
+    if not include_done:
+        lines = [line for line in lines if 'Done' not in line.keys()]
+
+    if not include_omitted:
+        lines = [line for line in lines if 'Omitted' not in line.keys()]
 
     lines = sorted(lines, key=lambda line: line['PT.Clip.Start_Seconds'])
 
@@ -132,10 +132,10 @@ def generate_report(page_size, records, character_number=None):
     doc.build(story)
 
 
-def output_report(records, page_size=portrait(letter), by_character=False):
+def output_report(lines, page_size=portrait(letter), by_character=False):
     if by_character:
-        character_numbers = set((r['Character Number'] for r in records['events']))
+        character_numbers = set((r['Character Number'] for r in lines))
         for n in character_numbers:
-            generate_report(page_size, records, n)
+            generate_report(page_size, lines, n)
     else:
-        generate_report(page_size, records)
+        generate_report(page_size, lines)

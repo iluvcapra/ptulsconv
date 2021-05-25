@@ -8,6 +8,7 @@ from reportlab.platypus.frames import Frame
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
+
 # This is from https://code.activestate.com/recipes/576832/ for
 # generating page count messages
 class ReportCanvas(canvas.Canvas):
@@ -87,7 +88,7 @@ def time_format(mins, zero_str=""):
     else:
         m = round(mins)
         hh, mm = divmod(m, 60)
-        return "%ih%i" % (hh, mm)
+        return "%i:%02i" % (hh, mm)
 
 
 def draw_header_footer(a_canvas, title_box, doc_title_box, footer_box, record, doc_title=""):

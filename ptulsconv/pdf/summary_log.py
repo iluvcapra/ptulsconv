@@ -23,7 +23,16 @@ def build_aux_data_field(line):
     tag_field = ""
     for tag in line.keys():
         if line[tag] == tag and tag != 'ADR':
-            tag_field += "<font backColor=black textColor=white>" + tag + "</font> "
+            fcolor = 'white'
+            bcolor = 'black'
+            if tag == 'ADLIB' or tag == 'TBW':
+                bcolor = 'darkmagenta'
+            elif tag == 'EFF':
+                bcolor = 'red'
+            elif tag == 'TV':
+                bcolor = 'blue'
+
+            tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font> " % (bcolor, fcolor, tag)
 
     entries.append(tag_field)
 
@@ -47,16 +56,16 @@ def build_story(lines):
                        ('LEFTPADDING', (0, 0), (0, 0), 0.0),
                        ('BOTTOMPADDING', (0, 0), (-1, -1), 24.)]
 
-        if 'Omitted' in line.keys():
-            cue_number_field = "<s>" + line['Cue Number'] + "</s><br /><font fontSize=7>" + \
-                               line['Character Name'] + "</font>"
-            table_style.append(('BACKGROUND', (0, 0), (-1, 0), colors.lightpink))
-        elif 'Effort' in line.keys():
-            cue_number_field = "<s>" + line['Cue Number'] + "</s><br /><font fontSize=7>" + \
-                               line['Character Name'] + "</font>"
-            table_style.append(('BACKGROUND', (0, 0), (-1, 0), colors.lightgreen))
-        else:
-            cue_number_field = line['Cue Number'] + "<br /><font fontSize=7>" + line['Character Name'] + "</font>"
+        # if 'Omitted' in line.keys():
+        #     cue_number_field = "<s>" + line['Cue Number'] + "</s><br /><font fontSize=7>" + \
+        #                        line['Character Name'] + "</font>"
+        #     table_style.append(('BACKGROUND', (0, 0), (-1, 0), colors.lightpink))
+        # elif 'Effort' in line.keys():
+        #     cue_number_field = "<s>" + line['Cue Number'] + "</s><br /><font fontSize=7>" + \
+        #                        line['Character Name'] + "</font>"
+        #     table_style.append(('BACKGROUND', (0, 0), (-1, 0), colors.lightgreen))
+        # else:
+        cue_number_field = line['Cue Number'] + "<br /><font fontSize=7>" + line['Character Name'] + "</font>"
 
         time_data = time_format(line.get('Time Budget Mins', 0.))
 
@@ -89,16 +98,30 @@ def build_story(lines):
     return story
 
 
-def output_report(records, page_size=portrait(letter)):
-    lines = sorted(records['events'], key=lambda line: line['PT.Clip.Start_Seconds'])
+def generate_report(page_size, records, character_number=None):
+    lines = records['events']
+    if character_number is not None:
+        lines = [r for r in lines if r['Character Number'] == character_number]
+        title = "%s ADR Report (%s)" % (lines[0]['Title'], lines[0]['Character Name'])
+        document_header = "%s ADR Report" % (lines[0]['Character Name'])
+    else:
+        title = "%s ADR Report" % (lines[0]['Title'])
+        document_header = 'ADR Report'
 
-    title = "%s ADR Report" % (lines[0]['Title'])
+    lines = sorted(lines, key=lambda line: line['PT.Clip.Start_Seconds'])
+
     filename = title + ".pdf"
-
     doc = make_doc_template(page_size=page_size,
                             filename=filename, document_title=title,
-                            record=lines[0], document_header='ADR Report')
-
+                            record=lines[0], document_header=document_header)
     story = build_story(lines)
-
     doc.build(story)
+
+
+def output_report(records, page_size=portrait(letter), by_character=False):
+    if by_character:
+        character_numbers = set((r['Character Number'] for r in records['events']))
+        for n in character_numbers:
+            generate_report(page_size, records, n)
+    else:
+        generate_report(page_size, records)

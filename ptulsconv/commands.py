@@ -49,6 +49,7 @@ adr_field_map = ((['Title', 'PT.Session.Name'], 'Title', str),
                  (['OMIT'], 'Omit', str),
                  (['ADLIB'], 'Adlib', str),
                  (['OPT'], 'Optional', str),
+                 (['DONE'], 'Done', str),
                  (['Movie.Filename'], 'Movie', str),
                  (['Movie.Start_Offset_Seconds'], 'Movie Seconds', float),
                  )
@@ -156,8 +157,14 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
             os.chdir("Supervisor Logs")
             output_supervisor_1pg(parsed)
 
-            print_status_style("Creating Scripts directory and reports")
             os.chdir("..")
+            print_status_style("Creating Director's Logs director and reports")
+            os.makedirs("Director Logs", exist_ok=True)
+            os.chdir("Director Logs")
+            output_summary(parsed, by_character=True)
+
+            os.chdir("..")
+            print_status_style("Creating Scripts directory and reports")
             os.makedirs("Talent Scripts", exist_ok=True)
             os.chdir("Talent Scripts")
             output_talent_sides(parsed)

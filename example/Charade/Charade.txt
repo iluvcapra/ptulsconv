@@ -1,0 +1,170 @@
+SESSION NAME:	Charade
+SAMPLE RATE:	48000.000000
+BIT DEPTH:	24-bit
+SESSION START TIMECODE:	00:59:00:00
+TIMECODE FORMAT:	25 Frame
+# OF AUDIO TRACKS:	13
+# OF AUDIO CLIPS:	2
+# OF AUDIO FILES:	1
+
+
+T R A C K  L I S T I N G
+TRACK NAME:	Scenes
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	@ {Sc=Logos}                  	   01:00:00:00	   01:00:17:21	   00:00:17:21	Unmuted
+1       	2       	@ {Sc=1-2 Ext. French Countryside - Dusk}	   01:00:17:21	   01:01:00:24	   00:00:43:03	Unmuted
+1       	3       	@ {Sc=Main Titles}            	   01:01:00:24	   01:03:04:02	   00:02:03:02	Unmuted
+1       	4       	@ {Sc=6 Ext. Megve - Day}     	   01:03:04:02	   01:04:29:05	   00:01:25:02	Unmuted
+1       	5       	@ {Sc=8A Swimming Pool - Onto Terrace}	   01:04:29:05	   01:07:01:14	   00:02:32:09	Unmuted
+1       	6       	@ {Sc=11-12 Ext. Ave Foch - Lampert Apartment}	   01:07:01:14	   01:07:28:22	   00:00:27:08	Unmuted
+1       	7       	@ {Sc=15 Int. Apartment Landing}	   01:07:28:22	   01:07:39:16	   00:00:10:19	Unmuted
+1       	8       	@ {Sc=17 In. Lampert House - Empty}	   01:07:39:16	   01:08:57:21	   00:01:18:05	Unmuted
+1       	9       	@ {Sc=25 Int. Morgue}         	   01:08:57:21	   01:09:38:23	   00:00:41:02	Unmuted
+1       	10      	@ {Sc=28 Int. Grandpierre's Office}	   01:09:38:23	   01:13:23:16	   00:03:44:18	Unmuted
+1       	11      	@ {Sc=36 Int. Lampert Apartment - Night}	   01:13:23:16	   01:15:18:13	   00:01:54:21	Unmuted
+1       	12      	@ {Sc=38A Int. Funeral Chapel - Day}	   01:15:18:13	   01:18:50:20	   00:03:32:07	Unmuted
+1       	13      	@ {Sc=63 Ext/Int American Embassy - Establishing}	   01:18:50:20	   01:19:09:20	   00:00:19:00	Unmuted
+1       	14      	@ {Sc=70 Int. Barholomew's Office}	   01:19:09:20	   01:25:12:07	   00:06:02:12	Unmuted
+1       	15      	@ {Sc=77 Ext. Esplanade des Champs-Elysées}	   01:25:12:07	   01:26:53:03	   00:01:40:20	Unmuted
+1       	16      	@ {Sc=88 Int. Nightclub - Night}	   01:26:53:03	   01:30:07:06	   00:03:14:03	Unmuted
+1       	17      	@ {Sc=102 Int. Nightclub Lounge - Night}	   01:30:07:06	   01:31:49:18	   00:01:42:12	Unmuted
+1       	18      	@ {Sc=108 Int. Hotel Lobby}   	   01:31:49:18	   01:32:44:17	   00:00:54:23	Unmuted
+1       	19      	@ {Sc=109 Int. Elevator}      	   01:32:44:17	   01:33:05:20	   00:00:21:03	Unmuted
+1       	20      	@ {Sc=110 Int. Hotel Third Landing} 	   01:33:05:20	   01:33:55:07	   00:00:49:12	Unmuted
+1       	21      	@ {Sc=112 Int. Reggie's Room - Night}	   01:33:55:07	   01:34:23:00	   00:00:27:17	Unmuted
+1       	22      	@ {Sc=116 Int. Hotel Corridor}	   01:34:23:00	   01:34:46:16	   00:00:23:16	Unmuted
+1       	23      	@ {Sc=120 Int. Reggie's Room - Night}	   01:34:46:16	   01:35:25:17	   00:00:39:01	Unmuted
+1       	24      	@ {Sc=122 Ext. Hotel Window - Night}	   01:35:25:17	   01:36:49:04	   00:01:23:11	Unmuted
+1       	25      	@ {Sc=132 Int. Gideon's Hotel Room - Night}	   01:36:49:04	   01:38:13:08	   00:01:24:04	Unmuted
+1       	26      	@ {Sc=134 Int. Reggie's Room - Night}	   01:38:13:08	   01:38:29:16	   00:00:16:08	Unmuted
+1       	27      	@ {Sc=134 Int. Reggie's Room - Night}	   01:38:29:16	   01:40:18:07	   00:01:48:16	Unmuted
+1       	28      	@ {Sc=139/140 Int. Hotel Room/Phone Booth Intercut}	   01:40:18:07	   01:40:54:18	   00:00:36:11	Unmuted
+1       	29      	@ {Sc=142 Int. Reggie's Room - Night}	   01:40:54:18	   01:41:46:15	   00:00:51:22	Unmuted
+
+
+TRACK NAME:	PETER
+COMMENTS:	$CN=1 {Actor=Cary Grant}
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	"Does this belong to you?" (alt for "Does HE belong to you?" {R=Replace Line}	   01:05:10:16	   01:05:11:19	   00:00:01:03	Unmuted
+1       	2       	"Well I telephones by nobody answered." {R=Off mic}	   01:13:47:24	   01:13:49:19	   00:00:01:19	Unmuted
+1       	3       	"It's in all the afternoon papers." {R=Replace Line} {Note=Adding "ALL"}	   01:13:59:21	   01:14:01:11	   00:00:01:14	Unmuted
+1       	4       	"Here you are." {R=Replace temp}	   01:33:08:00	   01:33:09:01	   00:00:01:01	Unmuted
+1       	5       	"On the street where you live..." {R=Replace temp}	   01:33:10:09	   01:33:12:03	   00:00:01:19	Unmuted
+1       	6       	(adlib response to REGGIE) {R=Added/Replaces sync} [ADLIB]	   01:34:27:10	   01:34:29:03	   00:00:01:18	Unmuted
+1       	7       	(effort add PUNCH efforts, react to GETTING PUNCHED) {R=Added} [EFF]	   01:34:31:11	   01:34:41:23	   00:00:10:12	Unmuted
+1       	8       	"… And close these windows after me." {R=Replace temp} 	   01:35:19:16	   01:35:21:11	   00:00:01:20	Unmuted
+1       	9       	(effort LEAPING to balcony) [EFF] {R=Added}	   01:36:13:02	   01:36:15:06	   00:00:02:04	Unmuted
+1       	10      	"It's me, Peter." {R=Performance} {Note=More voice, call through door}	   01:38:32:01	   01:38:33:03	   00:00:01:02	Unmuted
+
+
+TRACK NAME:	REGGIE
+COMMENTS:	$CN=2 {Actor=Audrey Hepburn}
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	(react to getting squirted by gun) {R=Added} [EFF]	   01:03:40:02	   01:03:41:19	   00:00:01:16	Unmuted
+1       	2       	"Look I admit I came to Paris to escape American Provincial but that doesn't mean I'm ready for French Traditional!" {R=Clarity} {Note=Low Priority}	   01:04:45:22	   01:04:50:15	   00:00:04:18	Unmuted
+1       	3       	"Oh, no— you see, I don't really love him." {R=Clarity}	   01:06:14:17	   01:06:16:15	   00:00:01:22	Unmuted
+1       	4       	(reactions to empty house, turning open cupboards etc.) {R=Added} [EFF]	   01:07:41:13	   01:08:41:19	   00:01:00:06	Unmuted
+1       	5       	(effort RUN INTO Grandpierre) {R=Added} [EFF]	   01:08:41:19	   01:08:45:12	   00:00:03:17	Unmuted
+1       	6       	"I know, I'm sorry." {R=Replace Sync} {Note=More hesitant}	   01:10:36:00	   01:10:38:06	   00:00:02:06	Unmuted
+1       	7       	"Misses Lampert, Misses Charles Lampert." {R=Clarity} {Note=Prounonce P of Lampert harder}	   01:19:30:22	   01:19:32:18	   00:00:01:21	Unmuted
+1       	8       	"Mister Bartholomew this is Regina Lampert— Mister Bartholomew I just saw one of those me—" {R=Clarity}	   01:30:24:12	   01:30:28:16	   00:00:04:04	Unmuted
+1       	9       	"Where?" {R=Replace temp}     	   01:33:09:07	   01:33:09:24	   00:00:00:16	Unmuted
+1       	10      	"Peter? … Peter? … Peter are you alright?" {R=More sotto voce}	   01:34:53:10	   01:35:01:02	   00:00:07:16	Unmuted
+
+
+TRACK NAME:	BARTHOLOMEW
+COMMENTS:	$CN=3  {Actor=Walter Matthau} $Mins=8
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	"Is there anything wrong, Miss Tompkins?" {R=Replace offscreen}	   01:19:17:07	   01:19:19:07	   00:00:02:00	Unmuted
+1       	2       	"Oh yes, uh, please— uh come in, Misses Lampert." {R=Clarity} {Note=Harder P on Lampert}	   01:19:33:02	   01:19:37:13	   00:00:04:11	Unmuted
+1       	3       	"You're Charles Lampert's widow, yes?" {R=Clarity} 	   01:20:03:06	   01:20:04:22	   00:00:01:16	Unmuted
+
+
+TRACK NAME:	TEX
+COMMENTS:	$CN=4 {Actor=James Coburn}
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	"But if you do find that money…" {R=Accent}	   01:37:50:08	   01:37:52:15	   00:00:02:07	Unmuted
+1       	2       	"You ain't gonna forget to tell your buddies about it are ya?" {R=Accent}	   01:37:53:15	   01:37:55:24	   00:00:02:08	Unmuted
+
+
+TRACK NAME:	SCOBIE
+COMMENTS:	$CN=5 {Actor=George Kennedy}
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	(effort HEAVY BREATHING) {R=Added} [EFF]	   01:34:05:10	   01:34:15:04	   00:00:09:18	Unmuted
+1       	2       	(effort add PUNCH efforts, react to GETTING PUNCHED) {R=Added} [EFF]	   01:34:31:11	   01:34:41:23	   00:00:10:12	Unmuted
+
+
+TRACK NAME:	SYLVIE
+COMMENTS:	$CN=6 {Actor=Dominique Minot}
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	"It is infuriating that your unhappiness does not turn to fat!" {R=Accent}	   01:04:25:08	   01:04:28:19	   00:00:03:11	Unmuted
+
+
+TRACK NAME:	GIDEON
+COMMENTS:	$CN=7 {Actor=Ned Glass}
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	(effort) "OWWW!" (kicked in shin) {R=Added} [EFF]	   01:29:55:21	   01:29:58:16	   00:00:02:19	Unmuted
+1       	2       	"Eh" (sotto/closed-mouth reaction) {R=Added} [ADLIB]	   01:38:08:16	   01:38:10:07	   00:00:01:16	Unmuted
+
+
+TRACK NAME:	JEAN-LOUIS
+COMMENTS:	$CN=8m {Actor=Thomas Chelimsky}
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	"When you get your divorce, are you going back to America?" {R=Revioce}	   01:07:14:07	   01:07:17:07	   00:00:03:00	Unmuted
+1       	2       	"Yes, of course, but if you went back and wrote me a letter—" {R=Revoice}	   01:07:18:20	   01:07:21:18	   00:00:02:23	Unmuted
+1       	3       	"Okay." {R=Revoice}           	   01:07:24:13	   01:07:25:01	   00:00:00:13	Unmuted
+
+
+TRACK NAME:	Group
+COMMENTS:	$CN=99g {Char=Group} {Actor=Per LG}
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	ALL (Pool walla, FC "Whoo!" on man diving.)	   01:04:29:05	   01:04:43:09	   00:00:14:04	Unmuted
+1       	2       	(1M) "Madame" / "Miss" / "Merci" {R=Replace on-screen}	   01:07:35:23	   01:07:36:06	   00:00:00:07	Unmuted
+1       	3       	"D'accord" {R=Replace Futz}   	   01:10:47:20	   01:10:48:08	   00:00:00:13	Unmuted
+1       	4       	(ALL KIDS) React to Punch and Judy Show, laughter bursts	   01:25:12:07	   01:25:23:22	   00:00:11:15	Unmuted
+1       	5       	(ALL) Laugh! Prelap cut       	   01:25:33:18	   01:25:38:10	   00:00:04:17	Unmuted
+
+
+TRACK NAME:	Group.dup1
+COMMENTS:	$CN=99g {Char=Group} {Actor=Per LG}
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	(2M 2F) Detail reaction to show	   01:25:14:03	   01:25:15:23	   00:00:01:20	Unmuted
+
+
+TRACK NAME:	Group.dup2
+COMMENTS:	$CN=99g {Char=Group} {Actor=Per LG}
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	(1M) Boy reacts to show [ADLIB] [TBW]	   01:25:15:21	   01:25:18:12	   00:00:02:16	Unmuted
+1       	2       	(1M) Pointing boy             	   01:25:20:02	   01:25:22:16	   00:00:02:14	Unmuted
+
+
+M A R K E R S  L I S T I N G
+#   	LOCATION     	TIME REFERENCE    	UNITS    	NAME                             	COMMENTS
+1   	01:00:00:00  	2880000           	Samples  	{Title=Charade}                  	{Client=Stanley Donen Films/Universal} {Supv=Allan Morrison} {Spot=2021-0520} $Reel=1 [ADR]
+2   	01:18:50:20  	57159360          	Samples  	$Reel=2                          	
+3   	01:36:49:04  	108919680         	Samples  	$Reel=3                          	

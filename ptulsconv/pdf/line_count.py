@@ -5,7 +5,8 @@ from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter, portrait
 from reportlab.lib import colors
 
-from reportlab.platypus import Table
+from reportlab.platypus import Table, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
 
 from .common import time_format, make_doc_template
 
@@ -204,4 +205,15 @@ def output_report(records, include_omitted=False, page_size=portrait(letter)):
 
     table = Table(data=data, style=style, colWidths=columns_widths)
 
-    doc.build([table])
+    story = [table]
+
+    style = getSampleStyleSheet()['Normal']
+    style.fontName = 'Futura'
+    style.fontSize = 12.
+    style.spaceBefore = 16.
+    style.spaceAfter = 16.
+
+    if not include_omitted:
+        story.append(Paragraph("* Omitted lines are excluded.", style))
+
+    doc.build(story)

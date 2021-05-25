@@ -143,13 +143,20 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
             json.dump(parsed, output)
 
         elif output_format == 'full':
-            output_line_count(parsed)
+            print_section_header_style("Creating PDF Reports")
+
+            print_status_style("Creating ADR Report")
             output_summary(parsed)
 
+            print_status_style("Creating Line Count")
+            output_line_count(parsed)
+
+            print_status_style("Creating Supervisor Logs directory and reports")
             os.makedirs("Supervisor Logs", exist_ok=True)
             os.chdir("Supervisor Logs")
             output_supervisor_1pg(parsed)
 
+            print_status_style("Creating Scripts directory and reports")
             os.chdir("..")
             os.makedirs("Talent Scripts", exist_ok=True)
             os.chdir("Talent Scripts")

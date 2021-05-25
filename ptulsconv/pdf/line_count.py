@@ -12,7 +12,7 @@ from .common import time_format, make_doc_template
 
 def build_columns(records, show_priorities=False):
     columns = list()
-    reel_numbers = sorted(set([x.get('Reel', None) for x in records['events'] if 'Reel' in x.keys()]))
+    reel_numbers = sorted(set([x['Reel'] for x in records['events'] if 'Reel' in x.keys()]))
 
     def blank_len(i):
         length = len(i)
@@ -41,30 +41,24 @@ def build_columns(records, show_priorities=False):
         'summarize': False
     })
 
-    # columns.append({
-    #     'heading': 'Actor',
-    #     'value_getter': lambda recs: recs[0].get('Actor Name', ''),
-    #     'style_getter': lambda col_index: [(('LINEAFTER'), (col_index, 0), (col_index, -1), 1.0, colors.black)],
-    #     'width': 1.75 * inch
-    # })
-
     if len(reel_numbers) > 0:
-        columns.append({
-            'heading': 'RX',
-            'value_getter': lambda recs: blank_len([r for r in recs if r.get('Reel', None) in ("", None)]),
-            'value_getter2': lambda recs: time_format(sum([r.get('Time Budget Mins', 0.) for r in recs
-                                                           if r.get('Reel', None) in ("", None)])),
-            'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER')],
-            'width': num_column_width
-        })
+        # columns.append({
+        #     'heading': 'RX',
+        #     'value_getter': lambda recs: blank_len([r for r in recs if 'Reel' not in r.keys()]),
+        #     'value_getter2': lambda recs: time_format(sum([r.get('Time Budget Mins', 0.) for r in recs
+        #                                                    if 'Reel' not in r.keys()])),
+        #     'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER')],
+        #     'width': num_column_width
+        # })
 
         for n in reel_numbers:
             columns.append({
                 'heading': n,
-                'value_getter': lambda recs: blank_len([r for r in recs if r['Reel'] == n]),
-                'value_getter2': lambda recs: time_format(sum([r.get('Time Budget Mins', 0.) for r in recs
-                                                               if r['Reel'] == n])),
-                'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER')],
+                'value_getter': lambda recs, n1=n: blank_len([r for r in recs if r['Reel'] == n1]),
+                'value_getter2': lambda recs, n1=n: time_format(sum([r.get('Time Budget Mins', 0.) for r in recs
+                                                               if r['Reel'] == n1])),
+                'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER'),
+                                                   ('LINEAFTER', (col_index, 0), (col_index, -1), .5, colors.gray)],
                 'width': num_column_width
             })
 
@@ -109,14 +103,14 @@ def build_columns(records, show_priorities=False):
         'width': num_column_width
     })
 
-    # columns.append({
-    #     'heading': 'Eff',
-    #     'value_getter': lambda recs: blank_len([r for r in recs if 'Effort' in r.keys()]),
-    #     'value_getter2': lambda recs: time_format(sum([r.get('Time Budget Mins',0.)
-    #                                               for r in recs if 'Effort' in r.keys()])),
-    #     'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER')],
-    #     'width': 0.5 * inch
-    # })
+    columns.append({
+        'heading': 'Eff',
+        'value_getter': lambda recs: blank_len([r for r in recs if 'Effort' in r.keys()]),
+        'value_getter2': lambda recs: time_format(sum([r.get('Time Budget Mins',0.)
+                                                  for r in recs if 'Effort' in r.keys()])),
+        'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER')],
+        'width': num_column_width
+    })
 
     columns.append({
         'heading': 'Total',
@@ -125,22 +119,8 @@ def build_columns(records, show_priorities=False):
                                                        for r in recs if 'Omitted' not in r.keys()]), zero_str=None),
         'style_getter': lambda col_index: [('LINEBEFORE', (col_index, 0), (col_index, -1), 1.0, colors.black),
                                            ('ALIGN', (col_index, 0), (col_index, -1), 'CENTER')],
-        'width': num_column_width
+        'width': 0.5 * inch
     })
-
-    # columns.append({
-    #     'heading': 'Studio Time',
-    #     'value_getter': lambda recs: time_format(sum([r.get('Time Budget Mins', 0.) for r in recs])),
-    #     'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'RIGHT')],
-    #     'width': inch
-    # })
-
-    # columns.append({
-    #     'heading': 'Omit',
-    #     'value_getter': lambda recs: blank_len([r for r in recs if 'Omitted' in r.keys()]),
-    #     'style_getter': lambda col_index: [('LINEBEFORE', (col_index, 0), (col_index, -1), 1.0, colors.black)],
-    #     'width': 0.5 * inch
-    # })
 
     return columns
 
@@ -150,8 +130,9 @@ def populate_columns(records, columns):
     styles = list()
     columns_widths = list()
 
-    sorted_character_numbers = sorted(set([x['CN'] for x in records['events']]),
-                                      key=lambda x: int(x))
+    sorted_character_numbers = sorted(set([x['Character Number'] for x in records['events']
+                                          if 'Character Number' in x.keys()]),
+                                      key=lambda x: str(x))
 
     # construct column styles
 
@@ -164,15 +145,14 @@ def populate_columns(records, columns):
     lines = [x for x in records['events'] if 'Omitted' not in x.keys()]
 
     for n in sorted_character_numbers:
-        char_records = sorted([x for x in lines if x['Character Number'] == n],
-                              key=lambda x: x['PT.Clip.Start_Seconds'])
+        char_records = list([x for x in lines if x['Character Number'] == n])
         row_data = list()
         row_data2 = list()
         for col in columns:
             row1_index = len(data)
             row2_index = row1_index + 1
-            row_data.append(col['value_getter'](char_records))
-            row_data2.append(col['value_getter2'](char_records))
+            row_data.append(col['value_getter'](list(char_records)))
+            row_data2.append(col['value_getter2'](list(char_records)))
             styles.extend([('TEXTCOLOR', (0, row2_index), (-1, row2_index), colors.red),
                            ('LINEBELOW', (0, row2_index), (-1, row2_index), 0.5, colors.black)])
 

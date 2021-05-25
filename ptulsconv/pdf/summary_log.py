@@ -69,8 +69,8 @@ def build_story(lines):
                            colWidths=[inch, inch, inch * 3., 0.5 * inch, inch * 2.],
                            style=table_style)
 
-        if line['Scene'] != this_scene:
-            this_scene = line['Scene']
+        if line.get('Scene', "[No Scene]") != this_scene:
+            this_scene = line.get('Scene', "[No Scene]")
             story.append(KeepTogether([
                 Spacer(1., 0.25 * inch),
                 Paragraph("<u>" + this_scene + "</u>", scene_style),

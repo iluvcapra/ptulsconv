@@ -87,7 +87,7 @@ def time_format(mins, zero_str=""):
     else:
         m = round(mins)
         hh, mm = divmod(m, 60)
-        return "%ih%im" % (hh, mm)
+        return "%ih%i" % (hh, mm)
 
 
 def draw_header_footer(a_canvas, title_box, doc_title_box, footer_box, record, doc_title=""):

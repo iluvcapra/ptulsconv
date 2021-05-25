@@ -46,7 +46,7 @@ CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	D
 
 
 TRACK NAME:	PETER
-COMMENTS:	$CN=1 {Actor=Cary Grant}
+COMMENTS:	$CN=1 {Actor=Cary Grant} $Mins=5
 USER DELAY:	0 Samples
 STATE: 
 CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
@@ -63,7 +63,7 @@ CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	D
 
 
 TRACK NAME:	REGGIE
-COMMENTS:	$CN=2 {Actor=Audrey Hepburn}
+COMMENTS:	$CN=2 {Actor=Audrey Hepburn} $Mins=5
 USER DELAY:	0 Samples
 STATE: 
 CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
@@ -90,7 +90,7 @@ CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	D
 
 
 TRACK NAME:	TEX
-COMMENTS:	$CN=4 {Actor=James Coburn}
+COMMENTS:	$CN=4 {Actor=James Coburn} $Mins=5
 USER DELAY:	0 Samples
 STATE: 
 CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
@@ -99,7 +99,7 @@ CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	D
 
 
 TRACK NAME:	SCOBIE
-COMMENTS:	$CN=5 {Actor=George Kennedy}
+COMMENTS:	$CN=5 {Actor=George Kennedy} $Mins=5
 USER DELAY:	0 Samples
 STATE: 
 CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
@@ -108,7 +108,7 @@ CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	D
 
 
 TRACK NAME:	SYLVIE
-COMMENTS:	$CN=6 {Actor=Dominique Minot}
+COMMENTS:	$CN=6 {Actor=Dominique Minot} $Mins=5
 USER DELAY:	0 Samples
 STATE: 
 CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
@@ -116,7 +116,7 @@ CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	D
 
 
 TRACK NAME:	GIDEON
-COMMENTS:	$CN=7 {Actor=Ned Glass}
+COMMENTS:	$CN=7 {Actor=Ned Glass} $Mins=5
 USER DELAY:	0 Samples
 STATE: 
 CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
@@ -125,7 +125,7 @@ CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	D
 
 
 TRACK NAME:	JEAN-LOUIS
-COMMENTS:	$CN=8m {Actor=Thomas Chelimsky}
+COMMENTS:	$CN=8m {Actor=Thomas Chelimsky} $Mins=5
 USER DELAY:	0 Samples
 STATE: 
 CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
@@ -135,7 +135,7 @@ CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	D
 
 
 TRACK NAME:	Group
-COMMENTS:	$CN=99g {Char=Group} {Actor=Per LG}
+COMMENTS:	$CN=99g {Char=Group} {Actor=Per LG} $Mins=3
 USER DELAY:	0 Samples
 STATE: 
 CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
@@ -147,7 +147,7 @@ CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	D
 
 
 TRACK NAME:	Group.dup1
-COMMENTS:	$CN=99g {Char=Group} {Actor=Per LG}
+COMMENTS:	$CN=99g {Char=Group} {Actor=Per LG} $Mins=3
 USER DELAY:	0 Samples
 STATE: 
 CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
@@ -155,7 +155,7 @@ CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	D
 
 
 TRACK NAME:	Group.dup2
-COMMENTS:	$CN=99g {Char=Group} {Actor=Per LG}
+COMMENTS:	$CN=99g {Char=Group} {Actor=Per LG} $Mins=3
 USER DELAY:	0 Samples
 STATE: 
 CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
@@ -165,6 +165,6 @@ CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	D
 
 M A R K E R S  L I S T I N G
 #   	LOCATION     	TIME REFERENCE    	UNITS    	NAME                             	COMMENTS
-1   	01:00:00:00  	2880000           	Samples  	{Title=Charade}                  	{Client=Stanley Donen Films/Universal} {Supv=Allan Morrison} {Spot=2021-0520} $Reel=R1 [ADR] $Mins=5
+1   	01:00:00:00  	2880000           	Samples  	{Title=Charade}                  	{Client=Stanley Donen Films/Universal} {Supv=Allan Morrison} {Spot=2021-0520} $Reel=R1 [ADR]
 2   	01:18:50:20  	57159360          	Samples  	$Reel=R2                         	
 3   	01:36:49:04  	108919680         	Samples  	$Reel=R3                         	

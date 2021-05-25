@@ -38,18 +38,25 @@ def build_story(lines):
     scene_style.fontName = 'Futura'
     scene_style.leftIndent = 0.
     scene_style.leftPadding = 0.
+    scene_style.spaceAfter = 18.
     line_style = getSampleStyleSheet()['Normal']
     line_style.fontName = 'Futura'
 
     for line in lines:
-        table_style = [('VALIGN', (0, 0), (-1, -1), 'TOP'), ('LEFTPADDING', (0, 0), (0, 0), 0.0)]
+        table_style = [('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                       ('LEFTPADDING', (0, 0), (0, 0), 0.0),
+                       ('BOTTOMPADDING', (0, 0), (-1, -1), 24.)]
 
         if 'Omitted' in line.keys():
-            cue_number_field = "<s>" + line['Cue Number'] + "</s><br /><font fontSize=9>" + \
+            cue_number_field = "<s>" + line['Cue Number'] + "</s><br /><font fontSize=7>" + \
                                line['Character Name'] + "</font>"
             table_style.append(('BACKGROUND', (0, 0), (-1, 0), colors.lightpink))
+        elif 'Effort' in line.keys():
+            cue_number_field = "<s>" + line['Cue Number'] + "</s><br /><font fontSize=7>" + \
+                               line['Character Name'] + "</font>"
+            table_style.append(('BACKGROUND', (0, 0), (-1, 0), colors.lightgreen))
         else:
-            cue_number_field = line['Cue Number'] + "<br /><font fontSize=9>" + line['Character Name'] + "</font>"
+            cue_number_field = line['Cue Number'] + "<br /><font fontSize=7>" + line['Character Name'] + "</font>"
 
         time_data = time_format(line.get('Time Budget Mins', 0.))
 
@@ -66,7 +73,7 @@ def build_story(lines):
                             ]]
 
         line_table = Table(data=line_table_data,
-                           colWidths=[inch, inch, inch * 3., 0.5 * inch, inch * 2.],
+                           colWidths=[inch * 1., inch, inch * 3., 0.5 * inch, inch * 2.],
                            style=table_style)
 
         if line.get('Scene', "[No Scene]") != this_scene:
@@ -76,7 +83,6 @@ def build_story(lines):
                 Paragraph("<u>" + this_scene + "</u>", scene_style),
                 line_table]))
         else:
-            table_style.append(('LINEABOVE', (0, 0), (-1, 0), .5, colors.gray))
             line_table.setStyle(table_style)
             story.append(KeepTogether([line_table]))
 

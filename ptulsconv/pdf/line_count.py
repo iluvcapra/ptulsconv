@@ -186,9 +186,13 @@ def populate_columns(records, columns, include_omitted, page_size):
     return data, styles, columns_widths
 
 
+def build_header(column_widths):
+    pass
+
 def output_report(records, include_omitted=False, page_size=portrait(letter)):
     columns = build_columns(records, include_omitted)
     data, style, columns_widths = populate_columns(records, columns, include_omitted, page_size)
+
     style.append(('FONTNAME', (0, 0), (-1, -1), "Futura"))
     style.append(('FONTSIZE', (0, 0), (-1, -1), 9.))
     style.append(('LINEBELOW', (0, 0), (-1, 0), 1.0, colors.black))
@@ -202,6 +206,9 @@ def output_report(records, include_omitted=False, page_size=portrait(letter)):
                             document_title=title,
                             record=records['events'][0],
                             document_header='Line Count')
+
+    #header_data, header_style, header_widths = build_header(columns_widths)
+    #header_table = Table(data=header_data, style=header_style, colWidths=header_widths)
 
     table = Table(data=data, style=style, colWidths=columns_widths)
 

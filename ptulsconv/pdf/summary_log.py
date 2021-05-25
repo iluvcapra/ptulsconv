@@ -74,8 +74,22 @@ def build_story(lines):
 
         aux_data_field = build_aux_data_field(line)
 
+        tc_data = line['PT.Clip.Start'] + "<br />" + line['PT.Clip.Finish']
+
+        third_line = []
+        if 'Reel' in line.keys():
+            if line['Reel'][0:1] == 'R':
+                third_line.append("%s" % (line['Reel']))
+            else:
+                third_line.append("Reel %s" % (line['Reel']))
+        if 'Version' in line.keys():
+            third_line.append("(%s)" % line['Version'])
+
+        if len(third_line) > 0:
+            tc_data = tc_data + "<br/>" + " ".join(third_line)
+
         line_table_data = [[Paragraph(cue_number_field, line_style),
-                            Paragraph(line['PT.Clip.Start'] + "<br />" + line['PT.Clip.Finish'], line_style),
+                            Paragraph(tc_data, line_style),
                             Paragraph(line['Line'], line_style),
                             Paragraph(time_data, line_style),
                             Paragraph(aux_data_field, line_style)

@@ -226,6 +226,8 @@ class TagInterpreter(Transformation):
         event['PT.Track.Name'] = track_tags['line']
         event['PT.Session.Name'] = self.title_tags['line']
         event['PT.Session.TimecodeFormat'] = header_dict['timecode_format']
+        event['PT.Session.Start'] = header_dict['start_timecode']
+        event['PT.Session.DropFrame'] = header_dict['timecode_drop_frame']
         event['PT.Clip.Number'] = clip['event']
         event['PT.Clip.Name'] = clip_tags['line']
         event['PT.Clip.Start'] = clip['start_time']

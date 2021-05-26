@@ -9,7 +9,7 @@ import csv
 import ptulsconv
 from .reporting import print_section_header_style, print_status_style, print_warning
 from .validations import *
-from .xml.common import fmp_dump, fmp_transformed_dump
+from .xml.common import dump_fmpxml, fmp_transformed_dump
 
 from ptulsconv.pdf.supervisor_1pg import output_report as output_supervisor_1pg
 from ptulsconv.pdf.line_count import output_report as output_line_count
@@ -130,6 +130,12 @@ def output_adr_csv(lines):
             with open(outfile_name, mode='w', newline='') as outfile:
                 dump_keyed_csv(these_lines, adr_keys, outfile)
 
+def output_avid_markers(lines):
+    reels = set([ln['Reel'] for ln in lines if 'Reel' in ln.keys()])
+
+    for reel in reels:
+        pass
+
 
 def create_adr_reports(parsed):
     lines = [e for e in parsed['events'] if 'ADR' in e.keys()]
@@ -159,10 +165,25 @@ def create_adr_reports(parsed):
     output_adr_csv(lines)
     os.chdir("..")
 
+    print_status_style("Creating Avid Marker XML files")
+    os.makedirs("Avid Markers", exist_ok=True)
+    os.chdir("Avid Markers")
+    output_avid_markers(lines)
+
     print_status_style("Creating Scripts directory and reports")
     os.makedirs("Talent Scripts", exist_ok=True)
     os.chdir("Talent Scripts")
     output_talent_sides(lines)
+
+def parse_text_export(file):
+    ast = ptulsconv.protools_text_export_grammar.parse(file.read())
+    dict_parser = ptulsconv.DictionaryParserVisitor()
+    parsed = dict_parser.visit(ast)
+    print_status_style('Session title: %s' % parsed['header']['session_name'])
+    print_status_style('Session timecode format: %f' % parsed['header']['timecode_format'])
+    print_status_style('Fount %i tracks' % len(parsed['tracks']))
+    print_status_style('Found %i markers' % len(parsed['markers']))
+    return parsed
 
 
 def convert(input_file, output_format='fmpxml',
@@ -226,21 +247,9 @@ def convert(input_file, output_format='fmpxml',
 
         elif output_format == 'fmpxml':
             if xsl is None:
-                fmp_dump(parsed, input_file, output, adr_field_map)
+                dump_fmpxml(parsed, input_file, output, adr_field_map)
             else:
                 print_section_header_style("Performing XSL Translation")
                 print_status_style("Using builtin translation: %s" % xsl)
                 fmp_transformed_dump(parsed, input_file, xsl, output)
-
-
-def parse_text_export(file):
-    ast = ptulsconv.protools_text_export_grammar.parse(file.read())
-    dict_parser = ptulsconv.DictionaryParserVisitor()
-    parsed = dict_parser.visit(ast)
-    print_status_style('Session title: %s' % parsed['header']['session_name'])
-    print_status_style('Session timecode format: %f' % parsed['header']['timecode_format'])
-    print_status_style('Fount %i tracks' % len(parsed['tracks']))
-    print_status_style('Found %i markers' % len(parsed['markers']))
-    return parsed
-
 

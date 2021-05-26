@@ -1,15 +1,82 @@
+import datetime
 import os
 import os.path
 import pathlib
 import subprocess
 import sys
 import glob
+import datetime
+import ptulsconv
+
+from xml.etree.ElementTree import TreeBuilder, tostring
 
 
-def fmp_dump(data, input_file_name, output, adr_field_map):
-    from xml.etree.ElementTree import TreeBuilder, tostring
-    import ptulsconv
+def avid_marker_list(lines, report_date=datetime.datetime.now(), reel_start_frame=0):
+    doc = TreeBuilder(element_factory=None)
 
+    doc.start('Avid:StreamItems', {'xmlns:Avid': 'http://www.avid.com'})
+    doc.start('Avid:XMLFileData')
+    doc.start('AvProp', {'name': 'DomainMagic', 'type':'string'})
+    doc.data("Domain")
+    doc.end('AvProp')
+    doc.start('AvProp', {'name': 'DomainKey', 'type': 'string'})
+    doc.data("58424a44")
+    doc.end('AvProp')
+
+    def insert_elem(kind, attb, atype, name, value):
+        doc.start('ListElem')
+        doc.start('AvProp', {'id': 'ATTR',
+                             'name': 'OMFI:ATTB:Kind',
+                             'type': 'int32'})
+        doc.data(kind)
+        doc.end('AvProp')
+
+        doc.start('AvProp', {'id': 'ATTR',
+                             'name': 'OMFI:ATTB:Name',
+                             'type': 'string'})
+        doc.data(name)
+        doc.end('AvProp')
+
+        doc.start('AvProp', {'id': 'ATTR',
+                             'name': attb,
+                             'type': atype})
+        doc.data(value)
+        doc.end('AvProp')
+
+        doc.end('ListElem')
+
+    for line in lines:
+        doc.start('AvClass', {'id': 'ATTR'})
+        doc.start('AvProp', {'id': 'ATTR', 'name': '__OMFI:ATTR:NumItems', 'type': 'int32'})
+        doc.data('7')
+        doc.end('AvProp')
+
+        doc.start('List', {'id': 'OMFI:ATTR:AttrRefs'})
+
+        insert_elem('1', 'OMFI:ATTB:IntAttribute', 'int32', '_ATN_CRM_LONG_CREATE_DATE', report_date.strftime("%s"))
+        insert_elem('2', 'OMFI:ATTB:StringAttribute', 'string', '_ATN_CRM_COLOR', 'yellow')
+        insert_elem('2', 'OMFI:ATTB:StringAttribute', 'string', '_ATN_CRM_USER', line['Supervisor'])
+
+        marker_name = "%s: %s" % (line['Cue Number'], line['Line'])
+        insert_elem('2', 'OMFI:ATTB:StringAttribute', 'string', '_ATN_CRM_COM', marker_name)
+
+        insert_elem('2', "OMFI:ATTB:StringAttribute", 'string', '_ATN_CRM_TC',
+                    str(lines['Start Frames'] - reel_start_frame))
+
+        insert_elem('2', "OMFI:ATTB:StringAttribute", 'string', '_ATN_CRM_TRK', 'V1')
+        insert_elem('1', "OMFI:ATTB:IntAttribute", 'int32', '_ATN_CRM_LENGTH', '1')
+
+        doc.start('ListElem')
+        doc.end('ListElem')
+
+        doc.end('List')
+        doc.end('AvClass')
+
+    doc.end('Avid:XMLFileData')
+    doc.end('Avid:StreamItems')
+
+
+def dump_fmpxml(data, input_file_name, output, adr_field_map):
     doc = TreeBuilder(element_factory=None)
 
     doc.start('FMPXMLRESULT', {'xmlns': 'http://www.filemaker.com/fmpxmlresult'})
@@ -80,7 +147,7 @@ def fmp_transformed_dump(data, input_file, xsl_name, output, adr_field_map):
     pipe = io.StringIO()
 
     print_status_style("Generating base XML")
-    fmp_dump(data, input_file, pipe, adr_field_map)
+    dump_fmpxml(data, input_file, pipe, adr_field_map)
 
     str_data = pipe.getvalue()
     print_status_style("Base XML size %i" % (len(str_data)))

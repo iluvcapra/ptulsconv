@@ -153,10 +153,12 @@ class TagInterpreter(Transformation):
         print_section_header_style('Parsing Tags')
 
         self.title_tags = self.parse_tags(input_dict['header']['session_name'])
-        self.markers = sorted(input_dict['markers'], key=lambda m: m['location_decoded']['frame_count'])
+        self.markers = sorted(input_dict['markers'],
+                              key=lambda m: m['location_decoded']['frame_count'])
 
         if self.show_progress:
-            track_iter = tqdm(input_dict['tracks'], desc="Reading tracks...", unit='Track')
+            track_iter = tqdm(input_dict['tracks'],
+                              desc="Reading tracks...", unit='Track')
         else:
             track_iter = input_dict['tracks']
 
@@ -164,8 +166,10 @@ class TagInterpreter(Transformation):
             if 'Muted' in track['state'] and self.ignore_muted:
                 continue
 
-            track_tags = self.parse_tags(track['name'], parent_track_name=track['name'])
-            comment_tags = self.parse_tags(track['comments'], parent_track_name=track['name'])
+            track_tags = self.parse_tags(track['name'],
+                                         parent_track_name=track['name'])
+            comment_tags = self.parse_tags(track['comments'],
+                                           parent_track_name=track['name'])
             track_context_tags = track_tags['tags']
             track_context_tags.update(comment_tags['tags'])
 
@@ -178,7 +182,8 @@ class TagInterpreter(Transformation):
                                             clip_time=clip['start_time'])
 
                 if clip_tags['mode'] == 'Normal':
-                    event = self.decorate_event(clip, clip_tags, input_dict['header'], track_context_tags, track_tags)
+                    event = self.decorate_event(clip, clip_tags, input_dict['header'],
+                                                track_context_tags, track_tags)
                     self.transformed.append(event)
 
                 elif clip_tags['mode'] == 'Append':

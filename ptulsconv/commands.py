@@ -110,42 +110,94 @@ def normalize_record_keys_for_adr(records):
     return records
 
 
-def convert(input_file, output_format='fmpxml', start=None, end=None, select_reel=None,
+def output_adr_csv(lines):
+    adr_keys = ('Title', 'Cue Number', 'Character Name', 'Reel', 'Version', 'Line',
+                'Start', 'Finish', 'Reason', 'Note', 'TV', 'Version')
+    reels = set([ln['Reel'] for ln in lines])
+    reels.add(None)
+    for n in [n['Character Number'] for n in lines]:
+        for reel in reels:
+            these_lines = [ln for ln in lines
+                           if ln['Character Number'] == n and
+                           ln.get('Reel', None) == reel]
+
+            if len(these_lines) == 0:
+                continue
+
+            outfile_name = "%s_%s_%s_%s.csv" % (these_lines[0]['Title'],
+                                                n, these_lines[0]['Character Name'], reel,)
+
+            with open(outfile_name, mode='w', newline='') as outfile:
+                dump_keyed_csv(these_lines, adr_keys, outfile)
+
+
+def create_adr_reports(parsed):
+    lines = [e for e in parsed['events'] if 'ADR' in e.keys()]
+
+    print_section_header_style("Creating PDF Reports")
+    print_status_style("Creating ADR Report")
+    output_summary(lines)
+
+    print_status_style("Creating Line Count")
+    output_line_count(lines)
+
+    print_status_style("Creating Supervisor Logs directory and reports")
+    os.makedirs("Supervisor Logs", exist_ok=True)
+    os.chdir("Supervisor Logs")
+    output_supervisor_1pg(lines)
+    os.chdir("..")
+
+    print_status_style("Creating Director's Logs director and reports")
+    os.makedirs("Director Logs", exist_ok=True)
+    os.chdir("Director Logs")
+    output_summary(lines, by_character=True)
+    os.chdir("..")
+
+    print_status_style("Creating CSV outputs")
+    os.makedirs("CSV", exist_ok=True)
+    os.chdir("CSV")
+    output_adr_csv(lines)
+    os.chdir("..")
+
+    print_status_style("Creating Scripts directory and reports")
+    os.makedirs("Talent Scripts", exist_ok=True)
+    os.chdir("Talent Scripts")
+    output_talent_sides(lines)
+
+
+def convert(input_file, output_format='fmpxml',
             progress=False, include_muted=False, xsl=None,
             output=sys.stdout, log_output=sys.stderr, warnings=True):
+
     with open(input_file, 'r') as file:
         print_section_header_style('Parsing')
-        ast = ptulsconv.protools_text_export_grammar.parse(file.read())
-        dict_parser = ptulsconv.DictionaryParserVisitor()
-        parsed = dict_parser.visit(ast)
-
-        print_status_style('Session title: %s' % parsed['header']['session_name'])
-        print_status_style('Session timecode format: %f' % parsed['header']['timecode_format'])
-        print_status_style('Fount %i tracks' % len(parsed['tracks']))
-        print_status_style('Found %i markers' % len(parsed['markers']))
+        parsed = parse_text_export(file)
 
         tcxform = ptulsconv.transformations.TimecodeInterpreter()
-        tagxform = ptulsconv.transformations.TagInterpreter(show_progress=progress, ignore_muted=(not include_muted),
+        tagxform = ptulsconv.transformations.TagInterpreter(show_progress=progress,
+                                                            ignore_muted=(not include_muted),
                                                             log_output=log_output)
 
         parsed = tcxform.transform(parsed)
         parsed = tagxform.transform(parsed)
 
-        if start is not None and end is not None:
-            start_fs = tcxform.convert_time(start,
-                                            frame_rate=parsed['header']['timecode_format'],
-                                            drop_frame=parsed['header']['timecode_drop_frame'])['frame_count']
-
-            end_fs = tcxform.convert_time(end,
-                                          frame_rate=parsed['header']['timecode_format'],
-                                          drop_frame=parsed['header']['timecode_drop_frame'])['frame_count']
-
-            subclipxform = ptulsconv.transformations.SubclipOfSequence(start=start_fs, end=end_fs)
-            parsed = subclipxform.transform(parsed)
-
-        if select_reel is not None:
-            reel_xform = ptulsconv.transformations.SelectReel(reel_num=select_reel)
-            parsed = reel_xform.transform(parsed)
+        # start=None, end=None, select_reel=None
+        #
+        # if start is not None and end is not None:
+        #     start_fs = tcxform.convert_time(start,
+        #                                     frame_rate=parsed['header']['timecode_format'],
+        #                                     drop_frame=parsed['header']['timecode_drop_frame'])['frame_count']
+        #
+        #     end_fs = tcxform.convert_time(end,
+        #                                   frame_rate=parsed['header']['timecode_format'],
+        #                                   drop_frame=parsed['header']['timecode_drop_frame'])['frame_count']
+        #
+        #     subclipxform = ptulsconv.transformations.SubclipOfSequence(start=start_fs, end=end_fs)
+        #     parsed = subclipxform.transform(parsed)
+        #
+        # if select_reel is not None:
+        #     reel_xform = ptulsconv.transformations.SelectReel(reel_num=select_reel)
+        #     parsed = reel_xform.transform(parsed)
 
         parsed = normalize_record_keys_for_adr(parsed)
 
@@ -170,38 +222,7 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
             dump_csv(parsed['events'])
 
         elif output_format == 'adr':
-            lines = [e for e in parsed['events'] if 'ADR' in e.keys()]
-
-            print_section_header_style("Creating PDF Reports")
-
-            print_status_style("Creating ADR Report")
-            output_summary(lines)
-
-            print_status_style("Creating Line Count")
-            output_line_count(lines)
-
-            print_status_style("Creating Supervisor Logs directory and reports")
-            os.makedirs("Supervisor Logs", exist_ok=True)
-            os.chdir("Supervisor Logs")
-            output_supervisor_1pg(lines)
-
-            os.chdir("..")
-            print_status_style("Creating Director's Logs director and reports")
-            os.makedirs("Director Logs", exist_ok=True)
-            os.chdir("Director Logs")
-            output_summary(lines, by_character=True)
-
-            os.chdir("..")
-            print_status_style("Creating CSV outputs")
-            os.makedirs("CSV", exist_ok=True)
-            os.chdir("CSV")
-            output_adr_csv(lines)
-
-            os.chdir("..")
-            print_status_style("Creating Scripts directory and reports")
-            os.makedirs("Talent Scripts", exist_ok=True)
-            os.chdir("Talent Scripts")
-            output_talent_sides(lines)
+            create_adr_reports(parsed)
 
         elif output_format == 'fmpxml':
             if xsl is None:
@@ -212,22 +233,14 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
                 fmp_transformed_dump(parsed, input_file, xsl, output)
 
 
-def output_adr_csv(lines):
-    adr_keys = ('Title', 'Cue Number', 'Character Name', 'Reel', 'Version', 'Line',
-                'Start', 'Finish', 'Reason', 'Note', 'TV', 'Version')
-    reels = set([ln['Reel'] for ln in lines])
-    reels.add(None)
-    for n in [n['Character Number'] for n in lines]:
-        for reel in reels:
-            these_lines = [ln for ln in lines
-                           if ln['Character Number'] == n and
-                           ln.get('Reel', None) == reel]
+def parse_text_export(file):
+    ast = ptulsconv.protools_text_export_grammar.parse(file.read())
+    dict_parser = ptulsconv.DictionaryParserVisitor()
+    parsed = dict_parser.visit(ast)
+    print_status_style('Session title: %s' % parsed['header']['session_name'])
+    print_status_style('Session timecode format: %f' % parsed['header']['timecode_format'])
+    print_status_style('Fount %i tracks' % len(parsed['tracks']))
+    print_status_style('Found %i markers' % len(parsed['markers']))
+    return parsed
 
-            if len(these_lines) == 0:
-                continue
 
-            outfile_name = "%s_%s_%s_%s.csv" % (these_lines[0]['Title'],
-                                                n, these_lines[0]['Character Name'], reel,)
-
-            with open(outfile_name, mode='w', newline='') as outfile:
-                dump_keyed_csv(these_lines, adr_keys, outfile)

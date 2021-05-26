@@ -14,7 +14,6 @@ from ptulsconv.pdf.line_count import output_report as output_line_count
 from ptulsconv.pdf.talent_sides import output_report as output_talent_sides
 from ptulsconv.pdf.summary_log import output_report as output_summary
 
-
 # field_map maps tags in the text export to fields in FMPXMLRESULT
 #  - tuple field 0 is a list of tags, the first tag with contents will be used as source
 #  - tuple field 1 is the field in FMPXMLRESULT
@@ -55,6 +54,24 @@ adr_field_map = ((['Title', 'PT.Session.Name'], 'Title', str),
                  )
 
 
+def dump_csv(events, keys=(), output=sys.stdout):
+    import csv
+
+    if len(keys) == 0:
+        keys = ('Title', 'Cue Number', 'Character Name', 'Reel', 'Version', 'Line',
+                'Start', 'Finish', 'Reason', 'Note', 'TV', 'Version')
+
+    writer = csv.writer(output, dialect='excel')
+    writer.writerow(keys)
+
+    for event in events:
+        this_row = list()
+        for key in keys:
+            this_row.append(event.get(key, ""))
+
+        writer.writerow(this_row)
+
+
 def dump_field_map(field_map_name, output=sys.stdout):
     output.write("# Map of Tag fields to XML output columns\n")
     output.write("# (in order of precedence)\n")
@@ -73,7 +90,7 @@ def dump_field_map(field_map_name, output=sys.stdout):
             output.write("# %-27s-> %-20s | %-8s| %-7i\n" % (tag[:27], field[1][:20], field[2].__name__, n + 1))
 
 
-def normalize_record_keys(records):
+def normalize_record_keys_for_adr(records):
     for record in records['events']:
         for field in adr_field_map:
             spot_keys = field[0]
@@ -123,7 +140,7 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
             reel_xform = ptulsconv.transformations.SelectReel(reel_num=select_reel)
             parsed = reel_xform.transform(parsed)
 
-        parsed = normalize_record_keys(parsed)
+        parsed = normalize_record_keys_for_adr(parsed)
 
         if warnings:
             for warning in chain(validate_unique_field(parsed, field='QN'),
@@ -137,14 +154,15 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
                                  validate_unique_count(parsed, field='Title', count=1),
                                  validate_unique_count(parsed, field='Spotting', count=1),
                                  validate_unique_count(parsed, field='Supervisor', count=1)):
-
                 print_warning(warning.report_message())
 
         if output_format == 'json':
             json.dump(parsed, output)
 
-        elif output_format == 'adr':
+        elif output_format == 'csv':
+            dump_csv(parsed['events'])
 
+        elif output_format == 'adr':
             lines = [e for e in parsed['events'] if 'ADR' in e.keys()]
 
             print_section_header_style("Creating PDF Reports")

@@ -29,8 +29,8 @@ def main():
     parser.add_option_group(filter_opts)
 
     parser.add_option('-f', '--format', dest='output_format', metavar='FMT',
-                      choices=['fmpxml', 'json', 'full'], default='fmpxml',
-                      help='Set output format, `fmpxml`, `json`, or `full`. Default '
+                      choices=['fmpxml', 'json', 'adr', 'csv'], default='fmpxml',
+                      help='Set output format, `fmpxml`, `json`, `csv`, or `adr`. Default '
                            'is `fmpxml`.')
 
     parser.add_option('-x', '--xsl', dest='xslt', metavar='XML', default=None,
@@ -98,8 +98,11 @@ def main():
         if options.xslt is not None:
             output_format = 'fmpxml'
 
-        convert(input_file=args[1], output_format=output_format, start=options.in_time, end=options.out_time,
-                include_muted=options.include_muted, xsl=options.xslt, select_reel=options.select_reel,
+        convert(input_file=args[1], output_format=output_format,
+                start=options.in_time,
+                end=options.out_time,
+                include_muted=options.include_muted,
+                xsl=options.xslt, select_reel=options.select_reel,
                 progress=False, output=sys.stdout, log_output=sys.stderr,
                 warnings=options.warnings)
     except FileNotFoundError as e:

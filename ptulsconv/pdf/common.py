@@ -50,11 +50,11 @@ class ADRDocTemplate(BaseDocTemplate):
         BaseDocTemplate.build(self, flowables, filename, canvasmaker)
 
 
-def make_doc_template(page_size, filename, document_title, record, document_header=""):
-    left_margin = right_margin = top_margin = bottom_margin = 0.5 * inch
+def make_doc_template(page_size, filename, document_title, record, document_header="", left_margin=0.5 * inch):
+    right_margin = top_margin = bottom_margin = 0.5 * inch
     page_box = GRect(0., 0., page_size[0], page_size[1])
-    _, page_box = page_box.split_x(left_margin, direction='r')
-    _, page_box = page_box.split_x(right_margin, direction='l')
+    _, page_box = page_box.split_x(left_margin, direction='l')
+    _, page_box = page_box.split_x(right_margin, direction='r')
     _, page_box = page_box.split_y(bottom_margin, direction='u')
     _, page_box = page_box.split_y(top_margin, direction='d')
 

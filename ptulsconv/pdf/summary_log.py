@@ -75,7 +75,7 @@ def build_story(lines):
                             ]]
 
         line_table = Table(data=line_table_data,
-                           colWidths=[inch * 1., inch, inch * 3., 0.5 * inch, inch * 2.],
+                           colWidths=[inch * 0.75, inch, inch * 3., 0.5 * inch, inch * 2.],
                            style=table_style)
 
         if line.get('Scene', "[No Scene]") != this_scene:
@@ -127,7 +127,8 @@ def generate_report(page_size, lines, character_number=None, include_done=True,
     filename = title + ".pdf"
     doc = make_doc_template(page_size=page_size,
                             filename=filename, document_title=title,
-                            record=lines[0], document_header=document_header)
+                            record=lines[0], document_header=document_header,
+                            left_margin=0.75 * inch)
     story = build_story(lines)
     doc.build(story)
 

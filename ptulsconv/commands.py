@@ -169,6 +169,7 @@ def create_adr_reports(parsed):
     os.makedirs("Avid Markers", exist_ok=True)
     os.chdir("Avid Markers")
     output_avid_markers(lines)
+    os.chdir("..")
 
     print_status_style("Creating Scripts directory and reports")
     os.makedirs("Talent Scripts", exist_ok=True)

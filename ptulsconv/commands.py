@@ -3,7 +3,7 @@ import os
 
 import sys
 from itertools import chain
-
+from collections import namedtuple
 import csv
 
 import ptulsconv
@@ -176,6 +176,7 @@ def create_adr_reports(parsed):
     os.chdir("Talent Scripts")
     output_talent_sides(lines)
 
+
 def parse_text_export(file):
     ast = ptulsconv.protools_text_export_grammar.parse(file.read())
     dict_parser = ptulsconv.DictionaryParserVisitor()
@@ -185,6 +186,21 @@ def parse_text_export(file):
     print_status_style('Fount %i tracks' % len(parsed['tracks']))
     print_status_style('Found %i markers' % len(parsed['markers']))
     return parsed
+
+
+def raw_output(input_file, output=sys.stdout):
+    from .docparser.doc_parser_visitor import DocParserVisitor
+    from json import JSONEncoder
+
+    class DescriptorJSONEncoder(JSONEncoder):
+        def default(self, obj):
+            return obj.__dict__
+
+    with open(input_file, 'r') as file:
+        ast = ptulsconv.protools_text_export_grammar.parse(file.read())
+        visitor = DocParserVisitor()
+        parsed = visitor.visit(ast)
+        json.dump(parsed, output, cls=DescriptorJSONEncoder)
 
 
 def convert(input_file, output_format='fmpxml',

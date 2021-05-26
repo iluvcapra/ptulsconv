@@ -1,4 +1,4 @@
-from ptulsconv.commands import convert, dump_field_map
+from ptulsconv.commands import convert, dump_field_map, raw_output
 from ptulsconv import __name__, __version__, __author__
 from optparse import OptionParser, OptionGroup
 from .xml.common import dump_xform_options
@@ -22,14 +22,15 @@ def main():
     filter_opts.add_option('-m', '--include-muted', default=False, action='store_true', dest='include_muted',
                            help='Include muted clips.')
 
-    # filter_opts.add_option('-r', '--reel', dest='select_reel', help="Output only events in reel N, and recalculate "
-    #                                                                 " start times relative to that reel's start time.",
+    # filter_opts.add_option('-r', '--reel', dest='select_reel',
+    #                                           help="Output only events in reel N, and recalculate "
+    #                                              " start times relative to that reel's start time.",
     #                        default=None, metavar='N')
 
     parser.add_option_group(filter_opts)
 
     parser.add_option('-f', '--format', dest='output_format', metavar='FMT',
-                      choices=['fmpxml', 'json', 'adr', 'csv'], default='fmpxml',
+                      choices=['fmpxml', 'json', 'adr', 'csv', 'raw'], default='fmpxml',
                       help='Set output format, `fmpxml`, `json`, `csv`, or `adr`. Default '
                            'is `fmpxml`.')
 
@@ -58,6 +59,10 @@ def main():
     parser.add_option_group(informational_options)
 
     (options, args) = parser.parse_args(sys.argv)
+
+    if options.output_format == 'raw':
+        raw_output(args[1])
+        exit(0)
 
     print_banner_style("%s %s (c) 2020 %s. All rights reserved." % (__name__, __version__, __author__))
 

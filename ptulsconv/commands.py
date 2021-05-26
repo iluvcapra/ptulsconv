@@ -4,6 +4,8 @@ import os
 import sys
 from itertools import chain
 
+import csv
+
 import ptulsconv
 from .reporting import print_section_header_style, print_status_style, print_warning
 from .validations import *
@@ -53,14 +55,15 @@ adr_field_map = ((['Title', 'PT.Session.Name'], 'Title', str),
                  (['Movie.Start_Offset_Seconds'], 'Movie Seconds', float),
                  )
 
+def dump_csv(events, output=sys.stdout):
+    keys = set()
+    for e in events:
+        keys.update(e.keys())
 
-def dump_csv(events, keys=(), output=sys.stdout):
-    import csv
+    dump_keyed_csv(events, keys=keys, output=output)
 
-    if len(keys) == 0:
-        keys = ('Title', 'Cue Number', 'Character Name', 'Reel', 'Version', 'Line',
-                'Start', 'Finish', 'Reason', 'Note', 'TV', 'Version')
 
+def dump_keyed_csv(events, keys=(), output=sys.stdout):
     writer = csv.writer(output, dialect='excel')
     writer.writerow(keys)
 
@@ -92,6 +95,9 @@ def dump_field_map(field_map_name, output=sys.stdout):
 
 def normalize_record_keys_for_adr(records):
     for record in records['events']:
+        if 'ADR' not in record.keys():
+            continue
+
         for field in adr_field_map:
             spot_keys = field[0]
             output_key = field[1]
@@ -99,6 +105,7 @@ def normalize_record_keys_for_adr(records):
             for attempt_key in spot_keys:
                 if attempt_key in record.keys():
                     record[output_key] = field_type(record[attempt_key])
+                    break
 
     return records
 
@@ -185,6 +192,12 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
             output_summary(lines, by_character=True)
 
             os.chdir("..")
+            print_status_style("Creating CSV outputs")
+            os.makedirs("CSV", exist_ok=True)
+            os.chdir("CSV")
+            output_adr_csv(lines)
+
+            os.chdir("..")
             print_status_style("Creating Scripts directory and reports")
             os.makedirs("Talent Scripts", exist_ok=True)
             os.chdir("Talent Scripts")
@@ -197,3 +210,24 @@ def convert(input_file, output_format='fmpxml', start=None, end=None, select_ree
                 print_section_header_style("Performing XSL Translation")
                 print_status_style("Using builtin translation: %s" % xsl)
                 fmp_transformed_dump(parsed, input_file, xsl, output)
+
+
+def output_adr_csv(lines):
+    adr_keys = ('Title', 'Cue Number', 'Character Name', 'Reel', 'Version', 'Line',
+                'Start', 'Finish', 'Reason', 'Note', 'TV', 'Version')
+    reels = set([ln['Reel'] for ln in lines])
+    reels.add(None)
+    for n in [n['Character Number'] for n in lines]:
+        for reel in reels:
+            these_lines = [ln for ln in lines
+                           if ln['Character Number'] == n and
+                           ln.get('Reel', None) == reel]
+
+            if len(these_lines) == 0:
+                continue
+
+            outfile_name = "%s_%s_%s_%s.csv" % (these_lines[0]['Title'],
+                                                n, these_lines[0]['Character Name'], reel,)
+
+            with open(outfile_name, mode='w', newline='') as outfile:
+                dump_keyed_csv(these_lines, adr_keys, outfile)

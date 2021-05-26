@@ -23,7 +23,7 @@ def output_report(lines):
         sorted(char_lines, key=lambda line: line['PT.Clip.Start_Seconds'])
 
         title = "%s (%s) %s ADR Script" % (char_lines[0]['Title'], char_lines[0]['Character Name'], n)
-        filename = "%s_%s_%s_ADR Script.pdf" % (lines[0]['Title'], n, lines[0]['Character Name'])
+        filename = "%s_%s_%s_ADR Script.pdf" % (char_lines[0]['Title'], n, char_lines[0]['Character Name'])
 
         doc = make_doc_template(page_size=letter, filename=filename, document_title=title,
                                 record=char_lines[0], document_header=char_lines[0]['Character Name'])
@@ -32,9 +32,9 @@ def output_report(lines):
 
         prompt_style = getSampleStyleSheet()['Normal']
         prompt_style.fontName = 'Futura'
-        prompt_style.fontSize = 18
+        prompt_style.fontSize = 18.
 
-        prompt_style.leading = 24
+        prompt_style.leading = 24.
         prompt_style.leftIndent = 1.5 * inch
         prompt_style.rightIndent = 1.5 * inch
 

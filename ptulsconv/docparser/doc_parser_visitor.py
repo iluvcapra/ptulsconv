@@ -95,7 +95,7 @@ class DocParserVisitor(NodeVisitor):
                                    event=visited_children[3],
                                    clip_name=visited_children[6],
                                    start_time=visited_children[8],
-                                   end_time=visited_children[10],
+                                   finish_time=visited_children[10],
                                    duration=visited_children[12],
                                    timestamp=timestamp,
                                    state=visited_children[15])

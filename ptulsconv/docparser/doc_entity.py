@@ -1,5 +1,6 @@
 from fractions import Fraction
 from ptulsconv.broadcast_timecode import smpte_to_frame_count
+from typing import Tuple, List
 
 
 class SessionDescriptor:
@@ -13,6 +14,16 @@ class SessionDescriptor:
 
 
 class HeaderDescriptor:
+    session_name: str
+    sample_rate: float
+    bit_depth: int
+    start_timecode: str
+    timecode_format: str
+    timecode_drop_frame: bool
+    count_audio_tracks: int
+    count_clips: int
+    count_files: int
+
     def __init__(self, **kwargs):
         self.session_name = kwargs['session_name']
         self.sample_rate = kwargs['sample_rate']
@@ -49,7 +60,7 @@ class HeaderDescriptor:
         return self._get_tcformat_params[1]
 
     @property
-    def _get_tcformat_params(self):
+    def _get_tcformat_params(self) -> Tuple[int, Fraction]:
         frame_rates = {"23.976": (24, Fraction(1001, 24_000)),
                        "24": (24, Fraction(1, 24)),
                        "29.97": (30, Fraction(1001, 30_000)),
@@ -65,6 +76,13 @@ class HeaderDescriptor:
 
 
 class TrackDescriptor:
+    name: str
+    comments: str
+    user_delay_samples: int
+    state: List[str]
+    plugins: List[str]
+    clips: List["TrackClipDescriptor"]
+
     def __init__(self, **kwargs):
         self.name = kwargs['name']
         self.comments = kwargs['comments']
@@ -79,12 +97,21 @@ class FileDescriptor(dict):
 
 
 class TrackClipDescriptor:
+    channel: int
+    event: int
+    clip_name: str
+    start_time: str
+    finish_time: str
+    duration: str
+    timestamp: str
+    state: str
+
     def __init__(self, **kwargs):
         self.channel = kwargs['channel']
         self.event = kwargs['event']
         self.clip_name = kwargs['clip_name']
         self.start_time = kwargs['start_time']
-        self.end_time = kwargs['end_time']
+        self.finish_time = kwargs['finish_time']
         self.duration = kwargs['duration']
         self.timestamp = kwargs['timestamp']
         self.state = kwargs['state']
@@ -99,6 +126,13 @@ class PluginDescriptor(dict):
 
 
 class MarkerDescriptor:
+    number: int
+    location: str
+    time_reference: int
+    units: str
+    name: str
+    comments: str
+
     def __init__(self, **kwargs):
         self.number = kwargs['number']
         self.location = kwargs['location']

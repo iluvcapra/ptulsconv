@@ -4,7 +4,7 @@ import math
 
 
 def smpte_to_frame_count(smpte_rep_string: str, frames_per_logical_second: int, drop_frame_hint=False,
-                         include_fractional=False):
+                         include_fractional=False) -> object:
     """
     Convert a string with a SMPTE timecode representation into a frame count.
 

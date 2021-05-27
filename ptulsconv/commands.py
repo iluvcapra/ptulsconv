@@ -3,7 +3,6 @@ import os
 
 import sys
 from itertools import chain
-from collections import namedtuple
 import csv
 
 import ptulsconv
@@ -54,6 +53,7 @@ adr_field_map = ((['Title', 'PT.Session.Name'], 'Title', str),
                  (['Movie.Filename'], 'Movie', str),
                  (['Movie.Start_Offset_Seconds'], 'Movie Seconds', float),
                  )
+
 
 def dump_csv(events, output=sys.stdout):
     keys = set()

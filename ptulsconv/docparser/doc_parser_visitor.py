@@ -1,99 +1,7 @@
-from parsimonious.nodes import NodeVisitor, Node
-from collections import namedtuple
+from parsimonious.nodes import NodeVisitor
 
-# _SessionDescriptor = namedtuple('_SessionDescriptor',
-#                                 "header files clips plugins tracks markers")
-#
-# _HeaderDescriptor = namedtuple('_HeaderDescriptor',
-#                                "session_name sample_rate bit_depth start_timecode "
-#                                "timecode_format timecode_drop_frame "
-#                                "count_audio_tracks count_clips count_files")
-#
-# _TrackDescriptor = namedtuple("_TrackDescriptor",
-#                               "name comments user_delay_samples state plugins "
-#                               "clips")
-#
-# _TrackClipDescriptor = namedtuple("_TrackClipDescriptor",
-#                                   "channel event clip_name start_time end_time "
-#                                   "duration timestamp state")
-#
-# _PluginDescriptor = namedtuple("_PluginDescriptor",
-#                                "manufacturer plugin_name version format stems "
-#                                "count_instances")
-#
-# _MarkerDescriptor = namedtuple("_MarkerDescriptor",
-#                                "number location time_reference units name "
-#                                "comments")
-#
-# _FileDescriptor = namedtuple("_FileDescriptor", "filename path")
-
-
-class SessionDescriptor:
-    def __init__(self, **kwargs):
-        self.header = kwargs['header']
-        self.files = kwargs['files']
-        self.clips = kwargs['clips']
-        self.plugins = kwargs['plugins']
-        self.tracks = kwargs['tracks']
-        self.markers = kwargs['markers']
-
-
-class HeaderDescriptor:
-    def __init__(self, **kwargs):
-        self.session_name = kwargs['session_name']
-        self.sample_rate = kwargs['sample_rate']
-        self.bit_depth = kwargs['bit_depth']
-        self.start_timecode = kwargs['start_timecode']
-        self.timecode_format = kwargs['timecode_format']
-        self.timecode_drop_frame = kwargs['timecode_drop_frame']
-        self.count_audio_tracks = kwargs['count_audio_tracks']
-        self.count_clips = kwargs['count_clips']
-        self.count_files = kwargs['count_files']
-
-
-class TrackDescriptor:
-    def __init__(self, **kwargs):
-        self.name = kwargs['name']
-        self.comments = kwargs['comments']
-        self.user_delay_samples = kwargs['user_delay_samples']
-        self.state = kwargs['state']
-        self.plugins = kwargs['plugins']
-        self.clips = kwargs['clips']
-
-
-class FileDescriptor(dict):
-    pass
-
-
-class TrackClipDescriptor:
-    def __init__(self, **kwargs):
-        self.channel = kwargs['channel']
-        self.event = kwargs['event']
-        self.clip_name = kwargs['clip_name']
-        self.start_time = kwargs['start_time']
-        self.end_time = kwargs['end_time']
-        self.duration = kwargs['duration']
-        self.timestamp = kwargs['timestamp']
-        self.state = kwargs['state']
-
-
-class ClipDescriptor(dict):
-    pass
-
-
-class PluginDescriptor(dict):
-    pass
-
-
-class MarkerDescriptor:
-    def __init__(self, **kwargs):
-        self.number = kwargs['number']
-        self.location = kwargs['location']
-        self.time_reference = kwargs['time_reference']
-        self.units = kwargs['units']
-        self.name = kwargs['name']
-        self.comments = kwargs['comments']
-
+from .doc_entity import SessionDescriptor, HeaderDescriptor, TrackDescriptor, FileDescriptor, \
+    TrackClipDescriptor, ClipDescriptor, PluginDescriptor, MarkerDescriptor
 
 
 class DocParserVisitor(NodeVisitor):
@@ -215,11 +123,11 @@ class DocParserVisitor(NodeVisitor):
     @staticmethod
     def visit_marker_record(_, visited_children):
         return MarkerDescriptor(number=visited_children[0],
-                    location=visited_children[3],
-                    time_reference=visited_children[5],
-                    units=visited_children[8],
-                    name=visited_children[10],
-                    comments=visited_children[12])
+                                location=visited_children[3],
+                                time_reference=visited_children[5],
+                                units=visited_children[8],
+                                name=visited_children[10],
+                                comments=visited_children[12])
 
     @staticmethod
     def visit_formatted_clip_name(_, visited_children):

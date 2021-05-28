@@ -1,5 +1,8 @@
-from .doc_entity import SessionDescriptor
-from .tagged_string_parser_visitor import parse_tags
+from .doc_entity import SessionDescriptor, TrackDescriptor, TrackClipDescriptor
+from typing import Optional, Generator, List, Callable
+from tagged_string_parser_visitor import parse_tags
+from itertools import chain
+from functools import reduce
 
 from fractions import Fraction
 # field_map maps tags in the text export to fields in FMPXMLRESULT
@@ -69,14 +72,18 @@ class ADRLine:
     optional: bool
     done: bool
 
+    @staticmethod
+    def from_clip(clip: TrackClipDescriptor,
+                  track: TrackDescriptor,
+                  session: SessionDescriptor) -> Optional['ADRLine']:
+        pass
 
-class ADRDocument:
-    document: SessionDescriptor
+    @staticmethod
+    def generate_lines(session: SessionDescriptor) -> Generator['ADRLine']:
+        for track in session.tracks:
+            for track_clip in track.clips:
+                line = ADRLine.from_clip(track_clip, track, session)
+                if line is not None:
+                    yield line
 
-    def __init__(self, session: SessionDescriptor):
-        self.document = session
-
-    def lines(self):
-        header_metadata = parse_tags(self.document.header.session_name)
-        #TODO continue
 

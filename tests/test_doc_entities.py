@@ -17,7 +17,7 @@ class DocParserTestCase(unittest.TestCase):
                                   count_files=0)
 
         self.assertEqual(header.session_name, "Test Session")
-        self.assertEqual(header.convert_timecode(header.start_timecode), Fraction((59 * 60 + 52) * 30, 30))
+        self.assertEqual(header.start_time, Fraction((59 * 60 + 52) * 30, 30))
 
 
 if __name__ == '__main__':

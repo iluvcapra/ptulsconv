@@ -3,8 +3,7 @@ import re
 import math
 
 
-def smpte_to_frame_count(smpte_rep_string: str, frames_per_logical_second: int, drop_frame_hint=False,
-                         include_fractional=False) -> object:
+def smpte_to_frame_count(smpte_rep_string: str, frames_per_logical_second: int, drop_frame_hint=False) -> int:
     """
     Convert a string with a SMPTE timecode representation into a frame count.
 
@@ -40,10 +39,10 @@ def smpte_to_frame_count(smpte_rep_string: str, frames_per_logical_second: int, 
         dropped_frames = frames_dropped_per_inst * inst_count
         frames = raw_frames - dropped_frames
 
-    if include_fractional:
-        return frames, frac
-    else:
-        return frames
+    # if include_fractional:
+    #     return frames, frac
+    # else:
+    return frames
 
 
 def frame_count_to_smpte(frame_count: int, frames_per_logical_second: int, drop_frame: bool = False,

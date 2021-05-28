@@ -4,6 +4,13 @@ from typing import Tuple, List
 
 
 class SessionDescriptor:
+    header: "HeaderDescriptor"
+    files: List["FileDescriptor"]
+    clips: List["ClipDescriptor"]
+    plugins: List["PluginDescriptor"]
+    tracks: List["TrackDescriptor"]
+    markers: List["MarkerDescriptor"]
+
     def __init__(self, **kwargs):
         self.header = kwargs['header']
         self.files = kwargs['files']
@@ -38,8 +45,7 @@ class HeaderDescriptor:
     def convert_timecode(self, tc_string) -> Fraction:
         frame_count = smpte_to_frame_count(tc_string,
                                            self.logical_fps,
-                                           self.timecode_drop_frame,
-                                           include_fractional=False)
+                                           self.timecode_drop_frame)
 
         return self.frame_duration * frame_count
 
@@ -53,20 +59,20 @@ class HeaderDescriptor:
 
     @property
     def logical_fps(self) -> int:
-        return self._get_tcformat_params[0]
+        return self._get_tc_format_params[0]
 
     @property
     def frame_duration(self) -> Fraction:
-        return self._get_tcformat_params[1]
+        return self._get_tc_format_params[1]
 
     @property
-    def _get_tcformat_params(self) -> Tuple[int, Fraction]:
+    def _get_tc_format_params(self) -> Tuple[int, Fraction]:
         frame_rates = {"23.976": (24, Fraction(1001, 24_000)),
-                       "24": (24, Fraction(1, 24)),
-                       "29.97": (30, Fraction(1001, 30_000)),
-                       "30": (30, Fraction(1, 30)),
-                       "59.94": (60, Fraction(1001, 60_000)),
-                       "60": (60, Fraction(1, 60))
+                       "24":     (24, Fraction(1, 24)),
+                       "29.97":  (30, Fraction(1001, 30_000)),
+                       "30":     (30, Fraction(1, 30)),
+                       "59.94":  (60, Fraction(1001, 60_000)),
+                       "60":     (60, Fraction(1, 60))
                        }
 
         if self.timecode_format in frame_rates.keys():

@@ -32,12 +32,6 @@ class TestBroadcastTimecode(unittest.TestCase):
         s1 = broadcast_timecode.frame_count_to_smpte(c1, 30, drop_frame=True)
         self.assertEqual(s1, "01:00:03;18")
 
-    def test_fractional_to_framecount(self):
-        s1 = "00:00:01:04.105"
-        c1, f1 = broadcast_timecode.smpte_to_frame_count(s1, 24, drop_frame_hint=False, include_fractional=True)
-        self.assertEqual(c1, 28)
-        self.assertEqual(f1, 0.105)
-
     def test_fractional_to_string(self):
         c1 = 99
         f1 = .145
@@ -65,10 +59,6 @@ class TestBroadcastTimecode(unittest.TestCase):
         s1 = "194+11"
         f1 = broadcast_timecode.footage_to_frame_count(s1)
         self.assertEqual(f1, 3115)
-
-        s2 = "1+1.014"
-        f2 = broadcast_timecode.footage_to_frame_count(s2, include_fractional=True)
-        self.assertEqual(f2, (17, 0.014))
 
         s3 = "0+0.1"
         f3 = broadcast_timecode.footage_to_frame_count(s3, include_fractional=False)

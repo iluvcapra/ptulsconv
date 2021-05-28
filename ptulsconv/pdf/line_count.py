@@ -8,7 +8,7 @@ from reportlab.lib import colors
 from reportlab.platypus import Table, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 
-from .common import time_format, make_doc_template
+from .__init__ import time_format, make_doc_template
 
 
 def build_columns(lines, show_priorities=False, include_omitted=False):

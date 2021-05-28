@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .common import make_doc_template
+from .__init__ import make_doc_template
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 

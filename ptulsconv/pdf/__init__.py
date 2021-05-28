@@ -60,7 +60,7 @@ def make_doc_template(page_size, filename, document_title, record, document_head
 
     footer_box, page_box = page_box.split_y(0.25 * inch, direction='u')
     header_box, page_box = page_box.split_y(0.75 * inch, direction='d')
-    title_box, report_box = header_box.split_x(4. * inch, direction='r')
+    title_box, report_box = header_box.split_x(3. * inch, direction='r')
 
     page_template = PageTemplate(id="Main",
                                  frames=[Frame(page_box.min_x, page_box.min_y, page_box.width, page_box.height)],
@@ -91,15 +91,29 @@ def time_format(mins, zero_str=""):
         return "%i:%02i" % (hh, mm)
 
 
-def draw_header_footer(a_canvas, title_box, doc_title_box, footer_box, record, doc_title=""):
+def draw_header_footer(a_canvas: ReportCanvas, title_box, doc_title_box, footer_box, record, doc_title=""):
 
     (supervisor, client,), title = title_box.divide_y([16., 16., ])
-    title.draw_text_cell(a_canvas, record['Title'], "Futura", 18, inset_y=2.)
-    client.draw_text_cell(a_canvas, record.get('Client', ''), "Futura", 11, inset_y=2.)
+    title.draw_text_cell(a_canvas, record['Title'], "Futura", 18, inset_y=2., inset_x=5.)
+    client.draw_text_cell(a_canvas, record.get('Client', ''), "Futura", 11, inset_y=2., inset_x=5.)
+
+    a_canvas.saveState()
+    a_canvas.setLineWidth(0.5)
+    tline = a_canvas.beginPath()
+    tline.moveTo(doc_title_box.min_x, title_box.min_y)
+    tline.lineTo(title_box.max_x, title_box.min_y)
+    a_canvas.drawPath(tline)
+
+    tline2 = a_canvas.beginPath()
+    tline2.moveTo(title_box.min_x, title_box.min_y)
+    tline2.lineTo(title_box.min_x, title_box.max_y)
+    a_canvas.drawPath(tline2)
+    a_canvas.restoreState()
 
     (doc_title_cell, spotting_version_cell,), _ = doc_title_box.divide_y([18., 14], direction='d')
 
     doc_title_cell.draw_text_cell(a_canvas, doc_title, 'Futura', 14., inset_y=2.)
+
     if 'Spot' in record.keys():
         spotting_version_cell.draw_text_cell(a_canvas, record['Spot'], 'Futura', 12., inset_y=2.)
 

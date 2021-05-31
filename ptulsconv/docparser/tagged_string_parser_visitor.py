@@ -1,5 +1,12 @@
 from parsimonious import NodeVisitor, Grammar
 from typing import Dict, Optional
+from enum import Enum
+
+
+class TagPreModes(Enum):
+    NORMAL = 'Normal'
+    APPEND = 'Append'
+    TIMESPAN = 'Timespan'
 
 
 tag_grammar = Grammar(
@@ -16,7 +23,7 @@ tag_grammar = Grammar(
     tag_junk       = word word_sep?
     word           = ~"[^ \[\{\$][^ ]*"
     word_sep       = ~" +"
-    modifier       = ("@" / "&" / "!") word_sep?
+    modifier       = ("@" / "&") word_sep?
     """
 )
 
@@ -55,13 +62,11 @@ class TagListVisitor(NodeVisitor):
     @staticmethod
     def visit_modifier(node, _):
         if node.text.startswith('@'):
-            return 'Timespan'
+            return TagPreModes.TIMESPAN
         elif node.text.startswith('&'):
-            return 'Append'
-        elif node.text.startswith('!'):
-            return 'Movie'
+            return TagPreModes.APPEND
         else:
-            return 'Normal'
+            return TagPreModes.NORMAL
 
     @staticmethod
     def visit_tag_list(_, visited_children):

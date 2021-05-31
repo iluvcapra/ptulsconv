@@ -1,6 +1,8 @@
 from fractions import Fraction
 from ptulsconv.broadcast_timecode import smpte_to_frame_count
-from typing import Tuple, List
+from typing import Tuple, List, Generator
+from . import apply_appends
+from .tagged_string_parser_visitor import parse_tags
 
 
 class SessionDescriptor:

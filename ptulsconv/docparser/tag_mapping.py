@@ -21,8 +21,8 @@ class TagCompiler:
 
     def marker_tags(self, at):
         retval = dict()
-
-        for marker, time in [(m, t) for (m, t) in self.session.markers_timed() if t >= at ]:
+        applicable = [(m, t) for (m, t) in self.session.markers_timed() if t >= at]
+        for marker, time in sorted(applicable, key= lambda x: x[1]):
             retval.update(parse_tags(marker.comments).tag_dict)
             retval.update(parse_tags(marker.name).tag_dict)
 

@@ -22,7 +22,7 @@ class SessionDescriptor:
         self.tracks = kwargs['tracks']
         self.markers = kwargs['markers']
 
-    def markers_timed(self):
+    def markers_timed(self) -> Generator[tuple['MarkerDescriptor', Fraction]]:
         for marker in self.markers:
             marker_time = self.header.convert_timecode(marker.location)
             yield marker, marker_time
@@ -32,18 +32,18 @@ class SessionDescriptor:
             for clip in track.clips:
                 yield track_idx, track, clip
 
-    def track_clips_timed(self) -> Generator[Tuple[int, "TrackDescriptor", "TrackClipDescriptor",
+    def track_clips_timed(self) -> Generator[Tuple["TrackDescriptor", "TrackClipDescriptor",
                                                    Fraction, Fraction, Fraction]]:
         """
         :return: A Generator that yields track, clip, start time, finish time, and timestamp
         """
-        for track_idx, track, clip in self.tracks_clips():
+        for track, clip in self.tracks_clips():
             start_time = self.header.convert_timecode(clip.start_timecode)
             finish_time = self.header.convert_timecode(clip.finish_timecode)
             timestamp_time = self.header.convert_timecode(clip.timestamp) \
                 if clip.timestamp is not None else None
 
-            yield track_idx, track, clip, start_time, finish_time, timestamp_time
+            yield track, clip, start_time, finish_time, timestamp_time
 
 
 class HeaderDescriptor:

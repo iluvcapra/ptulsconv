@@ -1,6 +1,7 @@
 from fractions import Fraction
 from ptulsconv.broadcast_timecode import smpte_to_frame_count
 from typing import Tuple, List, Generator
+from collections import namedtuple
 from . import apply_appends
 from .tagged_string_parser_visitor import parse_tags
 
@@ -20,6 +21,29 @@ class SessionDescriptor:
         self.plugins = kwargs['plugins']
         self.tracks = kwargs['tracks']
         self.markers = kwargs['markers']
+
+    def markers_timed(self):
+        for marker in self.markers:
+            marker_time = self.header.convert_timecode(marker.location)
+            yield marker, marker_time
+
+    def tracks_clips(self):
+        for track_idx, track in enumerate(self.tracks):
+            for clip in track.clips:
+                yield track_idx, track, clip
+
+    def track_clips_timed(self) -> Generator[Tuple[int, "TrackDescriptor", "TrackClipDescriptor",
+                                                   Fraction, Fraction, Fraction]]:
+        """
+        :return: A Generator that yields track, clip, start time, finish time, and timestamp
+        """
+        for track_idx, track, clip in self.tracks_clips():
+            start_time = self.header.convert_timecode(clip.start_timecode)
+            finish_time = self.header.convert_timecode(clip.finish_timecode)
+            timestamp_time = self.header.convert_timecode(clip.timestamp) \
+                if clip.timestamp is not None else None
+
+            yield track_idx, track, clip, start_time, finish_time, timestamp_time
 
 
 class HeaderDescriptor:
@@ -44,7 +68,7 @@ class HeaderDescriptor:
         self.count_clips = kwargs['count_clips']
         self.count_files = kwargs['count_files']
 
-    def convert_timecode(self, tc_string) -> Fraction:
+    def convert_timecode(self, tc_string: str) -> Fraction:
         frame_count = smpte_to_frame_count(tc_string,
                                            self.logical_fps,
                                            self.timecode_drop_frame)
@@ -108,8 +132,8 @@ class TrackClipDescriptor:
     channel: int
     event: int
     clip_name: str
-    start_time: str
-    finish_time: str
+    start_timecode: str
+    finish_timecode: str
     duration: str
     timestamp: str
     state: str
@@ -118,8 +142,8 @@ class TrackClipDescriptor:
         self.channel = kwargs['channel']
         self.event = kwargs['event']
         self.clip_name = kwargs['clip_name']
-        self.start_time = kwargs['start_time']
-        self.finish_time = kwargs['finish_time']
+        self.start_timecode = kwargs['start_time']
+        self.finish_timecode = kwargs['finish_time']
         self.duration = kwargs['duration']
         self.timestamp = kwargs['timestamp']
         self.state = kwargs['state']

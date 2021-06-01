@@ -1,14 +1,11 @@
 from .doc_entity import SessionDescriptor, TrackDescriptor, TrackClipDescriptor
-from typing import Optional, Generator, List, Callable
-from tagged_string_parser_visitor import parse_tags
-from itertools import chain
-from functools import reduce
+from typing import Optional, Generator
 
-from fractions import Fraction
 # field_map maps tags in the text export to fields in FMPXMLRESULT
 #  - tuple field 0 is a list of tags, the first tag with contents will be used as source
 #  - tuple field 1 is the field in FMPXMLRESULT
 #  - tuple field 2 the constructor/type of the field
+from .tag_mapping import TagMapping
 
 adr_field_map = ((['Title', 'PT.Session.Name'], 'Title', str),
                  (['Supv'], 'Supervisor', str),
@@ -46,6 +43,7 @@ adr_field_map = ((['Title', 'PT.Session.Name'], 'Title', str),
                  )
 
 
+
 class ADRLine:
     title: str
     supervisor: str
@@ -58,9 +56,12 @@ class ADRLine:
     priority: int
     cue_number: str
     character_id: str
+    character_name: str
+    actor_name: str
     prompt: str
     reason: str
     requested_by: str
+    time_budget_mins: float
     note: str
     spot: str
     shot: str
@@ -70,7 +71,40 @@ class ADRLine:
     omitted: bool
     adlib: bool
     optional: bool
-    done: bool
+
+    adr_tag_to_line_map = (
+        TagMapping(source='Title', target="title", alt=TagMapping.ContentSource.Session),
+        TagMapping(source="Supv", target="supervisor"),
+        TagMapping(source="Client", target="client"),
+        TagMapping(source="Sc", target="scene"),
+        TagMapping(source="Ver", target="version"),
+        TagMapping(source="Reel", target="reel"),
+        TagMapping(source="P", target="priority"),
+        TagMapping(source="QN", target="cue_number"),
+        TagMapping(source="CN", target="character_id"),
+        TagMapping(source="Char", target="character_name", alt=TagMapping.ContentSource.Track),
+        TagMapping(source="Actor", target="actor_name"),
+        TagMapping(source="Line", target="prompt", alt=TagMapping.ContentSource.Clip),
+        TagMapping(source="R", target="reason"),
+        TagMapping(source="Rq", target="requested_by"),
+        TagMapping(source="Mins", target="time_budget_mins",
+                   formatter=(lambda n: float(n))),
+        TagMapping(source="Note", target="note"),
+        TagMapping(source="Spot", target="spot"),
+        TagMapping(source="Shot", target="shot"),
+        TagMapping(source="EFF", target="effort",
+                   formatter=(lambda x: len(x) > 0)),
+        TagMapping(source="TV", target="tv",
+                   formatter=(lambda x: len(x) > 0)),
+        TagMapping(source="TBW", target="tbw",
+                   formatter=(lambda x: len(x) > 0)),
+        TagMapping(source="OMIT", target="omitted",
+                   formatter=(lambda x: len(x) > 0)),
+        TagMapping(source="ADLIB", target="adlib",
+                   formatter=(lambda x: len(x) > 0)),
+        TagMapping(source="OPT", target="optional",
+                   formatter=(lambda x: len(x) > 0))
+    )
 
     @staticmethod
     def from_clip(clip: TrackClipDescriptor,
@@ -85,5 +119,3 @@ class ADRLine:
                 line = ADRLine.from_clip(track_clip, track, session)
                 if line is not None:
                     yield line
-
-

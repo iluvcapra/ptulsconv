@@ -19,20 +19,20 @@ class TagCompiler:
             )
         )
 
-    def marker_tags(self, at):
+    def _marker_tags(self, at):
         retval = dict()
         applicable = [(m, t) for (m, t) in self.session.markers_timed() if t >= at]
-        for marker, time in sorted(applicable, key= lambda x: x[1]):
+        for marker, time in sorted(applicable, key=lambda x: x[1]):
             retval.update(parse_tags(marker.comments).tag_dict)
             retval.update(parse_tags(marker.name).tag_dict)
 
         return retval
 
     @staticmethod
-    def coalesce_tags(clip_tags: dict, track_tags: dict,
-                      track_comment_tags: dict,
-                      timespan_tags: dict,
-                      marker_tags: dict, session_tags: dict):
+    def _coalesce_tags(clip_tags: dict, track_tags: dict,
+                       track_comment_tags: dict,
+                       timespan_tags: dict,
+                       marker_tags: dict, session_tags: dict):
 
         effective_tags = session_tags
         effective_tags.update(marker_tags)
@@ -93,7 +93,7 @@ class TagCompiler:
                 yield item, list(time_spans)
 
     @staticmethod
-    def time_span_tags(at_time: Fraction, applicable_spans) -> dict:
+    def _time_span_tags(at_time: Fraction, applicable_spans) -> dict:
         retval = dict()
         for tags in [a[0] for a in applicable_spans if a.start <= at_time <= a.finish]:
             retval.update(tags)
@@ -106,14 +106,14 @@ class TagCompiler:
 
         for event, time_spans in parsed_with_time_spans:
             event: 'TagCompiler.Intermediate'
-            marker_tags = self.marker_tags(event.start)
-            time_span_tags = self.time_span_tags(event.start, time_spans)
-            tags = self.coalesce_tags(clip_tags=event.clip_tags,
-                                      track_tags=event.track_tags,
-                                      track_comment_tags=event.track_comment_tags,
-                                      timespan_tags=time_span_tags,
-                                      marker_tags=marker_tags,
-                                      session_tags=session_parsed.tag_dict)
+            marker_tags = self._marker_tags(event.start)
+            time_span_tags = self._time_span_tags(event.start, time_spans)
+            tags = self._coalesce_tags(clip_tags=event.clip_tags,
+                                       track_tags=event.track_tags,
+                                       track_comment_tags=event.track_comment_tags,
+                                       timespan_tags=time_span_tags,
+                                       marker_tags=marker_tags,
+                                       session_tags=session_parsed.tag_dict)
 
             yield event.clip_content, event.track_content, session_parsed.content, tags, event.start, event.finish
 

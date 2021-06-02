@@ -6,7 +6,7 @@ from fractions import Fraction
 
 
 class TestADREntity(unittest.TestCase):
-    def test_something(self):
+    def test_event2line(self):
         tags = {
             'Ver': '1.0',
             'Actor': "Bill",
@@ -31,8 +31,6 @@ class TestADREntity(unittest.TestCase):
         self.assertEqual(True, line.effort)
         self.assertEqual('Test Project', line.title)
         self.assertEqual('1.0', line.version)
-
-
 
 
 if __name__ == '__main__':

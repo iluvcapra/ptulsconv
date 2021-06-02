@@ -36,8 +36,8 @@ class TagCompiler:
                        track_comment_tags: dict,
                        timespan_tags: dict,
                        marker_tags: dict, session_tags: dict):
-
-        effective_tags = session_tags
+        effective_tags = dict()
+        effective_tags.update(session_tags)
         effective_tags.update(marker_tags)
         effective_tags.update(timespan_tags)
         effective_tags.update(track_comment_tags)
@@ -99,7 +99,7 @@ class TagCompiler:
     @staticmethod
     def _time_span_tags(at_time: Fraction, applicable_spans) -> dict:
         retval = dict()
-        for tags in [a[0] for a in applicable_spans if a.start <= at_time <= a.finish]:
+        for tags in [a[0] for a in applicable_spans if a[1] <= at_time <= a[2]]:
             retval.update(tags)
 
         return retval

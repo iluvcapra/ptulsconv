@@ -7,11 +7,12 @@ protools_text_export_grammar = Grammar(
                "SAMPLE RATE:" fs float_value rs 
                "BIT DEPTH:" fs integer_value "-bit" rs 
                "SESSION START TIMECODE:" fs string_value rs 
-               "TIMECODE FORMAT:" fs float_value " Drop"? " Frame" rs 
+               "TIMECODE FORMAT:" fs frame_rate " Drop"? " Frame" rs 
                "# OF AUDIO TRACKS:" fs integer_value rs 
                "# OF AUDIO CLIPS:" fs integer_value rs 
                "# OF AUDIO FILES:" fs integer_value rs block_ending
-
+    
+    frame_rate           = ("60" / "59.94" / "30" / "29.97" / "24" / "23.976")
     files_section        = files_header files_column_header file_record* block_ending
     files_header         = "F I L E S  I N  S E S S I O N" rs
     files_column_header  = "Filename" isp fs "Location" rs

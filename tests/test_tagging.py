@@ -1,5 +1,5 @@
 import unittest
-import ptulsconv
+from ptulsconv.docparser import doc_entity, doc_parser_visitor, ptuls_grammar, tag_compiler
 import os.path
 
 
@@ -8,83 +8,62 @@ class TaggingIntegratedTests(unittest.TestCase):
 
     def test_event_list(self):
         with open(self.path, 'r') as f:
-            visitor = ptulsconv.DictionaryParserVisitor()
-            result = ptulsconv.protools_text_export_grammar.parse(f.read())
-            parsed: dict = visitor.visit(result)
+            document_ast = ptuls_grammar.protools_text_export_grammar.parse(f.read())
+            document: doc_entity.SessionDescriptor = doc_parser_visitor.DocParserVisitor().visit(document_ast)
+            compiler = tag_compiler.TagCompiler()
+            compiler.session = document
 
-            tcxform = ptulsconv.transformations.TimecodeInterpreter()
-            tagxform = ptulsconv.transformations.TagInterpreter(show_progress=False,
-                                                                ignore_muted=True,
-                                                                log_output=False)
+            events = list(compiler.compile_events())
 
-            parsed = tcxform.transform(parsed)
-            parsed = tagxform.transform(parsed)
-
-            self.assertEqual(9, len(parsed['events']))
-            self.assertEqual("Clip Name", parsed['events'][0]['PT.Clip.Name'])
-            self.assertEqual("Lorem ipsum", parsed['events'][1]['PT.Clip.Name'])
-            self.assertEqual("Dolor sic amet the rain in spain", parsed['events'][2]['PT.Clip.Name'])
-            self.assertEqual("A B C", parsed['events'][3]['PT.Clip.Name'])
-            self.assertEqual("Silver Bridge", parsed['events'][4]['PT.Clip.Name'])
-            self.assertEqual("Region 02", parsed['events'][5]['PT.Clip.Name'])
-            self.assertEqual("Region 12", parsed['events'][6]['PT.Clip.Name'])
-            self.assertEqual("Region 22", parsed['events'][7]['PT.Clip.Name'])
-            self.assertEqual("Region 04", parsed['events'][8]['PT.Clip.Name'])
+            self.assertEqual(9, len(events))
+            self.assertEqual("Clip Name", events[0].clip_name)
+            self.assertEqual("Lorem ipsum", events[1].clip_name)
+            self.assertEqual("Dolor sic amet the rain in spain", events[2].clip_name)
+            self.assertEqual("A B C", events[3].clip_name)
+            self.assertEqual("Silver Bridge", events[4].clip_name)
+            self.assertEqual("Region 02", events[5].clip_name)
+            self.assertEqual("Region 12", events[6].clip_name)
+            self.assertEqual("Region 22", events[7].clip_name)
+            self.assertEqual("Region 04", events[8].clip_name)
 
     def test_append(self):
         with open(self.path, 'r') as f:
-            visitor = ptulsconv.DictionaryParserVisitor()
-            result = ptulsconv.protools_text_export_grammar.parse(f.read())
-            parsed: dict = visitor.visit(result)
+            document_ast = ptuls_grammar.protools_text_export_grammar.parse(f.read())
+            document: doc_entity.SessionDescriptor = doc_parser_visitor.DocParserVisitor().visit(document_ast)
+            compiler = tag_compiler.TagCompiler()
+            compiler.session = document
 
-            tcxform = ptulsconv.transformations.TimecodeInterpreter()
-            tagxform = ptulsconv.transformations.TagInterpreter(show_progress=False,
-                                                                ignore_muted=True,
-                                                                log_output=False)
+            events = list(compiler.compile_events())
 
-            parsed = tcxform.transform(parsed)
-            parsed = tagxform.transform(parsed)
+            self.assertTrue(len(events) > 2)
 
-            self.assertTrue(len(parsed['events']) > 2)
+            self.assertEqual("Dolor sic amet the rain in spain", events[2].clip_name)
 
-            self.assertEqual("Dolor sic amet the rain in spain",
-                             parsed['events'][2]['PT.Clip.Name'])
+            self.assertEqual(document.header.convert_timecode("01:00:10:00"), events[2].start)
+            self.assertEqual(document.header.convert_timecode("01:00:25:00"), events[2].finish)
 
-            self.assertTrue("01:00:10:00", parsed['events'][2]['PT.Clip.Start'])
-            self.assertTrue("01:00:25:00", parsed['events'][2]['PT.Clip.Finish'])
-            self.assertTrue(240, parsed['events'][2]['PT.Clip.Start_Frames'])
-            self.assertTrue(600, parsed['events'][2]['PT.Clip.Finish_Frames'])
-
-            self.assertIn('X', parsed['events'][2].keys())
-            self.assertIn('ABC', parsed['events'][2].keys())
-            self.assertIn('A', parsed['events'][2].keys())
-            self.assertEqual('302', parsed['events'][2]['X'])
-            self.assertEqual('ABC', parsed['events'][2]['ABC'])
-            self.assertEqual('1', parsed['events'][2]['A'])
+            self.assertIn('X', events[2].tags.keys())
+            self.assertIn('ABC', events[2].tags.keys())
+            self.assertIn('A', events[2].tags.keys())
+            self.assertEqual('302', events[2].tags['X'])
+            self.assertEqual('ABC', events[2].tags['ABC'])
+            self.assertEqual('1', events[2].tags['A'])
 
     def test_successive_appends(self):
         with open(self.path, 'r') as f:
-            visitor = ptulsconv.DictionaryParserVisitor()
-            result = ptulsconv.protools_text_export_grammar.parse(f.read())
-            parsed: dict = visitor.visit(result)
+            document_ast = ptuls_grammar.protools_text_export_grammar.parse(f.read())
+            document: doc_entity.SessionDescriptor = doc_parser_visitor.DocParserVisitor().visit(document_ast)
+            compiler = tag_compiler.TagCompiler()
+            compiler.session = document
 
-            tcxform = ptulsconv.transformations.TimecodeInterpreter()
-            tagxform = ptulsconv.transformations.TagInterpreter(show_progress=False,
-                                                                ignore_muted=True,
-                                                                log_output=False)
+            events = list(compiler.compile_events())
 
-            parsed = tcxform.transform(parsed)
-            parsed = tagxform.transform(parsed)
+            self.assertTrue(len(events) > 3)
 
-            self.assertTrue(len(parsed['events']) > 3)
+            self.assertEqual("A B C", events[3].clip_name)
 
-            self.assertEqual("A B C",
-                             parsed['events'][3]['PT.Clip.Name'])
-
-            self.assertTrue("01:00:15:00", parsed['events'][3]['PT.Clip.Start'])
-            self.assertTrue("01:00:45:00", parsed['events'][3]['PT.Clip.Finish'])
-            self.assertTrue(80, parsed['events'][3]['PT.Clip.Start_Frames'])
-            self.assertTrue(1080, parsed['events'][3]['PT.Clip.Finish_Frames'])
+            self.assertEqual(document.header.convert_timecode("01:00:15:00"), events[3].start)
+            self.assertEqual(document.header.convert_timecode("01:00:45:00"), events[3].finish)
 
 
 if __name__ == '__main__':

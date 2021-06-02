@@ -82,6 +82,10 @@ class DocParserVisitor(NodeVisitor):
         )
 
     @staticmethod
+    def visit_frame_rate(node, _):
+        return node.text
+
+    @staticmethod
     def visit_track_listing(_, visited_children):
         return visited_children[1]
 

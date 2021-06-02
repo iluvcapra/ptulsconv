@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional, Callable, Any, List, Generator, Tuple
+from typing import Optional, Callable, Any, List, Generator, Tuple, Iterator
 from .doc_entity import SessionDescriptor
 from .tagged_string_parser_visitor import parse_tags, TagPreModes
 from . import apply_appends
@@ -10,7 +10,7 @@ from collections import namedtuple
 class TagCompiler:
     session: SessionDescriptor
 
-    def compile_events(self) -> Generator[Tuple[str, str, str, dict, Fraction, Fraction]]:
+    def compile_events(self) -> [Tuple[str, str, str, dict, Fraction, Fraction]]:
         yield from self.apply_tags(
             self.collect_time_spans(
                 self.apply_appends(
@@ -45,9 +45,9 @@ class TagCompiler:
     Intermediate = namedtuple('Intermediate', 'track_content track_tags track_comment_tags '
                                               'clip_content clip_tags clip_tag_mode start finish')
 
-    def parse_data(self) -> Generator[Intermediate]:
+    def parse_data(self) -> Iterator[Intermediate]:
 
-        for track, clip, start, finish in self.session.track_clips_timed():
+        for track, clip, start, finish, _ in self.session.track_clips_timed():
             if clip.state == 'Muted':
                 continue
 
@@ -63,13 +63,13 @@ class TagCompiler:
                                            start=start, finish=finish)
 
     @staticmethod
-    def apply_appends(parsed: Generator[Intermediate]) -> Generator[Intermediate]:
+    def apply_appends(parsed: Iterator[Intermediate]) -> Iterator[Intermediate]:
 
         def should_append(a, b):
             return b.clip_tag_mode == TagPreModes.APPEND and b.start >= a.finish
 
         def do_append(a, b):
-            merged_tags = a.clip_tags
+            merged_tags = dict(a.clip_tags)
             merged_tags.update(b.clip_tags)
             return TagCompiler.Intermediate(track_content=a.track_content,
                                             track_tags=a.track_tags,
@@ -81,8 +81,8 @@ class TagCompiler:
         yield from apply_appends(parsed, should_append, do_append)
 
     @staticmethod
-    def collect_time_spans(parsed: Generator[Intermediate]) -> \
-            Generator[Tuple[Intermediate, List[dict, Fraction, Fraction]]]:
+    def collect_time_spans(parsed: Iterator[Intermediate]) -> \
+            Iterator[Tuple[Intermediate, Tuple[dict, Fraction, Fraction]]]:
 
         time_spans = list()
 
@@ -100,7 +100,7 @@ class TagCompiler:
 
         return retval
 
-    def apply_tags(self, parsed_with_time_spans) -> Generator[Tuple[str, str, str, dict, Fraction, Fraction]]:
+    def apply_tags(self, parsed_with_time_spans) -> Iterator[Tuple[str, str, str, dict, Fraction, Fraction]]:
 
         session_parsed = parse_tags(self.session.header.session_name)
 

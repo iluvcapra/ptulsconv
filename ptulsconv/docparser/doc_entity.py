@@ -1,6 +1,6 @@
 from fractions import Fraction
 from ptulsconv.broadcast_timecode import smpte_to_frame_count
-from typing import Tuple, List, Generator
+from typing import Tuple, List, Iterator
 from collections import namedtuple
 from . import apply_appends
 from .tagged_string_parser_visitor import parse_tags
@@ -22,17 +22,17 @@ class SessionDescriptor:
         self.tracks = kwargs['tracks']
         self.markers = kwargs['markers']
 
-    def markers_timed(self) -> Generator[tuple['MarkerDescriptor', Fraction]]:
+    def markers_timed(self) -> Iterator[Tuple['MarkerDescriptor', Fraction]]:
         for marker in self.markers:
             marker_time = self.header.convert_timecode(marker.location)
             yield marker, marker_time
 
-    def tracks_clips(self):
-        for track_idx, track in enumerate(self.tracks):
+    def tracks_clips(self) -> Iterator[Tuple['TrackDescriptor', 'TrackClipDescriptor']]:
+        for track in self.tracks:
             for clip in track.clips:
-                yield track_idx, track, clip
+                yield track, clip
 
-    def track_clips_timed(self) -> Generator[Tuple["TrackDescriptor", "TrackClipDescriptor",
+    def track_clips_timed(self) -> Iterator[Tuple["TrackDescriptor", "TrackClipDescriptor",
                                                    Fraction, Fraction, Fraction]]:
         """
         :return: A Generator that yields track, clip, start time, finish time, and timestamp

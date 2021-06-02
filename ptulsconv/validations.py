@@ -1,58 +1,67 @@
 from dataclasses import dataclass
-from sys import stderr
+from ptulsconv.docparser.adr_entity import ADRLine
+from typing import List, Iterator, Optional
 
 
 @dataclass
 class ValidationError:
     message: str
-    event: dict
+    event: Optional[ADRLine]
 
     def report_message(self):
-        return f"{self.message}: event at {self.event['PT.Clip.Start']} on track {self.event['PT.Track.Name']}"
+        if self.event is not None:
+            return f"{self.message}: event at {self.event.start} with number {self.event.cue_number}"
+        else:
+            return self.message
 
-def validate_unique_count(input_dict, field='Title', count=1):
-    values = set(list(map(lambda e: e.get(field, None), input_dict['events'])))
+
+def validate_unique_count(input_lines: Iterator[ADRLine], field='title', count=1):
+    values = set(list(map(lambda e: getattr(e, field), input_lines)))
     if len(values) > count:
         yield ValidationError(message="Field {} has too many values (max={}): {}".format(field, count, values))
 
-def validate_value(input_dict, key_field, predicate):
-    for event in input_dict['events']:
-        val = event[key_field]
+
+def validate_value(input_lines: Iterator[ADRLine], key_field, predicate):
+    for event in input_lines:
+        val = getattr(event, key_field)
         if not predicate(val):
             yield ValidationError(message='Field {} not in range'.format(val),
                                   event=event)
 
 
-def validate_unique_field(input_dict, field='QN'):
+def validate_unique_field(input_lines: Iterator[ADRLine], field='cue_number'):
     values = set()
-    for event in input_dict['events']:
-        if event[field] in values:
+    for event in input_lines:
+        this = getattr(event, field)
+        if this in values:
             yield ValidationError(message='Re-used {}'.format(field), event=event)
+        else:
+            values.update(this)
 
 
-def validate_non_empty_field(input_dict, field='QN'):
-    for event in input_dict['events']:
-        if field not in event.keys() or len(event[field]) == 0:
+def validate_non_empty_field(input_lines: Iterator[ADRLine], field='cue_number'):
+    for event in input_lines:
+        if getattr(event, field, None) is None:
             yield ValidationError(message='Empty field {}'.format(field), event=event)
 
 
-def validate_dependent_value(input_dict, key_field, dependent_field):
+def validate_dependent_value(input_lines: Iterator[ADRLine], key_field, dependent_field):
     """
     Validates that two events with the same value in `key_field` always have the
     same value in `dependent_field`
     """
-    value_map = dict()
-    for event in input_dict['events']:
-        if key_field not in event.keys():
-            continue
+    key_values = set((getattr(x, key_field) for x in input_lines))
 
-        if event[key_field] not in value_map.keys():
-            value_map[event[key_field]] = event.get(dependent_field, None)
-        else:
-            if value_map[event[key_field]] != event.get(dependent_field, None):
-                yield ValidationError(message='Field {} depends on key field {} (value={}), expected {}, was {}'
-                                      .format(dependent_field, key_field, event[key_field], value_map[key_field],
-                                              event.get(dependent_field, None)), event=event)
+    for key_value in key_values:
+        rows = [(getattr(x, key_field), getattr(x, dependent_field)) for x in input_lines
+                if getattr(x, key_field) == key_value]
+        unique_rows = set(rows)
+        if len(unique_rows) > 1:
+            message = "Non-unique values for key {} = ".format(key_field)
+            for u in unique_rows:
+                message = message + "\n - {} -> {}".format(u[0], u[1])
+
+            yield ValidationError(message=message, event=None)
 
 
 

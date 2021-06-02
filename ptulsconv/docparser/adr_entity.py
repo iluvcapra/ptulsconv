@@ -1,70 +1,32 @@
-from .doc_entity import SessionDescriptor, TrackDescriptor, TrackClipDescriptor
-from .tag_compiler import Event
-from typing import Optional, Generator
+from ptulsconv.docparser.tag_compiler import Event
+from typing import Optional
+from dataclasses import dataclass
 
-# field_map maps tags in the text export to fields in FMPXMLRESULT
-#  - tuple field 0 is a list of tags, the first tag with contents will be used as source
-#  - tuple field 1 is the field in FMPXMLRESULT
-#  - tuple field 2 the constructor/type of the field
-from .tag_mapping import TagMapping
-
-adr_field_map = ((['Title', 'PT.Session.Name'], 'Title', str),
-                 (['Supv'], 'Supervisor', str),
-                 (['Client'], 'Client', str),
-                 (['Sc'], 'Scene', str),
-                 (['Ver'], 'Version', str),
-                 (['Reel'], 'Reel', str),
-                 (['PT.Clip.Start'], 'Start', str),
-                 (['PT.Clip.Finish'], 'Finish', str),
-                 (['PT.Clip.Start_Seconds'], 'Start Seconds', float),
-                 (['PT.Clip.Finish_Seconds'], 'Finish Seconds', float),
-                 (['PT.Clip.Start_Frames'], 'Start Frames', int),
-                 (['PT.Clip.Finish_Frames'], 'Finish Frames', int),
-                 (['P'], 'Priority', int),
-                 (['QN'], 'Cue Number', str),
-                 (['Char', 'PT.Track.Name'], 'Character Name', str),
-                 (['Actor'], 'Actor Name', str),
-                 (['CN'], 'Character Number', str),
-                 (['R'], 'Reason', str),
-                 (['Rq'], 'Requested by', str),
-                 (['Spot'], 'Spot', str),
-                 (['PT.Clip.Name', 'Line'], 'Line', str),
-                 (['Shot'], 'Shot', str),
-                 (['Note'], 'Note', str),
-                 (['Mins'], 'Time Budget Mins', float),
-                 (['EFF'], 'Effort', str),
-                 (['TV'], 'TV', str),
-                 (['TBW'], 'To Be Written', str),
-                 (['OMIT'], 'Omit', str),
-                 (['ADLIB'], 'Adlib', str),
-                 (['OPT'], 'Optional', str),
-                 (['DONE'], 'Done', str),
-                 (['Movie.Filename'], 'Movie', str),
-                 (['Movie.Start_Offset_Seconds'], 'Movie Seconds', float),
-                 )
+from ptulsconv.docparser.tag_mapping import TagMapping
 
 
+@dataclass
 class ADRLine:
-    title: str
-    supervisor: str
-    client: str
-    scene: str
-    version: str
-    reel: str
-    start: str
-    finish: str
-    priority: int
-    cue_number: str
-    character_id: str
-    character_name: str
-    actor_name: str
-    prompt: str
-    reason: str
-    requested_by: str
-    time_budget_mins: float
-    note: str
-    spot: str
-    shot: str
+    title: Optional[str]
+    supervisor: Optional[str]
+    client: Optional[str]
+    scene: Optional[str]
+    version: Optional[str]
+    reel: Optional[str]
+    start: Optional[str]
+    finish: Optional[str]
+    priority: Optional[int]
+    cue_number: Optional[str]
+    character_id: Optional[str]
+    character_name: Optional[str]
+    actor_name: Optional[str]
+    prompt: Optional[str]
+    reason: Optional[str]
+    requested_by: Optional[str]
+    time_budget_mins: Optional[float]
+    note: Optional[str]
+    spot: Optional[str]
+    shot: Optional[str]
     effort: bool
     tv: bool
     tbw: bool
@@ -72,7 +34,7 @@ class ADRLine:
     adlib: bool
     optional: bool
 
-    adr_tag_to_line_map = [
+    tag_mapping = [
         TagMapping(source='Title', target="title", alt=TagMapping.ContentSource.Session),
         TagMapping(source="Supv", target="supervisor"),
         TagMapping(source="Client", target="client"),
@@ -135,9 +97,10 @@ class ADRLine:
         self.optional = False
 
     @classmethod
-    def from_event(cls, event: Event) -> Optional['ADRLine']:
+    def from_event(cls, event: Event) -> 'ADRLine':
         new = cls()
-        TagMapping.apply_rules(cls.adr_tag_to_line_map, event.tags,
+        TagMapping.apply_rules(cls.tag_mapping, event.tags,
                                event.clip_name, event.track_name, event.session_name, new)
         return new
+
 

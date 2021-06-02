@@ -1,11 +1,11 @@
-from . import broadcast_timecode
-from .docparser.tagged_string_parser_visitor import TaggedStringResult, tag_grammar
+from ptulsconv import broadcast_timecode
+from ptulsconv.docparser.tagged_string_parser_visitor import TaggedStringResult, tag_grammar
 from parsimonious.exceptions import IncompleteParseError
 import math
 import sys
 
-from .docparser.tagged_string_parser_visitor import TagListVisitor
-from .reporting import print_advisory_tagging_error, print_section_header_style, print_status_style
+from ptulsconv.docparser.tagged_string_parser_visitor import TagListVisitor
+from ptulsconv.reporting import print_advisory_tagging_error, print_section_header_style, print_status_style
 
 from tqdm import tqdm
 

@@ -1,3 +1,4 @@
+import sys
 from enum import Enum
 from typing import Optional, Callable, Any, List
 
@@ -11,6 +12,29 @@ class TagMapping:
     source: str
     alternate_source: Optional[ContentSource]
     formatter: Callable[[str], Any]
+
+    @staticmethod
+    def print_rules(for_type: object, output=sys.stdout):
+        format_str = "%-20s |  %-20s | %-25s"
+        hr = "%s+%s+%s" % ("-" * 21, "-" * 23, "-" * 26)
+        print("Tag mapping for %s" % for_type.__name__)
+        print(hr)
+        print(format_str % ("Tag Source", "Target", "Type"),
+              file=output)
+        print(hr)
+        for rule in for_type.tag_mapping:
+            t = for_type.__annotations__[rule.target]
+            print(format_str % (rule.source, rule.target, t),
+                  file=output)
+            if rule.alternate_source is TagMapping.ContentSource.Session:
+                print(format_str % (" - (Session Name)", rule.target, t),
+                      file=output)
+            elif rule.alternate_source is TagMapping.ContentSource.Track:
+                print(format_str % (" - (Track Name)", rule.target, t),
+                      file=output)
+            elif rule.alternate_source is TagMapping.ContentSource.Clip:
+                print(format_str % (" - (Clip Name)", rule.target, t),
+                      file=output)
 
     @staticmethod
     def apply_rules(rules: List['TagMapping'],
@@ -30,11 +54,11 @@ class TagMapping:
     def __init__(self, source: str,
                  target: str,
                  alt: Optional[ContentSource] = None,
-                 formatter=(lambda x: x)):
+                 formatter=None):
         self.source = source
         self.target = target
         self.alternate_source = alt
-        self.formatter = formatter
+        self.formatter = formatter or (lambda x: x)
 
     def apply(self, tags: dict,
               clip_content: str,

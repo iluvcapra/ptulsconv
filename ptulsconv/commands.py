@@ -8,15 +8,19 @@ import csv
 import ptulsconv
 from .reporting import print_section_header_style, print_status_style, print_warning
 from .validations import *
-from .xml.common import dump_fmpxml, fmp_transformed_dump
+
+from ptulsconv.docparser import parse_document
+from ptulsconv.docparser.tag_compiler import TagCompiler
 
 from ptulsconv.pdf.supervisor_1pg import output_report as output_supervisor_1pg
 from ptulsconv.pdf.line_count import output_report as output_line_count
 from ptulsconv.pdf.talent_sides import output_report as output_talent_sides
 from ptulsconv.pdf.summary_log import output_report as output_summary
 
-from .docparser.adr_entity import adr_field_map
-
+from json import JSONEncoder
+class MyEncoder(JSONEncoder):
+        def default(self, o):
+            return o.__dict__
 
 def dump_csv(events, output=sys.stdout):
     keys = set()
@@ -38,39 +42,11 @@ def dump_keyed_csv(events, keys=(), output=sys.stdout):
         writer.writerow(this_row)
 
 
-def dump_field_map(field_map_name, output=sys.stdout):
-    output.write("# Map of Tag fields to XML output columns\n")
-    output.write("# (in order of precedence)\n")
-    output.write("# \n")
-    field_map = []
-    if field_map_name == 'ADR':
-        field_map = adr_field_map
-        output.write("# ADR Table Fields\n")
+def dump_field_map(output=sys.stdout):
+    from ptulsconv.docparser.tag_mapping import TagMapping
+    from ptulsconv.docparser.adr_entity import ADRLine
 
-    output.write("# \n")
-    output.write("# Tag Name                    | FMPXMLRESULT Column  | Type    | Column \n")
-    output.write("# ----------------------------+----------------------+---------+--------\n")
-
-    for n, field in enumerate(field_map):
-        for tag in field[0]:
-            output.write("# %-27s-> %-20s | %-8s| %-7i\n" % (tag[:27], field[1][:20], field[2].__name__, n + 1))
-
-
-def normalize_record_keys_for_adr(records):
-    for record in records['events']:
-        if 'ADR' not in record.keys():
-            continue
-
-        for field in adr_field_map:
-            spot_keys = field[0]
-            output_key = field[1]
-            field_type = field[2]
-            for attempt_key in spot_keys:
-                if attempt_key in record.keys():
-                    record[output_key] = field_type(record[attempt_key])
-                    break
-
-    return records
+    TagMapping.print_rules(ADRLine, output=output)
 
 
 def output_adr_csv(lines):
@@ -170,66 +146,38 @@ def convert(input_file, output_format='fmpxml',
             progress=False, include_muted=False, xsl=None,
             output=sys.stdout, log_output=sys.stderr, warnings=True):
 
-    with open(input_file, 'r') as file:
-        print_section_header_style('Parsing')
-        parsed = parse_text_export(file)
+    session = parse_document(input_file)
+    compiler = TagCompiler()
+    compiler.session = session
+    compiled_events = compiler.compile_events()
 
-        tcxform = ptulsconv.transformations.TimecodeInterpreter()
-        tagxform = ptulsconv.transformations.TagInterpreter(show_progress=progress,
-                                                            ignore_muted=(not include_muted),
-                                                            log_output=log_output)
+    lines = list(map(ADRLine.from_event, compiled_events))
 
-        parsed = tcxform.transform(parsed)
-        parsed = tagxform.transform(parsed)
+    if warnings:
+        for warning in chain(validate_unique_field(lines, field='cue_number'),
+                             validate_non_empty_field(lines, field='cue_number'),
+                             validate_non_empty_field(lines, field='character_id'),
+                             validate_non_empty_field(lines, field='title'),
+                             validate_dependent_value(lines, key_field='character_id',
+                                                      dependent_field='character_name'),
+                             validate_dependent_value(lines, key_field='character_id',
+                                                      dependent_field='actor_name')):
+            print_warning(warning.report_message())
 
-        # start=None, end=None, select_reel=None
-        #
-        # if start is not None and end is not None:
-        #     start_fs = tcxform.convert_time(start,
-        #                                     frame_rate=parsed['header']['timecode_format'],
-        #                                     drop_frame=parsed['header']['timecode_drop_frame'])['frame_count']
-        #
-        #     end_fs = tcxform.convert_time(end,
-        #                                   frame_rate=parsed['header']['timecode_format'],
-        #                                   drop_frame=parsed['header']['timecode_drop_frame'])['frame_count']
-        #
-        #     subclipxform = ptulsconv.transformations.SubclipOfSequence(start=start_fs, end=end_fs)
-        #     parsed = subclipxform.transform(parsed)
-        #
-        # if select_reel is not None:
-        #     reel_xform = ptulsconv.transformations.SelectReel(reel_num=select_reel)
-        #     parsed = reel_xform.transform(parsed)
+    if output_format == 'json':
+        print(MyEncoder().encode(lines))
 
-        parsed = normalize_record_keys_for_adr(parsed)
+    # elif output_format == 'csv':
+    #     dump_csv(parsed['events'])
+    #
+    # elif output_format == 'adr':
+    #     create_adr_reports(parsed)
 
-        if warnings:
-            for warning in chain(validate_unique_field(parsed, field='QN'),
-                                 validate_non_empty_field(parsed, field='QN'),
-                                 validate_non_empty_field(parsed, field='CN'),
-                                 validate_non_empty_field(parsed, field='Title'),
-                                 validate_dependent_value(parsed, key_field='CN',
-                                                          dependent_field='Char'),
-                                 validate_dependent_value(parsed, key_field='CN',
-                                                          dependent_field='Actor'),
-                                 validate_unique_count(parsed, field='Title', count=1),
-                                 validate_unique_count(parsed, field='Spotting', count=1),
-                                 validate_unique_count(parsed, field='Supervisor', count=1)):
-                print_warning(warning.report_message())
-
-        if output_format == 'json':
-            json.dump(parsed, output)
-
-        elif output_format == 'csv':
-            dump_csv(parsed['events'])
-
-        elif output_format == 'adr':
-            create_adr_reports(parsed)
-
-        elif output_format == 'fmpxml':
-            if xsl is None:
-                dump_fmpxml(parsed, input_file, output, adr_field_map)
-            else:
-                print_section_header_style("Performing XSL Translation")
-                print_status_style("Using builtin translation: %s" % xsl)
-                fmp_transformed_dump(parsed, input_file, xsl, output)
+    # elif output_format == 'fmpxml':
+    #     if xsl is None:
+    #         dump_fmpxml(parsed, input_file, output, adr_field_map)
+    #     else:
+    #         print_section_header_style("Performing XSL Translation")
+    #         print_status_style("Using builtin translation: %s" % xsl)
+    #         fmp_transformed_dump(parsed, input_file, xsl, output)
 

@@ -92,6 +92,7 @@ class HeaderDescriptor:
     def _get_tc_format_params(self) -> Tuple[int, Fraction]:
         frame_rates = {"23.976": (24, Fraction(1001, 24_000)),
                        "24":     (24, Fraction(1, 24)),
+                       "25":     (25, Fraction(1, 25)),
                        "29.97":  (30, Fraction(1001, 30_000)),
                        "30":     (30, Fraction(1, 30)),
                        "59.94":  (60, Fraction(1001, 60_000)),

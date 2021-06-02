@@ -7,17 +7,20 @@ from fractions import Fraction
 from collections import namedtuple
 
 
+class Event(namedtuple('Event', 'clip_name track_name session_name tags start finish')):
+    pass
+
+
 class TagCompiler:
     session: SessionDescriptor
 
-    def compile_events(self) -> [Tuple[str, str, str, dict, Fraction, Fraction]]:
-        yield from self.apply_tags(
-            self.collect_time_spans(
-                self.apply_appends(
-                    self.parse_data()
-                )
-            )
-        )
+    def compile_events(self) -> Iterator[Event]:
+        step0 = self.parse_data()
+        step1 = self.apply_appends(step0)
+        step2 = self.collect_time_spans(step1)
+        step3 = self.apply_tags(step2)
+        for datum in step3:
+            yield Event(*datum)
 
     def _marker_tags(self, at):
         retval = dict()
@@ -58,7 +61,8 @@ class TagCompiler:
             yield TagCompiler.Intermediate(track_content=track_parsed.content,
                                            track_tags=track_parsed.tag_dict,
                                            track_comment_tags=track_comments_parsed.tag_dict,
-                                           clip_content=clip_parsed.content, clip_tags=clip_parsed.tag_dict,
+                                           clip_content=clip_parsed.content,
+                                           clip_tags=clip_parsed.tag_dict,
                                            clip_tag_mode=clip_parsed.mode,
                                            start=start, finish=finish)
 

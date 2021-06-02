@@ -4,8 +4,8 @@ from fractions import Fraction
 import pprint
 
 
-class MyTestCase(unittest.TestCase):
-    def test_something(self):
+class TestTagCompiler(unittest.TestCase):
+    def test_one_track(self):
         c = tag_mapping.TagCompiler()
 
         test_header = doc_entity.HeaderDescriptor(session_name="Test Session $Ver=1.1",
@@ -60,30 +60,29 @@ class MyTestCase(unittest.TestCase):
 
         events = c.compile_events()
         event1 = next(events)
-        self.assertEqual('This is clip 1', event1[0])
-        self.assertEqual('Track 1', event1[1])
-        self.assertEqual('Test Session', event1[2])
+        self.assertEqual('This is clip 1', event1.clip_name)
+        self.assertEqual('Track 1', event1.track_name)
+        self.assertEqual('Test Session', event1.session_name)
         self.assertEqual(dict(A='A',
                               Color='Blue',
                               Ver='1.1',
-                              Comment='This is some text in the comments'), event1[3])
-        self.assertEqual(Fraction(3600, 1), event1[4])
+                              Comment='This is some text in the comments'), event1.tags)
+        self.assertEqual(Fraction(3600, 1), event1.start)
 
         event2 = next(events)
-        self.assertEqual("This is the second clip ...and this is the last clip", event2[0])
-        self.assertEqual('Track 1', event2[1])
-        self.assertEqual('Test Session', event2[2])
+        self.assertEqual("This is the second clip ...and this is the last clip", event2.clip_name)
+        self.assertEqual('Track 1', event2.track_name)
+        self.assertEqual('Test Session', event2.session_name)
         self.assertEqual(dict(R='Noise', A='A', B='B',
                               Color='Red',
                               Comment='This is some text in the comments',
                               N='1',
-                              Ver='1.1'), event2[3])
+                              Ver='1.1'), event2.tags)
 
-        self.assertEqual(c.session.header.convert_timecode('01:00:01:10'), event2[4])
-        self.assertEqual(c.session.header.convert_timecode('01:00:03:00'), event2[5])
+        self.assertEqual(c.session.header.convert_timecode('01:00:01:10'), event2.start)
+        self.assertEqual(c.session.header.convert_timecode('01:00:03:00'), event2.finish)
 
         self.assertIsNone(next(events, None))
-
 
 
 if __name__ == '__main__':

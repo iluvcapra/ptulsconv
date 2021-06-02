@@ -1,12 +1,14 @@
 import unittest
-from ptulsconv.docparser import tag_mapping, doc_entity
+
+import ptulsconv.docparser.tag_compiler
+from ptulsconv.docparser import doc_entity
 from fractions import Fraction
 import pprint
 
 
 class TestTagCompiler(unittest.TestCase):
     def test_one_track(self):
-        c = tag_mapping.TagCompiler()
+        c = ptulsconv.docparser.tag_compiler.TagCompiler()
 
         test_header = doc_entity.HeaderDescriptor(session_name="Test Session $Ver=1.1",
                                                   sample_rate=48000,

@@ -4,7 +4,6 @@ from ptulsconv.docparser.tag_compiler import Event
 from ptulsconv.docparser.adr_entity import ADRLine
 from fractions import Fraction
 
-from pprint import pprint
 
 class TestADREntity(unittest.TestCase):
     def test_something(self):
@@ -24,7 +23,15 @@ class TestADREntity(unittest.TestCase):
 
         line = ADRLine.from_event(event)
 
-        pprint(line.__dict__)
+        self.assertEqual('Bill', line.actor_name)
+        self.assertEqual('Justin', line.character_name)
+        self.assertEqual('"This is a test." (sotto voce)', line.prompt)
+        self.assertEqual('Noise', line.reason)
+        self.assertEqual('J1001', line.cue_number)
+        self.assertEqual(True, line.effort)
+        self.assertEqual('Test Project', line.title)
+        self.assertEqual('1.0', line.version)
+
 
 
 

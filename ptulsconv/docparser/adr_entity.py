@@ -44,7 +44,6 @@ adr_field_map = ((['Title', 'PT.Session.Name'], 'Title', str),
                  )
 
 
-
 class ADRLine:
     title: str
     supervisor: str
@@ -106,6 +105,34 @@ class ADRLine:
         TagMapping(source="OPT", target="optional",
                    formatter=(lambda x: len(x) > 0))
     ]
+
+    def __init__(self):
+        self.title = None
+        self.supervisor = None
+        self.client = None
+        self.scene = None
+        self.version = None
+        self.reel = None
+        self.start = None
+        self.finish = None
+        self.priority = None
+        self.cue_number = None
+        self.character_id = None
+        self.character_name = None
+        self.actor_name = None
+        self.prompt = None
+        self.reason = None
+        self.requested_by = None
+        self.time_budget_mins = None
+        self.note = None
+        self.spot = None
+        self.shot = None
+        self.effort = False
+        self.tv = False
+        self.tbw = False
+        self.omitted = False
+        self.adlib = False
+        self.optional = False
 
     @classmethod
     def from_event(cls, event: Event) -> Optional['ADRLine']:

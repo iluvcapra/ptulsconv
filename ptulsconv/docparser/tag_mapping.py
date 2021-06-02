@@ -30,31 +30,30 @@ class TagMapping:
     def __init__(self, source: str,
                  target: str,
                  alt: Optional[ContentSource] = None,
-                 formatter=None):
+                 formatter=(lambda x: x)):
         self.source = source
         self.target = target
         self.alternate_source = alt
-        self.formatter = formatter or (lambda x: x)
+        self.formatter = formatter
 
     def apply(self, tags: dict,
               clip_content: str,
               track_content: str,
               session_content: str, to: object) -> bool:
 
-        setter = getattr(to, self.target)
         new_value = None
 
         if self.source in tags.keys():
             new_value = tags[self.source]
-        elif self.alternate_source == 1:
+        elif self.alternate_source == TagMapping.ContentSource.Session:
             new_value = session_content
-        elif self.alternate_source == 2:
+        elif self.alternate_source == TagMapping.ContentSource.Track:
             new_value = track_content
-        elif self.alternate_source == 3:
+        elif self.alternate_source == TagMapping.ContentSource.Clip:
             new_value = clip_content
 
         if new_value is not None:
-            setter(self.formatter(new_value))
+            setattr(to, self.target, self.formatter(new_value))
             return True
         else:
             return False

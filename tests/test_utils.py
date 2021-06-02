@@ -1,6 +1,6 @@
 import unittest
 
-from ptulsconv.docparser import apply_appends
+from ptulsconv.docparser.tag_compiler import apply_appends
 
 
 class MyTestCase(unittest.TestCase):

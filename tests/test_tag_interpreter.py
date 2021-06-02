@@ -1,6 +1,5 @@
 import unittest
 
-
 from ptulsconv.docparser.tagged_string_parser_visitor import parse_tags, TagPreModes
 
 

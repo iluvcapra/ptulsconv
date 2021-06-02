@@ -1,10 +1,9 @@
 from collections import namedtuple
 from fractions import Fraction
-from typing import Iterator, Tuple
+from typing import Iterator, Tuple, Callable, Generator
 
-from ptulsconv.docparser import apply_appends
-from ptulsconv.docparser.doc_entity import SessionDescriptor
-from ptulsconv.docparser.tagged_string_parser_visitor import parse_tags, TagPreModes
+import ptulsconv.docparser.doc_entity as doc_entity
+from .tagged_string_parser_visitor import parse_tags, TagPreModes
 
 
 class Event(namedtuple('Event', 'clip_name track_name session_name tags start finish')):
@@ -12,7 +11,7 @@ class Event(namedtuple('Event', 'clip_name track_name session_name tags start fi
 
 
 class TagCompiler:
-    session: SessionDescriptor
+    session: doc_entity.SessionDescriptor
 
     def compile_events(self) -> Iterator[Event]:
         step0 = self.parse_data()
@@ -121,3 +120,25 @@ class TagCompiler:
 
             yield event.clip_content, event.track_content, session_parsed.content, tags, event.start, event.finish
 
+
+def apply_appends(source: Iterator,
+                  should_append: Callable,
+                  do_append: Callable) -> Generator:
+    """
+    :param source:
+    :param should_append: Called with two variables a and b, your
+                        function should return true if b should be
+                        appended to a
+    :param do_append: Called with two variables a and b, your function
+                        should return
+    :returns: A Generator
+    """
+    this_element = next(source)
+    for element in source:
+        if should_append(this_element, element):
+            this_element = do_append(this_element, element)
+        else:
+            yield this_element
+            this_element = element
+
+    yield this_element

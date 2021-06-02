@@ -4,6 +4,18 @@ from .doc_entity import SessionDescriptor, HeaderDescriptor, TrackDescriptor, Fi
     TrackClipDescriptor, ClipDescriptor, PluginDescriptor, MarkerDescriptor
 
 
+def parse_document(path: str) -> SessionDescriptor:
+    """
+    Parse a Pro Tools text export.
+    :param path: path to a file
+    :return: the session descriptor
+    """
+    from .ptuls_grammar import protools_text_export_grammar
+    with open(path, 'r') as f:
+        ast = protools_text_export_grammar.parse(f.read())
+        return DocParserVisitor().visit(ast)
+
+
 class DocParserVisitor(NodeVisitor):
 
     @staticmethod

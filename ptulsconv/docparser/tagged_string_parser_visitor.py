@@ -36,7 +36,7 @@ def parse_tags(prompt) -> "TaggedStringResult":
 class TaggedStringResult:
     content: Optional[str]
     tag_dict: Optional[Dict[str, str]]
-    mode: str
+    mode: TagPreModes
 
     def __init__(self, content, tag_dict, mode):
         self.content = content
@@ -52,7 +52,7 @@ class TagListVisitor(NodeVisitor):
 
         return TaggedStringResult(content=next(iter(line_opt), None),
                                   tag_dict=next(iter(tag_list_opt), None),
-                                  mode=next(iter(modifier_opt), 'Normal')
+                                  mode=TagPreModes(next(iter(modifier_opt), 'Normal'))
                                   )
 
     @staticmethod

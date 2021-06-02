@@ -1,4 +1,5 @@
 from .doc_entity import SessionDescriptor, TrackDescriptor, TrackClipDescriptor
+from .tag_compiler import Event
 from typing import Optional, Generator
 
 # field_map maps tags in the text export to fields in FMPXMLRESULT
@@ -72,7 +73,7 @@ class ADRLine:
     adlib: bool
     optional: bool
 
-    adr_tag_to_line_map = (
+    adr_tag_to_line_map = [
         TagMapping(source='Title', target="title", alt=TagMapping.ContentSource.Session),
         TagMapping(source="Supv", target="supervisor"),
         TagMapping(source="Client", target="client"),
@@ -104,18 +105,12 @@ class ADRLine:
                    formatter=(lambda x: len(x) > 0)),
         TagMapping(source="OPT", target="optional",
                    formatter=(lambda x: len(x) > 0))
-    )
+    ]
 
-    @staticmethod
-    def from_clip(clip: TrackClipDescriptor,
-                  track: TrackDescriptor,
-                  session: SessionDescriptor) -> Optional['ADRLine']:
-        pass
+    @classmethod
+    def from_event(cls, event: Event) -> Optional['ADRLine']:
+        new = cls()
+        TagMapping.apply_rules(cls.adr_tag_to_line_map, event.tags,
+                               event.clip_name, event.track_name, event.session_name, new)
+        return new
 
-    @staticmethod
-    def generate_lines(session: SessionDescriptor) -> Generator['ADRLine']:
-        for track in session.tracks:
-            for track_clip in track.clips:
-                line = ADRLine.from_clip(track_clip, track, session)
-                if line is not None:
-                    yield line

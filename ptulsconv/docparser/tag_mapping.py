@@ -1,10 +1,5 @@
 from enum import Enum
 from typing import Optional, Callable, Any, List
-from collections import namedtuple
-
-
-class Event(namedtuple('Event', 'clip_name track_name session_name tags start finish')):
-    pass
 
 
 class TagMapping:

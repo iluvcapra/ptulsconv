@@ -4,8 +4,11 @@ from typing import Iterator, Tuple
 
 from ptulsconv.docparser import apply_appends
 from ptulsconv.docparser.doc_entity import SessionDescriptor
-from ptulsconv.docparser.tag_mapping import Event
 from ptulsconv.docparser.tagged_string_parser_visitor import parse_tags, TagPreModes
+
+
+class Event(namedtuple('Event', 'clip_name track_name session_name tags start finish')):
+    pass
 
 
 class TagCompiler:
@@ -117,3 +120,4 @@ class TagCompiler:
                                        session_tags=session_parsed.tag_dict)
 
             yield event.clip_content, event.track_content, session_parsed.content, tags, event.start, event.finish
+

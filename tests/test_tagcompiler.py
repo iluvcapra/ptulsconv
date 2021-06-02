@@ -3,7 +3,6 @@ import unittest
 import ptulsconv.docparser.tag_compiler
 from ptulsconv.docparser import doc_entity
 from fractions import Fraction
-import pprint
 
 
 class TestTagCompiler(unittest.TestCase):

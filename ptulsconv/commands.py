@@ -93,9 +93,9 @@ def create_adr_reports(lines: List[ADRLine], tc_display_format: TimecodeFormat):
     print_status_style("Creating ADR Report")
     output_summary(lines, tc_display_format=tc_display_format)
 
-    # print_status_style("Creating Line Count")
-    # output_line_count(lines)
-    #
+    print_status_style("Creating Line Count")
+    output_line_count(lines, reel_list=['R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7'])
+
     print_status_style("Creating Supervisor Logs directory and reports")
     os.makedirs("Supervisor Logs", exist_ok=True)
     os.chdir("Supervisor Logs")

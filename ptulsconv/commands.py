@@ -96,17 +96,17 @@ def create_adr_reports(lines: List[ADRLine], tc_display_format: TimecodeFormat):
     # print_status_style("Creating Line Count")
     # output_line_count(lines)
     #
-    # print_status_style("Creating Supervisor Logs directory and reports")
-    # os.makedirs("Supervisor Logs", exist_ok=True)
-    # os.chdir("Supervisor Logs")
-    # output_supervisor_1pg(lines)
-    # os.chdir("..")
-    #
-    # print_status_style("Creating Director's Logs director and reports")
-    # os.makedirs("Director Logs", exist_ok=True)
-    # os.chdir("Director Logs")
-    # output_summary(lines, tc_display_format=tc_display_format, by_character=True)
-    # os.chdir("..")
+    print_status_style("Creating Supervisor Logs directory and reports")
+    os.makedirs("Supervisor Logs", exist_ok=True)
+    os.chdir("Supervisor Logs")
+    output_supervisor_1pg(lines, tc_display_format=tc_display_format)
+    os.chdir("..")
+
+    print_status_style("Creating Director's Logs director and reports")
+    os.makedirs("Director Logs", exist_ok=True)
+    os.chdir("Director Logs")
+    output_summary(lines, tc_display_format=tc_display_format, by_character=True)
+    os.chdir("..")
     #
     # print_status_style("Creating CSV outputs")
     # os.makedirs("CSV", exist_ok=True)

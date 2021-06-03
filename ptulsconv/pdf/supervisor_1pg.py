@@ -11,65 +11,73 @@ from reportlab.platypus import Paragraph
 
 from .__init__ import GRect
 
+from ptulsconv.broadcast_timecode import TimecodeFormat
+from ptulsconv.docparser.adr_entity import ADRLine
+
 import datetime
 
 
-def draw_header_block(canvas, rect, record):
-    rect.draw_text_cell(canvas, record['Cue Number'], "Helvetica", 44, vertical_align='m')
+def draw_header_block(canvas, rect, record: ADRLine):
+    rect.draw_text_cell(canvas, record.cue_number, "Helvetica", 44, vertical_align='m')
 
 
-def draw_character_row(canvas, rect, record):
+def draw_character_row(canvas, rect, record: ADRLine):
     label_frame, value_frame = rect.split_x(1.25 * inch)
     label_frame.draw_text_cell(canvas, "CHARACTER", "Futura", 10, force_baseline=9.)
-    line = "%s / %s " % (record['Character Number'], record['Character Name'])
-    if 'Actor Name' in record.keys():
-        line = line + " / " + record['Actor Name']
+    line = "%s / %s" % (record.character_id, record.character_name)
+    if record.actor_name is not None:
+        line = line + " / " + record.actor_name
     value_frame.draw_text_cell(canvas, line, "Futura", 12, force_baseline=9.)
     rect.draw_border(canvas, ['min_y', 'max_y'])
 
 
-def draw_cue_number_block(canvas, rect, record):
+def draw_cue_number_block(canvas, rect, record: ADRLine):
     (label_frame, number_frame,), aux_frame = rect.divide_y([0.20 * inch, 0.375 * inch], direction='d')
     label_frame.draw_text_cell(canvas, "CUE NUMBER", "Futura", 10,
                                inset_y=5., vertical_align='t')
-    number_frame.draw_text_cell(canvas, record['Cue Number'], "Futura", 14,
+    number_frame.draw_text_cell(canvas, record.cue_number, "Futura", 14,
                                 inset_x=10., inset_y=2., draw_baseline=True)
 
-    tags = ['TV', 'OPT', 'ADLIB', 'EFF', 'TBW', 'OMIT']
+    tags = {'tv': 'TV',
+            'optional': 'OPT',
+            'adlib': 'ADLIB',
+            'effort': 'EFF',
+            'tbw': 'TBW',
+            'omitted': 'OMIT'}
     tag_field = ""
-    for tag in tags:
-        if tag in record.keys():
-            tag_field = tag_field + tag + " "
+    for key in tags.keys():
+        if getattr(record, key):
+            tag_field = tag_field + tags[key] + " "
 
     aux_frame.draw_text_cell(canvas, tag_field, "Futura", 10,
                              inset_x=10., inset_y=2., vertical_align='t')
     rect.draw_border(canvas, 'max_x')
 
 
-def draw_timecode_block(canvas, rect, record):
+def draw_timecode_block(canvas, rect, record: ADRLine, tc_display_format: TimecodeFormat):
     (in_label_frame, in_frame, out_label_frame, out_frame), _ = rect.divide_y(
         [0.20 * inch, 0.25 * inch, 0.20 * inch, 0.25 * inch], direction='d')
 
     in_label_frame.draw_text_cell(canvas, "IN", "Futura", 10,
                                   vertical_align='t', inset_y=5., inset_x=5.)
-    in_frame.draw_text_cell(canvas, record['PT.Clip.Start'], "Futura", 14,
+    in_frame.draw_text_cell(canvas, tc_display_format.seconds_to_smpte(record.start), "Futura", 14,
                             inset_x=10., inset_y=2., draw_baseline=True)
     out_label_frame.draw_text_cell(canvas, "OUT", "Futura", 10,
                                    vertical_align='t', inset_y=5., inset_x=5.)
-    out_frame.draw_text_cell(canvas, record['PT.Clip.Finish'], "Futura", 14,
+    out_frame.draw_text_cell(canvas, tc_display_format.seconds_to_smpte(record.finish), "Futura", 14,
                              inset_x=10., inset_y=2., draw_baseline=True)
 
     rect.draw_border(canvas, 'max_x')
 
 
-def draw_reason_block(canvas, rect, record):
+def draw_reason_block(canvas, rect, record: ADRLine):
     reason_cell, notes_cell = rect.split_y(24., direction='d')
     reason_label, reason_value = reason_cell.split_x(.75 * inch)
     notes_label, notes_value = notes_cell.split_x(.75 * inch)
 
     reason_label.draw_text_cell(canvas, "Reason:", "Futura", 12,
                                 inset_x=5., inset_y=5., vertical_align='b')
-    reason_value.draw_text_cell(canvas, record.get("Reason", ""), "Futura", 12,
+    reason_value.draw_text_cell(canvas, record.reason or "", "Futura", 12,
                                 inset_x=5., inset_y=5., draw_baseline=True,
                                 vertical_align='b')
     notes_label.draw_text_cell(canvas, "Note:", "Futura", 12,
@@ -80,7 +88,7 @@ def draw_reason_block(canvas, rect, record):
     style.fontSize = 12
     style.leading = 14
 
-    p = Paragraph(record.get("Note", ""), style)
+    p = Paragraph(record.note or "", style)
 
     notes_value.draw_flowable(canvas, p, draw_baselines=True, inset_x=5., inset_y=5.)
 
@@ -175,18 +183,20 @@ def draw_aux_block(canvas, rect, recording_time_sec_this_line, recording_time_se
     lines[5].draw_text_cell(canvas, "Location: ______________", "Futura", 9., vertical_align='b')
 
 
-def draw_footer(canvas, rect, record, report_date, line_no, total_lines):
+def draw_footer(canvas, rect, record: ADRLine, report_date, line_no, total_lines):
     rect.draw_border(canvas, 'max_y')
     report_date_s = [report_date.strftime("%c")]
-    spotting_name = record.get('Spotting', [])
+    spotting_name = [record.spot] if record.spot is not None else []
     pages_s = ["Line %i of %i" % (line_no, total_lines)]
     footer_s = " - ".join(report_date_s + spotting_name + pages_s)
     rect.draw_text_cell(canvas, footer_s, font_name="Futura", font_size=10., inset_y=2.)
 
 
-def create_report_for_character(records, report_date):
+def create_report_for_character(records, report_date, tc_display_format: TimecodeFormat):
 
-    outfile = "%s_%s_%s_Log.pdf" % (records[0]['Title'], records[0]['Character Number'], records[0]['Character Name'],)
+    outfile = "%s_%s_%s_Log.pdf" % (records[0].title,
+                                    records[0].character_id,
+                                    records[0].character_name,)
     assert outfile is not None
     assert outfile[-4:] == '.pdf', "Output file must have 'pdf' extension!"
 
@@ -203,15 +213,16 @@ def create_report_for_character(records, report_date):
 
     c = Canvas(outfile, pagesize=letter,)
 
-    c.setTitle("%s %s (%s) Supervisor's Log" % (records[0]['Title'], records[0]['Character Name'],
-                                                records[0]['Character Number']))
-    c.setAuthor(records[0]['Supervisor'])
+    c.setTitle("%s %s (%s) Supervisor's Log" % (records[0].title, records[0].character_name,
+                                                records[0].character_id))
+    c.setAuthor(records[0].supervisor)
 
     recording_time_sec = 0.0
     total_lines = len(records)
     line_n = 1
     for record in records:
-        recording_time_sec_this_line: float = record.get('Time Budget Mins', 6.0) * 60.0
+        record: ADRLine
+        recording_time_sec_this_line: float = (record.time_budget_mins or 6.0) * 60.0
         recording_time_sec = recording_time_sec + recording_time_sec_this_line
 
         draw_header_block(c, cue_header_block, record)
@@ -221,9 +232,9 @@ def create_report_for_character(records, report_date):
         #draw_title_box(c, title_header_block, record)
         draw_character_row(c, char_row, record)
         draw_cue_number_block(c, cue_number_block, record)
-        draw_timecode_block(c, timecode_block, record)
+        draw_timecode_block(c, timecode_block, record, tc_display_format=tc_display_format)
         draw_reason_block(c, reason_block, record)
-        draw_prompt(c, prompt_row, prompt=record['Line'])
+        draw_prompt(c, prompt_row, prompt=record.prompt)
         draw_notes(c, notes_row, note="")
         draw_take_grid(c, take_grid_block)
         draw_aux_block(c, aux_block, recording_time_sec_this_line, recording_time_sec)
@@ -236,10 +247,11 @@ def create_report_for_character(records, report_date):
     c.save()
 
 
-def output_report(lines):
+def output_report(lines, tc_display_format: TimecodeFormat):
     report_date = datetime.datetime.now()
-    events = sorted(lines, key=lambda x: x['PT.Clip.Start_Frames'])
-    character_numbers = set([x['CN'] for x in lines])
+    events = sorted(lines, key=lambda x: x.start)
+    character_numbers = set([x.character_id for x in lines])
 
     for n in character_numbers:
-        create_report_for_character([e for e in events if e['CN'] == n], report_date)
+        create_report_for_character([e for e in events if e.character_id == n], report_date,
+                                    tc_display_format=tc_display_format)

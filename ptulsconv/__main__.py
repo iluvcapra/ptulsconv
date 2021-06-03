@@ -1,4 +1,4 @@
-from ptulsconv.commands import convert, dump_field_map, raw_output
+from ptulsconv.commands import convert, dump_field_map
 from ptulsconv import __name__, __version__, __author__
 from optparse import OptionParser, OptionGroup
 from .xml.common import dump_xform_options
@@ -60,17 +60,13 @@ def main():
 
     (options, args) = parser.parse_args(sys.argv)
 
-    if options.output_format == 'raw':
-        raw_output(args[1])
-        exit(0)
-
     print_banner_style("%s %s (c) 2020 %s. All rights reserved." % (__name__, __version__, __author__))
 
     print_section_header_style("Startup")
     print_status_style("This run started %s" % (datetime.datetime.now().isoformat()))
 
     if options.show_tags:
-        dump_field_map('ADR')
+        dump_field_map()
         sys.exit(0)
 
     if options.show_transforms:
@@ -84,16 +80,6 @@ def main():
 
     print_status_style("Input file is %s" % (args[1]))
 
-    # if options.in_time:
-    #     print_status_style("Start at time %s" % (options.in_time))
-    # else:
-    #     print_status_style("No start time given.")
-    #
-    # if options.out_time:
-    #     print_status_style("End at time %s." % (options.out_time))
-    # else:
-    #     print_status_style("No end time given.")
-
     if options.include_muted:
         print_status_style("Muted regions are included.")
     else:
@@ -105,11 +91,8 @@ def main():
             output_format = 'fmpxml'
 
         convert(input_file=args[1], output_format=output_format,
-                #start=options.in_time,
-                #end=options.out_time,
                 include_muted=options.include_muted,
                 xsl=options.xslt,
-                #select_reel=options.select_reel,
                 progress=False, output=sys.stdout, log_output=sys.stderr,
                 warnings=options.warnings)
     except FileNotFoundError as e:

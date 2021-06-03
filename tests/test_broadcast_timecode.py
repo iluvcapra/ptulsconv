@@ -1,9 +1,9 @@
 import unittest
 from ptulsconv import broadcast_timecode
-
+from fractions import Fraction
 
 class TestBroadcastTimecode(unittest.TestCase):
-    def test_basic_to_framecount(self):
+    def test_basic_to_frame_count(self):
         r1 = "01:00:00:00"
         f1 = broadcast_timecode.smpte_to_frame_count(r1, 24, False)
         self.assertEqual(f1, 86_400)
@@ -32,13 +32,7 @@ class TestBroadcastTimecode(unittest.TestCase):
         s1 = broadcast_timecode.frame_count_to_smpte(c1, 30, drop_frame=True)
         self.assertEqual(s1, "01:00:03;18")
 
-    def test_fractional_to_string(self):
-        c1 = 99
-        f1 = .145
-        s1 = broadcast_timecode.frame_count_to_smpte(c1, 25, drop_frame=False, fractional_frame=f1)
-        self.assertEqual(s1, "00:00:03:24.145")
-
-    def test_drop_frame_to_framecount(self):
+    def test_drop_frame_to_frame_count(self):
         r1 = "01:00:00;00"
         z1 = broadcast_timecode.smpte_to_frame_count(r1, 30, drop_frame_hint=True)
         self.assertEqual(z1, 107_892)
@@ -55,13 +49,13 @@ class TestBroadcastTimecode(unittest.TestCase):
         f3 = broadcast_timecode.smpte_to_frame_count(r3, 30, True)
         self.assertEqual(f3, 1799)
 
-    def test_footage_to_framecount(self):
+    def test_footage_to_frame_count(self):
         s1 = "194+11"
         f1 = broadcast_timecode.footage_to_frame_count(s1)
         self.assertEqual(f1, 3115)
 
         s3 = "0+0.1"
-        f3 = broadcast_timecode.footage_to_frame_count(s3, include_fractional=False)
+        f3 = broadcast_timecode.footage_to_frame_count(s3)
         self.assertEqual(f3, 0)
 
     def test_frame_count_to_footage(self):
@@ -69,10 +63,12 @@ class TestBroadcastTimecode(unittest.TestCase):
         s1 = broadcast_timecode.frame_count_to_footage(c1)
         self.assertEqual(s1, "1+03")
 
-        c2 = 24
-        f2 = .1
-        s2 = broadcast_timecode.frame_count_to_footage(c2, fractional_frames=f2)
-        self.assertEqual(s2, "1+08.100")
+    def test_seconds_to_smpte(self):
+        secs = Fraction(25, 24)
+        frame_duration = Fraction(1, 24)
+        s1 = broadcast_timecode.seconds_to_smpte(secs, frame_duration, 24, False)
+        self.assertEqual(s1, "00:00:01:01")
+
 
 if __name__ == '__main__':
     unittest.main()

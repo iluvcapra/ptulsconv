@@ -8,6 +8,8 @@ from reportlab.platypus.frames import Frame
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
+from ptulsconv.docparser.adr_entity import ADRLine
+
 
 # This is from https://code.activestate.com/recipes/576832/ for
 # generating page count messages
@@ -50,7 +52,7 @@ class ADRDocTemplate(BaseDocTemplate):
         BaseDocTemplate.build(self, flowables, filename, canvasmaker)
 
 
-def make_doc_template(page_size, filename, document_title, record, document_header="", left_margin=0.5 * inch):
+def make_doc_template(page_size, filename, document_title, record: ADRLine, document_header="", left_margin=0.5 * inch):
     right_margin = top_margin = bottom_margin = 0.5 * inch
     page_box = GRect(0., 0., page_size[0], page_size[1])
     _, page_box = page_box.split_x(left_margin, direction='l')
@@ -70,7 +72,7 @@ def make_doc_template(page_size, filename, document_title, record, document_head
     pdfmetrics.registerFont(TTFont('Futura', 'Futura.ttc'))
     doc = ADRDocTemplate(filename,
                          title=document_title,
-                         author=record.get('Supervisor', ""),
+                         author=record.supervisor,
                          pagesize=page_size,
                          leftMargin=left_margin, rightMargin=right_margin,
                          topMargin=top_margin, bottomMargin=bottom_margin)
@@ -91,11 +93,11 @@ def time_format(mins, zero_str=""):
         return "%i:%02i" % (hh, mm)
 
 
-def draw_header_footer(a_canvas: ReportCanvas, title_box, doc_title_box, footer_box, record, doc_title=""):
+def draw_header_footer(a_canvas: ReportCanvas, title_box, doc_title_box, footer_box, record: ADRLine, doc_title=""):
 
     (supervisor, client,), title = title_box.divide_y([16., 16., ])
-    title.draw_text_cell(a_canvas, record['Title'], "Futura", 18, inset_y=2., inset_x=5.)
-    client.draw_text_cell(a_canvas, record.get('Client', ''), "Futura", 11, inset_y=2., inset_x=5.)
+    title.draw_text_cell(a_canvas, record.title, "Futura", 18, inset_y=2., inset_x=5.)
+    client.draw_text_cell(a_canvas, record.client, "Futura", 11, inset_y=2., inset_x=5.)
 
     a_canvas.saveState()
     a_canvas.setLineWidth(0.5)
@@ -114,12 +116,12 @@ def draw_header_footer(a_canvas: ReportCanvas, title_box, doc_title_box, footer_
 
     doc_title_cell.draw_text_cell(a_canvas, doc_title, 'Futura', 14., inset_y=2.)
 
-    if 'Spot' in record.keys():
-        spotting_version_cell.draw_text_cell(a_canvas, record['Spot'], 'Futura', 12., inset_y=2.)
+    if record.spot is not None:
+        spotting_version_cell.draw_text_cell(a_canvas, record.spot, 'Futura', 12., inset_y=2.)
 
     a_canvas.setFont('Futura', 11.)
     a_canvas.drawCentredString(footer_box.min_x + footer_box.width / 2., footer_box.min_y,
-                               record.get('Supervisor', 'Supervisor: ________________'))
+                               record.supervisor or "")
 
 
 class GRect:
@@ -254,6 +256,9 @@ class GRect:
     def draw_text_cell(self, a_canvas, text, font_name, font_size,
                        vertical_align='t', force_baseline=None, inset_x=0.,
                        inset_y=0., draw_baseline=False):
+        if text is None:
+            return
+
         a_canvas.saveState()
 
         inset_rect = self.inset_xy(inset_x, inset_y)

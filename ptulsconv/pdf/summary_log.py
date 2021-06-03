@@ -6,40 +6,41 @@ from reportlab.lib.pagesizes import letter, portrait
 
 from reportlab.platypus import Paragraph, Spacer, KeepTogether, Table
 from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib import colors
+
+from typing import List
+from ptulsconv.docparser.adr_entity import ADRLine
+from ptulsconv.broadcast_timecode import TimecodeFormat
 
 
-def build_aux_data_field(line):
+def build_aux_data_field(line: ADRLine):
     entries = list()
-    if 'Reason' in line.keys():
-        entries.append("Reason: " + line["Reason"])
-    if 'Note' in line.keys():
-        entries.append("Note: " + line["Note"])
-    if 'Requested by' in line.keys():
-        entries.append("Requested by: " + line["Requested by"])
-    if 'Shot' in line.keys():
-        entries.append("Shot: " + line["Shot"])
+    if line.reason is not None:
+        entries.append("Reason: " + line.reason)
+    if line.note is not None:
+        entries.append("Note: " + line.note)
+    if line.requested_by is not None:
+        entries.append("Requested by: " + line.requested_by)
+    if line.shot is not None:
+        entries.append("Shot: " + line.shot)
 
+    fg_color = 'white'
     tag_field = ""
-    for tag in line.keys():
-        if line[tag] == tag and tag != 'ADR':
-            fcolor = 'white'
-            bcolor = 'black'
-            if tag == 'ADLIB' or tag == 'TBW':
-                bcolor = 'darkmagenta'
-            elif tag == 'EFF':
-                bcolor = 'red'
-            elif tag == 'TV':
-                bcolor = 'blue'
-
-            tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font> " % (bcolor, fcolor, tag)
+    if line.effort:
+        bg_color = 'red'
+        tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font> " % (bg_color, fg_color, "EFF")
+    elif line.tv:
+        bg_color = 'blue'
+        tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font> " % (bg_color, fg_color, "TV")
+    elif line.adlib:
+        bg_color = 'purple'
+        tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font> " % (bg_color, fg_color, "ADLIB")
 
     entries.append(tag_field)
 
     return "<br />".join(entries)
 
 
-def build_story(lines):
+def build_story(lines: List[ADRLine], tc_rate: TimecodeFormat):
     story = list()
 
     this_scene = None
@@ -56,20 +57,20 @@ def build_story(lines):
                        ('LEFTPADDING', (0, 0), (0, 0), 0.0),
                        ('BOTTOMPADDING', (0, 0), (-1, -1), 24.)]
 
-        cue_number_field = "%s<br /><font fontSize=7>%s</font>" % (line['Cue Number'], line['Character Name'])
+        cue_number_field = "%s<br /><font fontSize=7>%s</font>" % (line.cue_number, line.character_name)
 
-        time_data = time_format(line.get('Time Budget Mins', 0.))
+        time_data = time_format(line.time_budget_mins)
 
-        if 'Priority' in line.keys():
-            time_data = time_data + "<br />" + "P: " + int(line['Priority'])
+        if line.priority is not None:
+            time_data = time_data + "<br />" + "P: " + line.priority
 
         aux_data_field = build_aux_data_field(line)
 
-        tc_data = build_tc_data(line)
+        tc_data = build_tc_data(line, tc_rate)
 
         line_table_data = [[Paragraph(cue_number_field, line_style),
                             Paragraph(tc_data, line_style),
-                            Paragraph(line['Line'], line_style),
+                            Paragraph(line.prompt, line_style),
                             Paragraph(time_data, line_style),
                             Paragraph(aux_data_field, line_style)
                             ]]
@@ -78,8 +79,8 @@ def build_story(lines):
                            colWidths=[inch * 0.75, inch, inch * 3., 0.5 * inch, inch * 2.],
                            style=table_style)
 
-        if line.get('Scene', "[No Scene]") != this_scene:
-            this_scene = line.get('Scene', "[No Scene]")
+        if (line.scene or "[No Scene]") != this_scene:
+            this_scene = line.scene or "[No Scene]"
             story.append(KeepTogether([
                 Spacer(1., 0.25 * inch),
                 Paragraph("<u>" + this_scene + "</u>", scene_style),
@@ -91,52 +92,51 @@ def build_story(lines):
     return story
 
 
-def build_tc_data(line):
-    tc_data = line['PT.Clip.Start'] + "<br />" + line['PT.Clip.Finish']
+def build_tc_data(line: ADRLine, tc_format: TimecodeFormat):
+    tc_data = tc_format.seconds_to_smpte(line.start) + "<br />" + \
+              tc_format.seconds_to_smpte(line.finish)
     third_line = []
-    if 'Reel' in line.keys():
-        if line['Reel'][0:1] == 'R':
-            third_line.append("%s" % (line['Reel']))
+    if line.reel is not None:
+        if line.reel[0:1] == 'R':
+            third_line.append("%s" % line.reel)
         else:
-            third_line.append("Reel %s" % (line['Reel']))
-    if 'Version' in line.keys():
-        third_line.append("(%s)" % line['Version'])
+            third_line.append("Reel %s" % line.reel)
+    if line.version is not None:
+        third_line.append("(%s)" % line.version)
     if len(third_line) > 0:
         tc_data = tc_data + "<br/>" + " ".join(third_line)
     return tc_data
 
 
-def generate_report(page_size, lines, character_number=None, include_done=True,
+def generate_report(page_size, lines: List[ADRLine], tc_rate: TimecodeFormat, character_number=None,
                     include_omitted=True):
     if character_number is not None:
-        lines = [r for r in lines if r['Character Number'] == character_number]
-        title = "%s ADR Report (%s)" % (lines[0]['Title'], lines[0]['Character Name'])
-        document_header = "%s ADR Report" % (lines[0]['Character Name'])
+        lines = [r for r in lines if r.character_id == character_number]
+        title = "%s ADR Report (%s)" % (lines[0].title, lines[0].character_name)
+        document_header = "%s ADR Report" % lines[0].character_name
     else:
-        title = "%s ADR Report" % (lines[0]['Title'])
+        title = "%s ADR Report" % lines[0].title
         document_header = 'ADR Report'
 
-    if not include_done:
-        lines = [line for line in lines if 'Done' not in line.keys()]
-
     if not include_omitted:
-        lines = [line for line in lines if 'Omitted' not in line.keys()]
+        lines = [line for line in lines if not line.omitted]
 
-    lines = sorted(lines, key=lambda line: line['PT.Clip.Start_Seconds'])
+    lines = sorted(lines, key=lambda line: line.start)
 
     filename = title + ".pdf"
     doc = make_doc_template(page_size=page_size,
                             filename=filename, document_title=title,
                             record=lines[0], document_header=document_header,
                             left_margin=0.75 * inch)
-    story = build_story(lines)
+    story = build_story(lines, tc_rate)
     doc.build(story)
 
 
-def output_report(lines, page_size=portrait(letter), by_character=False):
+def output_report(lines: List[ADRLine], tc_display_format: TimecodeFormat,
+                  page_size=portrait(letter), by_character=False):
     if by_character:
-        character_numbers = set((r['Character Number'] for r in lines))
+        character_numbers = set((r.character_id for r in lines))
         for n in character_numbers:
-            generate_report(page_size, lines, n)
+            generate_report(page_size, lines, tc_display_format, n)
     else:
-        generate_report(page_size, lines)
+        generate_report(page_size, lines, tc_display_format)

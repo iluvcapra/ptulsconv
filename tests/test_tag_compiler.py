@@ -6,6 +6,9 @@ from fractions import Fraction
 
 
 class TestTagCompiler(unittest.TestCase):
+
+    #TODO Test marker comment application
+
     def test_one_track(self):
         c = ptulsconv.docparser.tag_compiler.TagCompiler()
 

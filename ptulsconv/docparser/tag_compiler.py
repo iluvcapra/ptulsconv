@@ -1,16 +1,28 @@
 from collections import namedtuple
 from fractions import Fraction
-from typing import Iterator, Tuple, Callable, Generator
+from typing import Iterator, Tuple, Callable, Generator, Dict
 
 import ptulsconv.docparser.doc_entity as doc_entity
 from .tagged_string_parser_visitor import parse_tags, TagPreModes
 
+from dataclasses import dataclass
 
-class Event(namedtuple('Event', 'clip_name track_name session_name tags start finish')):
-    pass
+
+@dataclass
+class Event:
+    clip_name: str
+    track_name: str
+    session_name: str
+    tags: Dict[str, str]
+    start: Fraction
+    finish: Fraction
 
 
 class TagCompiler:
+
+    Intermediate = namedtuple('Intermediate', 'track_content track_tags track_comment_tags '
+                                              'clip_content clip_tags clip_tag_mode start finish')
+
     session: doc_entity.SessionDescriptor
 
     def compile_events(self) -> Iterator[Event]:
@@ -19,11 +31,12 @@ class TagCompiler:
         step2 = self.collect_time_spans(step1)
         step3 = self.apply_tags(step2)
         for datum in step3:
-            yield Event(*datum)
+            yield Event(clip_name=datum[0], track_name=datum[1], session_name=datum[2],
+                        tags=datum[3], start=datum[4], finish=datum[5])
 
     def _marker_tags(self, at):
         retval = dict()
-        applicable = [(m, t) for (m, t) in self.session.markers_timed() if t >= at]
+        applicable = [(m, t) for (m, t) in self.session.markers_timed() if t <= at]
         for marker, time in sorted(applicable, key=lambda x: x[1]):
             retval.update(parse_tags(marker.comments).tag_dict)
             retval.update(parse_tags(marker.name).tag_dict)
@@ -43,9 +56,6 @@ class TagCompiler:
         effective_tags.update(track_tags)
         effective_tags.update(clip_tags)
         return effective_tags
-
-    Intermediate = namedtuple('Intermediate', 'track_content track_tags track_comment_tags '
-                                              'clip_content clip_tags clip_tag_mode start finish')
 
     def parse_data(self) -> Iterator[Intermediate]:
 

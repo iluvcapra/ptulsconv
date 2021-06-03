@@ -1,6 +1,22 @@
 from fractions import Fraction
 import re
 import math
+from collections import namedtuple
+
+
+class TimecodeFormat(namedtuple("_TimecodeFormat", "frame_duration logical_fps drop_frame")):
+
+    def smpte_to_seconds(self, smpte: str) -> Fraction:
+        frame_count = smpte_to_frame_count(smpte, self.logical_fps, drop_frame_hint=self.drop_frame)
+        return frame_count * self.frame_duration
+
+    def seconds_to_smpte(self, seconds: Fraction) -> str:
+        frame_count = int(seconds / self.frame_duration)
+        return frame_count_to_smpte(frame_count, self.logical_fps, self.drop_frame)
+
+
+
+
 
 
 def smpte_to_frame_count(smpte_rep_string: str, frames_per_logical_second: int, drop_frame_hint=False) -> int:
@@ -39,14 +55,11 @@ def smpte_to_frame_count(smpte_rep_string: str, frames_per_logical_second: int, 
         dropped_frames = frames_dropped_per_inst * inst_count
         frames = raw_frames - dropped_frames
 
-    # if include_fractional:
-    #     return frames, frac
-    # else:
     return frames
 
 
 def frame_count_to_smpte(frame_count: int, frames_per_logical_second: int, drop_frame: bool = False,
-                         fractional_frame: float = None):
+                         fractional_frame: float = None) -> str:
     assert frames_per_logical_second in [24, 25, 30, 48, 50, 60]
     assert fractional_frame is None or fractional_frame < 1.0
 
@@ -72,24 +85,18 @@ def frame_count_to_smpte(frame_count: int, frames_per_logical_second: int, drop_
         return "%02i:%02i:%02i%s%02i" % (hh, mm, ss, separator, ff)
 
 
-def footage_to_frame_count(footage_string, include_fractional=False):
+def footage_to_frame_count(footage_string):
     m = re.search("(\d+)\+(\d+)(\.\d+)?", footage_string)
     feet, frm, frac = m.groups()
     feet, frm, frac = int(feet), int(frm), float(frac or 0.0)
 
     frames = feet * 16 + frm
 
-    if include_fractional:
-        return frames, frac
-    else:
-        return frames
+    return frames
 
 
-def frame_count_to_footage(frame_count, fractional_frames=None):
-    assert fractional_frames is None or fractional_frames < 1.0
+def frame_count_to_footage(frame_count):
     feet, frm = divmod(frame_count, 16)
+    return "%i+%02i" % (feet, frm)
 
-    if fractional_frames is None:
-        return "%i+%02i" % (feet, frm)
-    else:
-        return "%i+%02i%s" % (feet, frm, ("%.3f" % fractional_frames)[1:])
+

@@ -11,6 +11,8 @@ from .validations import *
 
 from ptulsconv.docparser import parse_document
 from ptulsconv.docparser.tag_compiler import TagCompiler
+from ptulsconv.broadcast_timecode import TimecodeFormat
+from fractions import Fraction
 
 from ptulsconv.pdf.supervisor_1pg import output_report as output_supervisor_1pg
 from ptulsconv.pdf.line_count import output_report as output_line_count
@@ -18,9 +20,17 @@ from ptulsconv.pdf.talent_sides import output_report as output_talent_sides
 from ptulsconv.pdf.summary_log import output_report as output_summary
 
 from json import JSONEncoder
+
+
 class MyEncoder(JSONEncoder):
-        def default(self, o):
+    force_denominator: Optional[int]
+
+    def default(self, o):
+        if isinstance(o, Fraction):
+            return dict(numerator=o.numerator, denominator=o.denominator)
+        else:
             return o.__dict__
+
 
 def dump_csv(events, output=sys.stdout):
     keys = set()
@@ -69,6 +79,7 @@ def output_adr_csv(lines):
             with open(outfile_name, mode='w', newline='') as outfile:
                 dump_keyed_csv(these_lines, adr_keys, outfile)
 
+
 def output_avid_markers(lines):
     reels = set([ln['Reel'] for ln in lines if 'Reel' in ln.keys()])
 
@@ -76,44 +87,43 @@ def output_avid_markers(lines):
         pass
 
 
-def create_adr_reports(parsed):
-    lines = [e for e in parsed['events'] if 'ADR' in e.keys()]
+def create_adr_reports(lines: List[ADRLine], tc_display_format: TimecodeFormat):
 
     print_section_header_style("Creating PDF Reports")
     print_status_style("Creating ADR Report")
-    output_summary(lines)
+    output_summary(lines, tc_display_format=tc_display_format)
 
-    print_status_style("Creating Line Count")
-    output_line_count(lines)
-
-    print_status_style("Creating Supervisor Logs directory and reports")
-    os.makedirs("Supervisor Logs", exist_ok=True)
-    os.chdir("Supervisor Logs")
-    output_supervisor_1pg(lines)
-    os.chdir("..")
-
-    print_status_style("Creating Director's Logs director and reports")
-    os.makedirs("Director Logs", exist_ok=True)
-    os.chdir("Director Logs")
-    output_summary(lines, by_character=True)
-    os.chdir("..")
-
-    print_status_style("Creating CSV outputs")
-    os.makedirs("CSV", exist_ok=True)
-    os.chdir("CSV")
-    output_adr_csv(lines)
-    os.chdir("..")
-
-    print_status_style("Creating Avid Marker XML files")
-    os.makedirs("Avid Markers", exist_ok=True)
-    os.chdir("Avid Markers")
-    output_avid_markers(lines)
-    os.chdir("..")
-
-    print_status_style("Creating Scripts directory and reports")
-    os.makedirs("Talent Scripts", exist_ok=True)
-    os.chdir("Talent Scripts")
-    output_talent_sides(lines)
+    # print_status_style("Creating Line Count")
+    # output_line_count(lines)
+    #
+    # print_status_style("Creating Supervisor Logs directory and reports")
+    # os.makedirs("Supervisor Logs", exist_ok=True)
+    # os.chdir("Supervisor Logs")
+    # output_supervisor_1pg(lines)
+    # os.chdir("..")
+    #
+    # print_status_style("Creating Director's Logs director and reports")
+    # os.makedirs("Director Logs", exist_ok=True)
+    # os.chdir("Director Logs")
+    # output_summary(lines, tc_display_format=tc_display_format, by_character=True)
+    # os.chdir("..")
+    #
+    # print_status_style("Creating CSV outputs")
+    # os.makedirs("CSV", exist_ok=True)
+    # os.chdir("CSV")
+    # output_adr_csv(lines)
+    # os.chdir("..")
+    #
+    # print_status_style("Creating Avid Marker XML files")
+    # os.makedirs("Avid Markers", exist_ok=True)
+    # os.chdir("Avid Markers")
+    # output_avid_markers(lines)
+    # os.chdir("..")
+    #
+    # print_status_style("Creating Scripts directory and reports")
+    # os.makedirs("Talent Scripts", exist_ok=True)
+    # os.chdir("Talent Scripts")
+    # output_talent_sides(lines)
 
 
 def parse_text_export(file):
@@ -127,51 +137,44 @@ def parse_text_export(file):
     return parsed
 
 
-def raw_output(input_file, output=sys.stdout):
-    from .docparser.doc_parser_visitor import DocParserVisitor
-    from json import JSONEncoder
-
-    class DescriptorJSONEncoder(JSONEncoder):
-        def default(self, obj):
-            return obj.__dict__
-
-    with open(input_file, 'r') as file:
-        ast = ptulsconv.protools_text_export_grammar.parse(file.read())
-        visitor = DocParserVisitor()
-        parsed = visitor.visit(ast)
-        json.dump(parsed, output, cls=DescriptorJSONEncoder)
-
-
 def convert(input_file, output_format='fmpxml',
             progress=False, include_muted=False, xsl=None,
             output=sys.stdout, log_output=sys.stderr, warnings=True):
 
     session = parse_document(input_file)
-    compiler = TagCompiler()
-    compiler.session = session
-    compiled_events = compiler.compile_events()
+    session_tc_format = session.header.timecode_format
 
-    lines = list(map(ADRLine.from_event, compiled_events))
+    if output_format == 'raw':
+        output.write(MyEncoder().encode(session))
 
-    if warnings:
-        for warning in chain(validate_unique_field(lines, field='cue_number'),
-                             validate_non_empty_field(lines, field='cue_number'),
-                             validate_non_empty_field(lines, field='character_id'),
-                             validate_non_empty_field(lines, field='title'),
-                             validate_dependent_value(lines, key_field='character_id',
-                                                      dependent_field='character_name'),
-                             validate_dependent_value(lines, key_field='character_id',
-                                                      dependent_field='actor_name')):
-            print_warning(warning.report_message())
+    else:
 
-    if output_format == 'json':
-        print(MyEncoder().encode(lines))
+        compiler = TagCompiler()
+        compiler.session = session
+        compiled_events = list(compiler.compile_events())
+        if output_format == 'json':
+            output.write(MyEncoder().encode(compiled_events))
+
+        else:
+            lines = list(map(ADRLine.from_event, compiled_events))
+
+            if warnings:
+                for warning in chain(validate_unique_field(lines, field='cue_number'),
+                                     validate_non_empty_field(lines, field='cue_number'),
+                                     validate_non_empty_field(lines, field='character_id'),
+                                     validate_non_empty_field(lines, field='title'),
+                                     validate_dependent_value(lines, key_field='character_id',
+                                                              dependent_field='character_name'),
+                                     validate_dependent_value(lines, key_field='character_id',
+                                                              dependent_field='actor_name')):
+                    print_warning(warning.report_message())
+
+            if output_format == 'adr':
+                create_adr_reports(lines, tc_display_format=session_tc_format)
 
     # elif output_format == 'csv':
     #     dump_csv(parsed['events'])
     #
-    # elif output_format == 'adr':
-    #     create_adr_reports(parsed)
 
     # elif output_format == 'fmpxml':
     #     if xsl is None:

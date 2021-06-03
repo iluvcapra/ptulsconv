@@ -1,6 +1,7 @@
 from ptulsconv.docparser.tag_compiler import Event
 from typing import Optional
 from dataclasses import dataclass
+from fractions import Fraction
 
 from ptulsconv.docparser.tag_mapping import TagMapping
 
@@ -13,8 +14,8 @@ class ADRLine:
     scene: Optional[str]
     version: Optional[str]
     reel: Optional[str]
-    start: Optional[str]
-    finish: Optional[str]
+    start: Optional[Fraction]
+    finish: Optional[Fraction]
     priority: Optional[int]
     cue_number: Optional[str]
     character_id: Optional[str]
@@ -101,6 +102,8 @@ class ADRLine:
         new = cls()
         TagMapping.apply_rules(cls.tag_mapping, event.tags,
                                event.clip_name, event.track_name, event.session_name, new)
+        new.start = event.start
+        new.finish = event.finish
         return new
 
 

@@ -5,17 +5,19 @@ import subprocess
 import sys
 import glob
 import datetime
-import ptulsconv
-
 from xml.etree.ElementTree import TreeBuilder, tostring
+from typing import List
+
+import ptulsconv
+from ptulsconv.docparser.adr_entity import ADRLine
 
 
-def avid_marker_list(lines, report_date=datetime.datetime.now(), reel_start_frame=0):
+def avid_marker_list(lines: List[ADRLine], report_date=datetime.datetime.now(), reel_start_frame=0, fps=24):
     doc = TreeBuilder(element_factory=None)
 
     doc.start('Avid:StreamItems', {'xmlns:Avid': 'http://www.avid.com'})
-    doc.start('Avid:XMLFileData')
-    doc.start('AvProp', {'name': 'DomainMagic', 'type':'string'})
+    doc.start('Avid:XMLFileData', {})
+    doc.start('AvProp', {'name': 'DomainMagic', 'type': 'string'})
     doc.data("Domain")
     doc.end('AvProp')
     doc.start('AvProp', {'name': 'DomainKey', 'type': 'string'})
@@ -23,7 +25,7 @@ def avid_marker_list(lines, report_date=datetime.datetime.now(), reel_start_fram
     doc.end('AvProp')
 
     def insert_elem(kind, attb, atype, name, value):
-        doc.start('ListElem')
+        doc.start('ListElem', {})
         doc.start('AvProp', {'id': 'ATTR',
                              'name': 'OMFI:ATTB:Kind',
                              'type': 'int32'})
@@ -54,13 +56,15 @@ def avid_marker_list(lines, report_date=datetime.datetime.now(), reel_start_fram
 
         insert_elem('1', 'OMFI:ATTB:IntAttribute', 'int32', '_ATN_CRM_LONG_CREATE_DATE', report_date.strftime("%s"))
         insert_elem('2', 'OMFI:ATTB:StringAttribute', 'string', '_ATN_CRM_COLOR', 'yellow')
-        insert_elem('2', 'OMFI:ATTB:StringAttribute', 'string', '_ATN_CRM_USER', line['Supervisor'])
+        insert_elem('2', 'OMFI:ATTB:StringAttribute', 'string', '_ATN_CRM_USER', line.supervisor or "")
 
-        marker_name = "%s: %s" % (line['Cue Number'], line['Line'])
+        marker_name = "%s: %s" % (line.cue_number, line.prompt)
         insert_elem('2', 'OMFI:ATTB:StringAttribute', 'string', '_ATN_CRM_COM', marker_name)
 
+        start_frame = int(line.start * fps)
+
         insert_elem('2', "OMFI:ATTB:StringAttribute", 'string', '_ATN_CRM_TC',
-                    str(lines['Start Frames'] - reel_start_frame))
+                    str(start_frame - reel_start_frame))
 
         insert_elem('2', "OMFI:ATTB:StringAttribute", 'string', '_ATN_CRM_TRK', 'V1')
         insert_elem('1', "OMFI:ATTB:IntAttribute", 'int32', '_ATN_CRM_LENGTH', '1')

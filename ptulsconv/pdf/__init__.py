@@ -62,7 +62,7 @@ def make_doc_template(page_size, filename, document_title, record: ADRLine, docu
 
     footer_box, page_box = page_box.split_y(0.25 * inch, direction='u')
     header_box, page_box = page_box.split_y(0.75 * inch, direction='d')
-    title_box, report_box = header_box.split_x(3. * inch, direction='r')
+    title_box, report_box = header_box.split_x(3.5 * inch, direction='r')
 
     page_template = PageTemplate(id="Main",
                                  frames=[Frame(page_box.min_x, page_box.min_y, page_box.width, page_box.height)],

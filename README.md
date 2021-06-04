@@ -5,31 +5,7 @@
  
 # ptulsconv
 Read Pro Tools text exports and generate JSON, PDF reports.
-
-## Quick Example
-
-At this time we're using `ptulsconv` mostly for converting ADR notes in a Pro Tools session
-into an XML document we can import into Filemaker Pro. 
-
-    % ptulsconv STAR_WARS_IV_R1_ADR_Notes_PT_Text_Export.txt > SW4_r1_ADR_Notes.xml
-    % xmllint --format SW4_r1_ADR_Notes.xml
-    <?xml version="1.0"?>
-    <FMPXMLRESULT xmlns="http://www.filemaker.com/fmpxmlresult">
-      <ERRORCODE>0</ERRORCODE>
-      <PRODUCT NAME="ptulsconv" VERSION="0.0.1"/>
-      <DATABASE DATEFORMAT="MM/dd/yy" LAYOUT="summary" 
-        NAME="STAR_WARS_IV_R1_ADR_Notes_PT_Text_Export.txt" 
-        RECORDS="84" TIMEFORMAT="hh:mm:ss"/>
-      <METADATA>
-        <FIELD EMPTYOK="YES" MAXREPEAT="1" NAME="Title" TYPE="TEXT"/>
-        <FIELD EMPTYOK="YES" MAXREPEAT="1" NAME="Supervisor" TYPE="TEXT"/>
-        <FIELD EMPTYOK="YES" MAXREPEAT="1" NAME="Client" TYPE="TEXT"/>
-        <FIELD EMPTYOK="YES" MAXREPEAT="1" NAME="Scene" TYPE="TEXT"/>
-        <FIELD EMPTYOK="YES" MAXREPEAT="1" NAME="Version" TYPE="TEXT"/>
-        <FIELD EMPTYOK="YES" MAXREPEAT="1" NAME="Reel" TYPE="TEXT"/>
-        <FIELD EMPTYOK="YES" MAXREPEAT="1" NAME="Start" TYPE="TEXT"/>
-        [... much much more] 
-
+ 
 ## Installation
 
 The easiest way to install on your site is to use `pip`:

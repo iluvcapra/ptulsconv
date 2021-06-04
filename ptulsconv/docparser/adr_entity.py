@@ -98,7 +98,11 @@ class ADRLine:
         self.optional = False
 
     @classmethod
-    def from_event(cls, event: Event) -> 'ADRLine':
+    def from_event(cls, event: Event) -> Optional['ADRLine']:
+
+        if 'QN' not in event.tags:
+            return None
+
         new = cls()
         TagMapping.apply_rules(cls.tag_mapping, event.tags,
                                event.clip_name, event.track_name, event.session_name, new)

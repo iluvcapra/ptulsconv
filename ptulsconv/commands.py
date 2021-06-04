@@ -32,26 +32,6 @@ class MyEncoder(JSONEncoder):
             return o.__dict__
 
 
-def dump_csv(events, output=sys.stdout):
-    keys = set()
-    for e in events:
-        keys.update(e.keys())
-
-    dump_keyed_csv(events, keys=keys, output=output)
-
-
-def dump_keyed_csv(events, keys=(), output=sys.stdout):
-    writer = csv.writer(output, dialect='excel')
-    writer.writerow(keys)
-
-    for event in events:
-        this_row = list()
-        for key in keys:
-            this_row.append(event.get(key, ""))
-
-        writer.writerow(this_row)
-
-
 def dump_field_map(output=sys.stdout):
     from ptulsconv.docparser.tag_mapping import TagMapping
     from ptulsconv.docparser.adr_entity import ADRLine
@@ -59,25 +39,36 @@ def dump_field_map(output=sys.stdout):
     TagMapping.print_rules(ADRLine, output=output)
 
 
-def output_adr_csv(lines):
-    adr_keys = ('Title', 'Cue Number', 'Character Name', 'Reel', 'Version', 'Line',
-                'Start', 'Finish', 'Reason', 'Note', 'TV', 'Version')
-    reels = set([ln['Reel'] for ln in lines])
-    reels.add(None)
-    for n in [n['Character Number'] for n in lines]:
+def output_adr_csv(lines: List[ADRLine], time_format: TimecodeFormat):
+    reels = set([ln.reel for ln in lines])
+
+    for n in [n.character_id for n in lines]:
         for reel in reels:
-            these_lines = [ln for ln in lines
-                           if ln['Character Number'] == n and
-                           ln.get('Reel', None) == reel]
+            these_lines = [ln for ln in lines if ln.character_id == n and ln.reel == reel]
 
             if len(these_lines) == 0:
                 continue
 
-            outfile_name = "%s_%s_%s_%s.csv" % (these_lines[0]['Title'],
-                                                n, these_lines[0]['Character Name'], reel,)
+            outfile_name = "%s_%s_%s_%s.csv" % (these_lines[0].title, n, these_lines[0].character_name, reel,)
 
             with open(outfile_name, mode='w', newline='') as outfile:
-                dump_keyed_csv(these_lines, adr_keys, outfile)
+                writer = csv.writer(outfile, dialect='excel')
+                writer.writerow(['Title', 'Character Name', 'Cue Number',
+                                 'Reel', 'Version',
+                                 'Start', 'Finish',
+                                 'Start Seconds', 'Finish Seconds',
+                                 'Prompt',
+                                 'Reason', 'Note', 'TV'])
+
+                for event in these_lines:
+                    this_row = [event.title, event.character_name, event.cue_number,
+                                event.reel, event.version,
+                                time_format.seconds_to_smpte(event.start), time_format.seconds_to_smpte(event.finish),
+                                float(event.start), float(event.finish),
+                                event.prompt,
+                                event.reason, event.note, "TV" if event.tv else ""]
+
+                    writer.writerow(this_row)
 
 
 def output_avid_markers(lines):
@@ -107,23 +98,23 @@ def create_adr_reports(lines: List[ADRLine], tc_display_format: TimecodeFormat):
     os.chdir("Director Logs")
     output_summary(lines, tc_display_format=tc_display_format, by_character=True)
     os.chdir("..")
-    #
-    # print_status_style("Creating CSV outputs")
-    # os.makedirs("CSV", exist_ok=True)
-    # os.chdir("CSV")
-    # output_adr_csv(lines)
-    # os.chdir("..")
-    #
+
+    print_status_style("Creating CSV outputs")
+    os.makedirs("CSV", exist_ok=True)
+    os.chdir("CSV")
+    output_adr_csv(lines, time_format=tc_display_format)
+    os.chdir("..")
+
     # print_status_style("Creating Avid Marker XML files")
     # os.makedirs("Avid Markers", exist_ok=True)
     # os.chdir("Avid Markers")
     # output_avid_markers(lines)
     # os.chdir("..")
-    #
-    # print_status_style("Creating Scripts directory and reports")
-    # os.makedirs("Talent Scripts", exist_ok=True)
-    # os.chdir("Talent Scripts")
-    # output_talent_sides(lines)
+
+    print_status_style("Creating Scripts directory and reports")
+    os.makedirs("Talent Scripts", exist_ok=True)
+    os.chdir("Talent Scripts")
+    output_talent_sides(lines, tc_display_format=tc_display_format)
 
 
 def parse_text_export(file):

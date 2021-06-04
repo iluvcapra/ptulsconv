@@ -1,12 +1,11 @@
-from ptulsconv.commands import convert, dump_field_map
-from ptulsconv import __name__, __version__, __author__
 from optparse import OptionParser, OptionGroup
-from .xml.common import dump_xform_options
-from .reporting import print_status_style, print_banner_style, print_section_header_style, print_fatal_error
 import datetime
 import sys
-
 import traceback
+
+from ptulsconv import __name__, __version__, __author__
+from ptulsconv.commands import convert, dump_field_map
+from ptulsconv.reporting import print_status_style, print_banner_style, print_section_header_style, print_fatal_error
 
 
 def main():
@@ -46,10 +45,6 @@ def main():
         dump_field_map()
         sys.exit(0)
 
-    if options.show_transforms:
-        dump_xform_options()
-        sys.exit(0)
-
     if len(args) < 2:
         print_fatal_error("Error: No input file")
         parser.print_help(sys.stderr)
@@ -57,7 +52,7 @@ def main():
 
     try:
         output_format = options.output_format
-        convert(input_file=args[1], output_format=output_format, log_output=sys.stderr, warnings=options.warnings)
+        convert(input_file=args[1], output_format=output_format, warnings=options.warnings)
     except FileNotFoundError as e:
         print_fatal_error("Error trying to read input file")
         raise e

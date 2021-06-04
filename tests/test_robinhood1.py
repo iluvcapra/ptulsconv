@@ -14,7 +14,7 @@ class TestRobinHood1(unittest.TestCase):
         self.assertEqual(session.header.session_name, 'Robin Hood Spotting')
         self.assertEqual(session.header.sample_rate, 48000.0)
         self.assertEqual(session.header.bit_depth, 24)
-        self.assertEqual(session.header.timecode_format, '29.97')
+        self.assertEqual(session.header.timecode_fps, '29.97')
         self.assertEqual(session.header.timecode_drop_frame, False)
 
     def test_all_sections(self):

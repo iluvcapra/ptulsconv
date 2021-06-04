@@ -66,7 +66,8 @@ class TestBroadcastTimecode(unittest.TestCase):
     def test_seconds_to_smpte(self):
         secs = Fraction(25, 24)
         frame_duration = Fraction(1, 24)
-        s1 = broadcast_timecode.seconds_to_smpte(secs, frame_duration, 24, False)
+        tc_format = broadcast_timecode.TimecodeFormat(frame_duration=frame_duration, logical_fps=24, drop_frame=False)
+        s1 = tc_format.seconds_to_smpte(secs)
         self.assertEqual(s1, "00:00:01:01")
 
 

@@ -128,9 +128,7 @@ def parse_text_export(file):
     return parsed
 
 
-def convert(input_file, output_format='fmpxml',
-            progress=False, include_muted=False, xsl=None,
-            output=sys.stdout, log_output=sys.stderr, warnings=True):
+def convert(input_file, output_format='fmpxml', output=sys.stdout, warnings=True):
 
     session = parse_document(input_file)
     session_tc_format = session.header.timecode_format

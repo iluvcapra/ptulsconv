@@ -4,7 +4,7 @@
  ![Upload Python Package](https://github.com/iluvcapra/ptulsconv/workflows/Upload%20Python%20Package/badge.svg)
  
 # ptulsconv
-Read Pro Tools text exports and generate XML, JSON, PDF reports.
+Read Pro Tools text exports and generate JSON, PDF reports.
 
 ## Quick Example
 

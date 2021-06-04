@@ -139,7 +139,6 @@ def convert(input_file, output_format='fmpxml',
         output.write(MyEncoder().encode(session))
 
     else:
-
         compiler = TagCompiler()
         compiler.session = session
         compiled_events = list(compiler.compile_events())

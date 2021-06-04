@@ -13,30 +13,10 @@ def main():
     parser = OptionParser()
     parser.usage = "ptulsconv TEXT_EXPORT.txt"
 
-    filter_opts = OptionGroup(title='Filtering Options', parser=parser)
-
-    # filter_opts.add_option('-i', dest='in_time', help="Don't output events occurring before this timecode.",
-    #                        metavar='TC')
-    # filter_opts.add_option('-o', dest='out_time', help="Don't output events occurring after this timecode.",
-    #                        metavar='TC')
-    filter_opts.add_option('-m', '--include-muted', default=False, action='store_true', dest='include_muted',
-                           help='Include muted clips.')
-
-    # filter_opts.add_option('-r', '--reel', dest='select_reel',
-    #                                           help="Output only events in reel N, and recalculate "
-    #                                              " start times relative to that reel's start time.",
-    #                        default=None, metavar='N')
-
-    parser.add_option_group(filter_opts)
-
     parser.add_option('-f', '--format', dest='output_format', metavar='FMT',
-                      choices=['fmpxml', 'json', 'adr', 'csv', 'raw'], default='fmpxml',
-                      help='Set output format, `fmpxml`, `json`, `csv`, or `adr`. Default '
-                           'is `fmpxml`.')
-
-    parser.add_option('-x', '--xsl', dest='xslt', metavar='XML', default=None,
-                      help='Output XML with given transform. (Overrides -f to '
-                           '`fmpxml`.)')
+                      choices=['raw', 'json', 'adr'], default='adr',
+                      help='Set output format, `raw`, `json`, `adr`. Default '
+                           'is `adr`.')
 
     warn_options = OptionGroup(title="Warning and Validation Options", parser=parser)
     warn_options.add_option('-W', action='store_false', dest='warnings', default=True,
@@ -46,21 +26,18 @@ def main():
 
     informational_options = OptionGroup(title="Informational Options", parser=parser,
                                         description='Print useful information and exit without processing '
-                                        'input files.')
+                                                    'input files.')
 
     informational_options.add_option('--show-available-tags', dest='show_tags',
-                           action='store_true',
-                           default=False, help='Display tag mappings for the FMP XML output style and exit.')
-
-    informational_options.add_option('--show-available-transforms', dest='show_transforms',
-                           action='store_true',
-                           default=False, help='Display available built-in XSLT transforms.')
+                                     action='store_true',
+                                     default=False, help='Display tag mappings for the FMP XML '
+                                                         'output style and exit.')
 
     parser.add_option_group(informational_options)
 
     (options, args) = parser.parse_args(sys.argv)
 
-    print_banner_style("%s %s (c) 2020 %s. All rights reserved." % (__name__, __version__, __author__))
+    print_banner_style("%s %s (c) 2021 %s. All rights reserved." % (__name__, __version__, __author__))
 
     print_section_header_style("Startup")
     print_status_style("This run started %s" % (datetime.datetime.now().isoformat()))
@@ -78,23 +55,9 @@ def main():
         parser.print_help(sys.stderr)
         sys.exit(22)
 
-    print_status_style("Input file is %s" % (args[1]))
-
-    if options.include_muted:
-        print_status_style("Muted regions are included.")
-    else:
-        print_status_style("Muted regions are ignored.")
-
     try:
         output_format = options.output_format
-        if options.xslt is not None:
-            output_format = 'fmpxml'
-
-        convert(input_file=args[1], output_format=output_format,
-                include_muted=options.include_muted,
-                xsl=options.xslt,
-                progress=False, output=sys.stdout, log_output=sys.stderr,
-                warnings=options.warnings)
+        convert(input_file=args[1], output_format=output_format, log_output=sys.stderr, warnings=options.warnings)
     except FileNotFoundError as e:
         print_fatal_error("Error trying to read input file")
         raise e

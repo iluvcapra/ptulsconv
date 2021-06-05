@@ -1,6 +1,7 @@
+import sys
 from collections import namedtuple
 from fractions import Fraction
-from typing import Iterator, Tuple, Callable, Generator, Dict
+from typing import Iterator, Tuple, Callable, Generator, Dict, List
 
 import ptulsconv.docparser.doc_entity as doc_entity
 from .tagged_string_parser_visitor import parse_tags, TagPreModes
@@ -24,6 +25,40 @@ class TagCompiler:
                                               'clip_content clip_tags clip_tag_mode start finish')
 
     session: doc_entity.SessionDescriptor
+
+    def compile_all_timespans(self) -> List[Tuple[str, str, Fraction, Fraction]]:
+        ret_list = list()
+        for element in self.parse_data():
+            if element.clip_tag_mode == TagPreModes.TIMESPAN:
+                for k in element.clip_tags.keys():
+                    ret_list.append((k, element.clip_tags[k], element.start, element.finish))
+
+        return ret_list
+
+    def compile_tag_list(self) -> Dict[str, List[str]]:
+        tags_dict = dict()
+
+        def update_tags_dict(other_dict: dict):
+            for k in other_dict.keys():
+                if k not in tags_dict.keys():
+                    tags_dict[k] = set()
+                tags_dict[k].add(other_dict[k])
+
+        for parsed in self.parse_data():
+            update_tags_dict(parsed.clip_tags)
+            update_tags_dict(parsed.track_tags)
+            update_tags_dict(parsed.track_comment_tags)
+
+        session_tags = parse_tags(self.session.header.session_name).tag_dict
+        update_tags_dict(session_tags)
+
+        for m in self.session.markers:
+            marker_tags = parse_tags(m.name).tag_dict
+            marker_comment_tags = parse_tags(m.comments).tag_dict
+            update_tags_dict(marker_tags)
+            update_tags_dict(marker_comment_tags)
+
+        return tags_dict
 
     def compile_events(self) -> Iterator[Event]:
         step0 = self.parse_data()
@@ -108,7 +143,7 @@ class TagCompiler:
     @staticmethod
     def _time_span_tags(at_time: Fraction, applicable_spans) -> dict:
         retval = dict()
-        for tags in [a[0] for a in applicable_spans if a[1] <= at_time <= a[2]]:
+        for tags in reversed([a[0] for a in applicable_spans if a[1] <= at_time <= a[2]]):
             retval.update(tags)
 
         return retval

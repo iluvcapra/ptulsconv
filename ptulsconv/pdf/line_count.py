@@ -11,7 +11,6 @@ from reportlab.platypus import Table, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 
 from .__init__ import time_format, make_doc_template
-from ..broadcast_timecode import TimecodeFormat
 from ..docparser.adr_entity import ADRLine
 
 
@@ -53,8 +52,8 @@ def build_columns(lines: List[ADRLine], reel_list: Optional[List[str]], show_pri
             columns.append({
                 'heading': n,
                 'value_getter': lambda recs, n1=n: len([r for r in recs if r.reel == n1]),
-                'value_getter2': lambda recs, n1=n: time_format(sum([r.time_budget_mins or 0. for r in recs
-                                                               if r.reel == n1])),
+                'value_getter2': lambda recs, n1=n: time_format(sum([r.time_budget_mins or 0. for r
+                                                                     in recs if r.reel == n1])),
                 'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER'),
                                                    ('LINEAFTER', (col_index, 0), (col_index, -1), .5, colors.gray)],
                 'width': num_column_width
@@ -133,7 +132,8 @@ def build_columns(lines: List[ADRLine], reel_list: Optional[List[str]], show_pri
     return columns
 
 
-def populate_columns(lines: List[ADRLine], columns, include_omitted, page_size):
+def populate_columns(lines: List[ADRLine], columns, include_omitted, _page_size):
+    # TODO: use page_size parameter
     data = list()
     styles = list()
     columns_widths = list()
@@ -187,8 +187,8 @@ def populate_columns(lines: List[ADRLine], columns, include_omitted, page_size):
     return data, styles, columns_widths
 
 
-def build_header(column_widths):
-    pass
+# def build_header(column_widths):
+#     pass
 
 
 def output_report(lines: List[ADRLine], reel_list: List[str], include_omitted=False,
@@ -210,8 +210,8 @@ def output_report(lines: List[ADRLine], reel_list: List[str], include_omitted=Fa
                             record=lines[0],
                             document_header='Line Count')
 
-    #header_data, header_style, header_widths = build_header(columns_widths)
-    #header_table = Table(data=header_data, style=header_style, colWidths=header_widths)
+    # header_data, header_style, header_widths = build_header(columns_widths)
+    # header_table = Table(data=header_data, style=header_style, colWidths=header_widths)
 
     table = Table(data=data, style=style, colWidths=columns_widths)
 

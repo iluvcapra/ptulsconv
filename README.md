@@ -6,7 +6,7 @@
 # ptulsconv
 Read Pro Tools text exports and generate JSON, PDF reports.
 
-## Notice
+## Notice!
 
 At this time there are a lot of changes in the HEAD of this package and you should use the last posted Pypi package.
 New features and much better reporting, including native PDF reports, are coming soon!

@@ -10,6 +10,9 @@ from reportlab.pdfbase.ttfonts import TTFont
 
 from ptulsconv.docparser.adr_entity import ADRLine
 
+#TODO: A Generic report useful for spotting
+#TODO: A report useful for M&E mixer's notes
+#TODO: Address all style notes this file
 
 # This is from https://code.activestate.com/recipes/576832/ for
 # generating page count messages

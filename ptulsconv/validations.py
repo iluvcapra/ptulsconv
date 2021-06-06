@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 from ptulsconv.docparser.adr_entity import ADRLine
-from typing import List, Iterator, Optional
+from typing import Iterator, Optional
 
 
 @dataclass
 class ValidationError:
     message: str
-    event: Optional[ADRLine]
+    event: Optional[ADRLine] = None
 
     def report_message(self):
         if self.event is not None:
@@ -62,7 +62,3 @@ def validate_dependent_value(input_lines: Iterator[ADRLine], key_field, dependen
                 message = message + "\n - {} -> {}".format(u[0], u[1])
 
             yield ValidationError(message=message, event=None)
-
-
-
-

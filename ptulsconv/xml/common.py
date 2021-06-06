@@ -11,7 +11,7 @@ from typing import List
 import ptulsconv
 from ptulsconv.docparser.adr_entity import ADRLine
 
-
+# TODO Get a third-party test for Avid Marker lists
 def avid_marker_list(lines: List[ADRLine], report_date=datetime.datetime.now(), reel_start_frame=0, fps=24):
     doc = TreeBuilder(element_factory=None)
 
@@ -69,7 +69,7 @@ def avid_marker_list(lines: List[ADRLine], report_date=datetime.datetime.now(), 
         insert_elem('2', "OMFI:ATTB:StringAttribute", 'string', '_ATN_CRM_TRK', 'V1')
         insert_elem('1', "OMFI:ATTB:IntAttribute", 'int32', '_ATN_CRM_LENGTH', '1')
 
-        doc.start('ListElem')
+        doc.start('ListElem', {})
         doc.end('ListElem')
 
         doc.end('List')

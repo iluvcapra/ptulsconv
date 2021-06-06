@@ -15,10 +15,6 @@ class TimecodeFormat(namedtuple("_TimecodeFormat", "frame_duration logical_fps d
         return frame_count_to_smpte(frame_count, self.logical_fps, self.drop_frame)
 
 
-
-
-
-
 def smpte_to_frame_count(smpte_rep_string: str, frames_per_logical_second: int, drop_frame_hint=False) -> int:
     """
     Convert a string with a SMPTE timecode representation into a frame count.
@@ -29,7 +25,6 @@ def smpte_to_frame_count(smpte_rep_string: str, frames_per_logical_second: int, 
     :param drop_frame_hint: `True` if the timecode rep is drop frame. This is ignored (and implied `True`) if
             the last separator in the timecode string is a semicolon. This is ignored (and implied `False`) if
             `frames_per_logical_second` is not 30 or 60.
-    :param include_fractional: If `True` fractional frames will be parsed and returned as a second retval in a tuple
     """
     assert frames_per_logical_second in [24, 25, 30, 48, 50, 60]
 
@@ -98,5 +93,3 @@ def footage_to_frame_count(footage_string):
 def frame_count_to_footage(frame_count):
     feet, frm = divmod(frame_count, 16)
     return "%i+%02i" % (feet, frm)
-
-

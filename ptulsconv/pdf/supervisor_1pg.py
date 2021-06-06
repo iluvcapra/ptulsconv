@@ -229,7 +229,7 @@ def create_report_for_character(records, report_date, tc_display_format: Timecod
         # FIXME: Draw the title
         # TODO: Integrate this report into the common DocTemplate api
 
-        #draw_title_box(c, title_header_block, record)
+        # draw_title_box(c, title_header_block, record)
         draw_character_row(c, char_row, record)
         draw_cue_number_block(c, cue_number_block, record)
         draw_timecode_block(c, timecode_block, record, tc_display_format=tc_display_format)

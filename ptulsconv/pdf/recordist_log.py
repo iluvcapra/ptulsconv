@@ -1,18 +1,4 @@
-from reportlab.pdfgen.canvas import Canvas
-
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-
-from reportlab.lib.units import inch
-from reportlab.lib.pagesizes import letter
-
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import Paragraph
-
-from .__init__ import GRect
-
-import datetime
-
+# TODO: Complete Recordist Log
 
 def output_report(records):
     # order by start

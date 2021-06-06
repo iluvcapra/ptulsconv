@@ -7,8 +7,6 @@ from fractions import Fraction
 
 class TestTagCompiler(unittest.TestCase):
 
-    #TODO Test marker comment application
-
     def test_one_track(self):
         c = ptulsconv.docparser.tag_compiler.TagCompiler()
 
@@ -38,6 +36,7 @@ class TestTagCompiler(unittest.TestCase):
                               Comment='This is some text in the comments',
                               N='1', Mode='2',
                               Ver='1.1',
+                              M1='M1',
                               Part='2'), event2.tags)
 
         self.assertEqual(c.session.header.convert_timecode('01:00:01:10'), event2.start)
@@ -108,7 +107,7 @@ class TestTagCompiler(unittest.TestCase):
                                                time_reference=48000 * 61,
                                                units="Samples",
                                                name="Marker 2 {Part=2}",
-                                               comments=""
+                                               comments="[M1]"
                                                ),
                    ]
 

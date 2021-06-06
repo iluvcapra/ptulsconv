@@ -29,14 +29,20 @@ def validate_value(input_lines: Iterator[ADRLine], key_field, predicate):
                                   event=event)
 
 
-def validate_unique_field(input_lines: Iterator[ADRLine], field='cue_number'):
-    values = set()
+def validate_unique_field(input_lines: Iterator[ADRLine], field='cue_number', scope=None):
+    values = dict()
     for event in input_lines:
         this = getattr(event, field)
-        if this in values:
+        if scope is not None:
+            key = getattr(event, scope)
+        else:
+            key = '_values'
+
+        values.setdefault(key, set())
+        if this in values[key]:
             yield ValidationError(message='Re-used {}'.format(field), event=event)
         else:
-            values.update(this)
+            values[key].update(this)
 
 
 def validate_non_empty_field(input_lines: Iterator[ADRLine], field='cue_number'):

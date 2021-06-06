@@ -152,7 +152,8 @@ def convert(input_file, output_format='fmpxml', output=sys.stdout, warnings=True
 
             if warnings:
                 for warning in chain(validate_unique_field(lines,
-                                                           field='cue_number'),
+                                                           field='cue_number',
+                                                           scope='title'),
                                      validate_non_empty_field(lines,
                                                               field='cue_number'),
                                      validate_non_empty_field(lines,
@@ -174,16 +175,4 @@ def convert(input_file, output_format='fmpxml', output=sys.stdout, warnings=True
 
                 create_adr_reports(lines, tc_display_format=session_tc_format,
                                    reel_list=sorted(reels))
-
-    # elif output_format == 'csv':
-    #     dump_csv(parsed['events'])
-    #
-
-    # elif output_format == 'fmpxml':
-    #     if xsl is None:
-    #         dump_fmpxml(parsed, input_file, output, adr_field_map)
-    #     else:
-    #         print_section_header_style("Performing XSL Translation")
-    #         print_status_style("Using builtin translation: %s" % xsl)
-    #         fmp_transformed_dump(parsed, input_file, xsl, output)
 

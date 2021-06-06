@@ -7,6 +7,7 @@ import csv
 from typing import List
 
 import ptulsconv
+from .docparser.adr_entity import make_entity
 from .reporting import print_section_header_style, print_status_style, print_warning
 from .validations import *
 
@@ -139,20 +140,30 @@ def convert(input_file, output_format='fmpxml', output=sys.stdout, warnings=True
         compiler = TagCompiler()
         compiler.session = session
         compiled_events = list(compiler.compile_events())
+
+        # TODO: Breakdown by titles
+
         if output_format == 'tagged':
             output.write(MyEncoder().encode(compiled_events))
 
         else:
-            lines = list(map(ADRLine.from_event, compiled_events))
+            events = list(map(make_entity, compiled_events))
+            lines = [event for event in events if isinstance(event, ADRLine)]
 
             if warnings:
-                for warning in chain(validate_unique_field(lines, field='cue_number'),
-                                     validate_non_empty_field(lines, field='cue_number'),
-                                     validate_non_empty_field(lines, field='character_id'),
-                                     validate_non_empty_field(lines, field='title'),
-                                     validate_dependent_value(lines, key_field='character_id',
+                for warning in chain(validate_unique_field(lines,
+                                                           field='cue_number'),
+                                     validate_non_empty_field(lines,
+                                                              field='cue_number'),
+                                     validate_non_empty_field(lines,
+                                                              field='character_id'),
+                                     validate_non_empty_field(lines,
+                                                              field='title'),
+                                     validate_dependent_value(lines,
+                                                              key_field='character_id',
                                                               dependent_field='character_name'),
-                                     validate_dependent_value(lines, key_field='character_id',
+                                     validate_dependent_value(lines,
+                                                              key_field='character_id',
                                                               dependent_field='actor_name')):
                     print_warning(warning.report_message())
 

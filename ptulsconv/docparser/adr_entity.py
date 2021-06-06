@@ -5,9 +5,24 @@ from fractions import Fraction
 
 from ptulsconv.docparser.tag_mapping import TagMapping
 
+def make_entity(from_event: Event) -> Optional[object]:
+    instance = GenericEvent
+    tag_map = GenericEvent.tag_mapping
+    if 'QN' in from_event.tags.keys():
+        instance = ADRLine
+        tag_map += ADRLine.tag_mapping
+
+    new = instance()
+    TagMapping.apply_rules(tag_map, from_event.tags,
+                           from_event.clip_name, from_event.track_name,
+                           from_event.session_name, new)
+
+    new.start = from_event.start
+    new.finish = from_event.finish
+    return new
 
 @dataclass
-class ADRLine:
+class GenericEvent:
     title: Optional[str]
     supervisor: Optional[str]
     client: Optional[str]
@@ -16,24 +31,9 @@ class ADRLine:
     reel: Optional[str]
     start: Optional[Fraction]
     finish: Optional[Fraction]
-    priority: Optional[int]
-    cue_number: Optional[str]
-    character_id: Optional[str]
-    character_name: Optional[str]
-    actor_name: Optional[str]
-    prompt: Optional[str]
-    reason: Optional[str]
-    requested_by: Optional[str]
-    time_budget_mins: Optional[float]
-    note: Optional[str]
-    spot: Optional[str]
-    shot: Optional[str]
-    effort: bool
-    tv: bool
-    tbw: bool
     omitted: bool
-    adlib: bool
-    optional: bool
+    note: Optional[str]
+    requested_by: Optional[str]
 
     tag_mapping = [
         TagMapping(source='Title', target="title", alt=TagMapping.ContentSource.Session),
@@ -42,6 +42,33 @@ class ADRLine:
         TagMapping(source="Sc", target="scene"),
         TagMapping(source="Ver", target="version"),
         TagMapping(source="Reel", target="reel"),
+        TagMapping(source="Note", target="note"),
+        TagMapping(source="Rq", target="requested_by"),
+        TagMapping(source="OMIT", target="omitted",
+                   formatter=(lambda x: len(x) > 0)),
+    ]
+
+
+@dataclass
+class ADRLine(GenericEvent):
+    priority: Optional[int]
+    cue_number: Optional[str]
+    character_id: Optional[str]
+    character_name: Optional[str]
+    actor_name: Optional[str]
+    prompt: Optional[str]
+    reason: Optional[str]
+    time_budget_mins: Optional[float]
+    spot: Optional[str]
+    shot: Optional[str]
+    effort: bool
+    tv: bool
+    tbw: bool
+    adlib: bool
+    optional: bool
+
+    tag_mapping = [
+
         TagMapping(source="P", target="priority"),
         TagMapping(source="QN", target="cue_number"),
         TagMapping(source="CN", target="character_id"),
@@ -49,10 +76,8 @@ class ADRLine:
         TagMapping(source="Actor", target="actor_name"),
         TagMapping(source="Line", target="prompt", alt=TagMapping.ContentSource.Clip),
         TagMapping(source="R", target="reason"),
-        TagMapping(source="Rq", target="requested_by"),
         TagMapping(source="Mins", target="time_budget_mins",
                    formatter=(lambda n: float(n))),
-        TagMapping(source="Note", target="note"),
         TagMapping(source="Spot", target="spot"),
         TagMapping(source="Shot", target="shot"),
         TagMapping(source="EFF", target="effort",
@@ -61,8 +86,7 @@ class ADRLine:
                    formatter=(lambda x: len(x) > 0)),
         TagMapping(source="TBW", target="tbw",
                    formatter=(lambda x: len(x) > 0)),
-        TagMapping(source="OMIT", target="omitted",
-                   formatter=(lambda x: len(x) > 0)),
+
         TagMapping(source="ADLIB", target="adlib",
                    formatter=(lambda x: len(x) > 0)),
         TagMapping(source="OPT", target="optional",
@@ -96,18 +120,4 @@ class ADRLine:
         self.omitted = False
         self.adlib = False
         self.optional = False
-
-    @classmethod
-    def from_event(cls, event: Event) -> Optional['ADRLine']:
-
-        if 'QN' not in event.tags:
-            return None
-
-        new = cls()
-        TagMapping.apply_rules(cls.tag_mapping, event.tags,
-                               event.clip_name, event.track_name, event.session_name, new)
-        new.start = event.start
-        new.finish = event.finish
-        return new
-
 

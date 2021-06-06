@@ -77,13 +77,9 @@ def make_doc_template(page_size, filename, document_title,
 
     page_template = PageTemplate(id="Main",
                                  frames=[Frame(page_box.min_x, page_box.min_y, page_box.width, page_box.height)],
-                                 onPage=lambda c, _: draw_header_footer(c, title_box,
-                                                                        report_box,
-                                                                        footer_box,
-                                                                        title=title,
-                                                                        supervisor=supervisor,
-                                                                        client=client,
-                                                                        document_date=document_date,
+                                 onPage=lambda c, _: draw_header_footer(c, report_box, title_box, footer_box,
+                                                                        title=title, supervisor=supervisor,
+                                                                        document_date=document_date, client=client,
                                                                         doc_title=document_header))
 
     pdfmetrics.registerFont(TTFont('Futura', 'Futura.ttc'))
@@ -110,8 +106,8 @@ def time_format(mins, zero_str=""):
         return "%i:%02i" % (hh, mm)
 
 
-def draw_header_footer(a_canvas: ReportCanvas, right_box, left_box, footer_box,
-                       title: str, supervisor: str, document_date: str, client: str, doc_title=""):
+def draw_header_footer(a_canvas: ReportCanvas, left_box, right_box, footer_box, title: str, supervisor: str,
+                       document_date: str, client: str, doc_title=""):
 
     (_supervisor_box, client_box,), title_box = right_box.divide_y([16., 16., ])
     title_box.draw_text_cell(a_canvas, title, "Futura", 18, inset_y=2., inset_x=5.)

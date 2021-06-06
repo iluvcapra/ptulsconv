@@ -1,7 +1,7 @@
 import unittest
 
 from ptulsconv.docparser.tag_compiler import Event
-from ptulsconv.docparser.adr_entity import ADRLine
+from ptulsconv.docparser.adr_entity import ADRLine, make_entity
 from fractions import Fraction
 
 
@@ -21,8 +21,9 @@ class TestADREntity(unittest.TestCase):
                       tags=tags,
                       start=Fraction(0, 1), finish=Fraction(1, 1))
 
-        line = ADRLine.from_event(event)
+        line = make_entity(event)
 
+        self.assertIsInstance(line, ADRLine)
         self.assertEqual('Bill', line.actor_name)
         self.assertEqual('Justin', line.character_name)
         self.assertEqual('"This is a test." (sotto voce)', line.prompt)

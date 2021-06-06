@@ -12,7 +12,7 @@ from ptulsconv.docparser.adr_entity import ADRLine
 
 
 # TODO: A Generic report useful for spotting
-# TODO: A Continuity
+
 # TODO: A report useful for M&E mixer's notes
 # TODO: Address all style notes this file
 

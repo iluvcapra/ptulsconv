@@ -6,8 +6,7 @@ from itertools import chain
 import csv
 from typing import List
 
-import ptulsconv
-from .docparser.adr_entity import make_entity, GenericEvent, make_entities
+from .docparser.adr_entity import make_entities
 from .reporting import print_section_header_style, print_status_style, print_warning
 from .validations import *
 
@@ -37,7 +36,10 @@ class MyEncoder(JSONEncoder):
 def output_adr_csv(lines: List[ADRLine], time_format: TimecodeFormat):
     reels = set([ln.reel for ln in lines])
 
-    for n in [n.character_id for n in lines]:
+    for n, name in [(n.character_id, n.character_name) for n in lines]:
+        dir_name = "%s_%s" % (n, name)
+        os.makedirs(dir_name, exist_ok=True)
+        os.chdir(dir_name)
         for reel in reels:
             these_lines = [ln for ln in lines if ln.character_id == n and ln.reel == reel]
 
@@ -64,22 +66,17 @@ def output_adr_csv(lines: List[ADRLine], time_format: TimecodeFormat):
                                 event.reason, event.note, "TV" if event.tv else ""]
 
                     writer.writerow(this_row)
+        os.chdir("..")
 
-
-def output_avid_markers(lines):
-    reels = set([ln['Reel'] for ln in lines if 'Reel' in ln.keys()])
-
-    for reel in reels:
-        pass
+#
+# def output_avid_markers(lines):
+#     reels = set([ln['Reel'] for ln in lines if 'Reel' in ln.keys()])
+#
+#     for reel in reels:
+#         pass
 
 
 def create_adr_reports(lines: List[ADRLine], tc_display_format: TimecodeFormat, reel_list):
-
-    print_section_header_style("Creating PDF Reports")
-    report_date = datetime.datetime.now()
-    reports_dir = "%s_%s" % (lines[0].title, report_date.strftime("%Y-%m-%d_%H%M"))
-    os.makedirs(reports_dir, exist_ok=False)
-    os.chdir(reports_dir)
 
     print_status_style("Creating ADR Report")
     output_summary(lines, tc_display_format=tc_display_format)
@@ -157,6 +154,12 @@ def convert(input_file, major_mode='fmpxml', output=sys.stdout, warnings=True):
                 perform_adr_validations(adr_lines)
 
             if major_mode == 'doc':
+                print_section_header_style("Creating PDF Reports")
+                report_date = datetime.datetime.now()
+                reports_dir = "%s_%s" % (list(titles)[0], report_date.strftime("%Y-%m-%d_%H%M%S"))
+                os.makedirs(reports_dir, exist_ok=False)
+                os.chdir(reports_dir)
+
                 reels = sorted([r for r in compiler.compile_all_time_spans() if r[0] == 'Reel'],
                                key=lambda x: x[2])
 

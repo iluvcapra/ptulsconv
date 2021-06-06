@@ -75,8 +75,8 @@ def main():
         sys.exit(22)
 
     try:
-        output_format = options.output_format
-        convert(input_file=args[1], output_format=output_format, warnings=options.warnings)
+        major_mode = options.output_format
+        convert(input_file=args[1], major_mode=major_mode, warnings=options.warnings)
 
     except FileNotFoundError as e:
         print_fatal_error("Error trying to read input file")

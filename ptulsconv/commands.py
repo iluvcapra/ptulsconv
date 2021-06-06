@@ -7,7 +7,7 @@ import csv
 from typing import List
 
 import ptulsconv
-from .docparser.adr_entity import make_entity
+from .docparser.adr_entity import make_entity, GenericEvent, make_entities
 from .reporting import print_section_header_style, print_status_style, print_warning
 from .validations import *
 
@@ -117,23 +117,23 @@ def create_adr_reports(lines: List[ADRLine], tc_display_format: TimecodeFormat, 
     output_talent_sides(lines, tc_display_format=tc_display_format)
 
 
-def parse_text_export(file):
-    ast = ptulsconv.protools_text_export_grammar.parse(file.read())
-    dict_parser = ptulsconv.DictionaryParserVisitor()
-    parsed = dict_parser.visit(ast)
-    print_status_style('Session title: %s' % parsed['header']['session_name'])
-    print_status_style('Session timecode format: %f' % parsed['header']['timecode_format'])
-    print_status_style('Fount %i tracks' % len(parsed['tracks']))
-    print_status_style('Found %i markers' % len(parsed['markers']))
-    return parsed
+# def parse_text_export(file):
+#     ast = ptulsconv.protools_text_export_grammar.parse(file.read())
+#     dict_parser = ptulsconv.DictionaryParserVisitor()
+#     parsed = dict_parser.visit(ast)
+#     print_status_style('Session title: %s' % parsed['header']['session_name'])
+#     print_status_style('Session timecode format: %f' % parsed['header']['timecode_format'])
+#     print_status_style('Fount %i tracks' % len(parsed['tracks']))
+#     print_status_style('Found %i markers' % len(parsed['markers']))
+#     return parsed
 
 
-def convert(input_file, output_format='fmpxml', output=sys.stdout, warnings=True):
+def convert(input_file, major_mode='fmpxml', output=sys.stdout, warnings=True):
 
     session = parse_document(input_file)
     session_tc_format = session.header.timecode_format
 
-    if output_format == 'raw':
+    if major_mode == 'raw':
         output.write(MyEncoder().encode(session))
 
     else:
@@ -141,38 +141,45 @@ def convert(input_file, output_format='fmpxml', output=sys.stdout, warnings=True
         compiler.session = session
         compiled_events = list(compiler.compile_events())
 
-        # TODO: Breakdown by titles
-
-        if output_format == 'tagged':
+        if major_mode == 'tagged':
             output.write(MyEncoder().encode(compiled_events))
 
         else:
-            events = list(map(make_entity, compiled_events))
-            lines = [event for event in events if isinstance(event, ADRLine)]
+            generic_events, adr_lines = make_entities(compiled_events)
+
+            # TODO: Breakdown by titles
+            titles = set([x.title for x in (generic_events + adr_lines)])
+            assert len(titles) == 1, "Multiple titles per export is not supported"
+
+            print(titles)
 
             if warnings:
-                for warning in chain(validate_unique_field(lines,
-                                                           field='cue_number',
-                                                           scope='title'),
-                                     validate_non_empty_field(lines,
-                                                              field='cue_number'),
-                                     validate_non_empty_field(lines,
-                                                              field='character_id'),
-                                     validate_non_empty_field(lines,
-                                                              field='title'),
-                                     validate_dependent_value(lines,
-                                                              key_field='character_id',
-                                                              dependent_field='character_name'),
-                                     validate_dependent_value(lines,
-                                                              key_field='character_id',
-                                                              dependent_field='actor_name')):
-                    print_warning(warning.report_message())
+                perform_adr_validations(adr_lines)
 
-            if output_format == 'doc':
-
+            if major_mode == 'doc':
                 reels = sorted([r for r in compiler.compile_all_time_spans() if r[0] == 'Reel'],
                                key=lambda x: x[2])
 
-                create_adr_reports(lines, tc_display_format=session_tc_format,
+                create_adr_reports(adr_lines,
+                                   tc_display_format=session_tc_format,
                                    reel_list=sorted(reels))
+
+
+def perform_adr_validations(lines):
+    for warning in chain(validate_unique_field(lines,
+                                               field='cue_number',
+                                               scope='title'),
+                         validate_non_empty_field(lines,
+                                                  field='cue_number'),
+                         validate_non_empty_field(lines,
+                                                  field='character_id'),
+                         validate_non_empty_field(lines,
+                                                  field='title'),
+                         validate_dependent_value(lines,
+                                                  key_field='character_id',
+                                                  dependent_field='character_name'),
+                         validate_dependent_value(lines,
+                                                  key_field='character_id',
+                                                  dependent_field='actor_name')):
+        print_warning(warning.report_message())
 

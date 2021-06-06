@@ -1,9 +1,26 @@
 from ptulsconv.docparser.tag_compiler import Event
-from typing import Optional
+from typing import Optional, List, Tuple
 from dataclasses import dataclass
 from fractions import Fraction
 
 from ptulsconv.docparser.tag_mapping import TagMapping
+
+
+def make_entities(from_events: List[Event]) -> Tuple[List['GenericEvent'], List['ADRLine']]:
+    generic_events = list()
+    adr_lines = list()
+
+    for event in from_events:
+        result = make_entity(event)
+        if type(result) is ADRLine:
+            result: ADRLine
+            adr_lines.append(result)
+        elif type(result) is GenericEvent:
+            result: GenericEvent
+            generic_events.append(result)
+
+    return generic_events, adr_lines
+
 
 def make_entity(from_event: Event) -> Optional[object]:
     instance = GenericEvent

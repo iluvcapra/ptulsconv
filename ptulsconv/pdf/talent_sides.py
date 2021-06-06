@@ -30,7 +30,11 @@ def output_report(lines: List[ADRLine], tc_display_format: TimecodeFormat):
         filename = "%s_%s_%s_ADR Script.pdf" % (char_lines[0].title, n, character_name)
 
         doc = make_doc_template(page_size=letter, filename=filename, document_title=title,
-                                record=char_lines[0], document_header=character_name)
+                                title=char_lines[0].title,
+                                document_date=char_lines[0].spot,
+                                supervisor=char_lines[0].supervisor,
+                                client=char_lines[0].client,
+                                document_header=character_name)
 
         story = []
 

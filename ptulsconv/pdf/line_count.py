@@ -206,8 +206,10 @@ def output_report(lines: List[ADRLine], reel_list: List[str], include_omitted=Fa
     title = "%s Line Count" % lines[0].title
     filename = title + '.pdf'
     doc = make_doc_template(page_size=page_size, filename=filename,
-                            document_title=title,
-                            record=lines[0],
+                            document_title=title, title=lines[0].title,
+                            document_date=lines[0].spot,
+                            client=lines[0].client,
+                            supervisor=lines[0].supervisor,
                             document_header='Line Count')
 
     # header_data, header_style, header_widths = build_header(columns_widths)

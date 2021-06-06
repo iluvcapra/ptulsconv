@@ -57,7 +57,12 @@ class ADRDocTemplate(BaseDocTemplate):
         BaseDocTemplate.build(self, flowables, filename, canvasmaker)
 
 
-def make_doc_template(page_size, filename, document_title, record: ADRLine, document_header="",
+def make_doc_template(page_size, filename, document_title,
+                      title: str,
+                      supervisor: str,
+                      document_header: str,
+                      client: str,
+                      document_date: str,
                       left_margin=0.5 * inch) -> ADRDocTemplate:
     right_margin = top_margin = bottom_margin = 0.5 * inch
     page_box = GRect(0., 0., page_size[0], page_size[1])
@@ -72,13 +77,19 @@ def make_doc_template(page_size, filename, document_title, record: ADRLine, docu
 
     page_template = PageTemplate(id="Main",
                                  frames=[Frame(page_box.min_x, page_box.min_y, page_box.width, page_box.height)],
-                                 onPage=lambda c, _: draw_header_footer(c, title_box, report_box, footer_box, record,
+                                 onPage=lambda c, _: draw_header_footer(c, title_box,
+                                                                        report_box,
+                                                                        footer_box,
+                                                                        title=title,
+                                                                        supervisor=supervisor,
+                                                                        client=client,
+                                                                        document_date=document_date,
                                                                         doc_title=document_header))
 
     pdfmetrics.registerFont(TTFont('Futura', 'Futura.ttc'))
     doc = ADRDocTemplate(filename,
                          title=document_title,
-                         author=record.supervisor,
+                         author=supervisor,
                          pagesize=page_size,
                          leftMargin=left_margin, rightMargin=right_margin,
                          topMargin=top_margin, bottomMargin=bottom_margin)
@@ -99,34 +110,36 @@ def time_format(mins, zero_str=""):
         return "%i:%02i" % (hh, mm)
 
 
-def draw_header_footer(a_canvas: ReportCanvas, title_box, doc_title_box, footer_box, record: ADRLine, doc_title=""):
-    (supervisor, client,), title = title_box.divide_y([16., 16., ])
-    title.draw_text_cell(a_canvas, record.title, "Futura", 18, inset_y=2., inset_x=5.)
-    client.draw_text_cell(a_canvas, record.client, "Futura", 11, inset_y=2., inset_x=5.)
+def draw_header_footer(a_canvas: ReportCanvas, right_box, left_box, footer_box,
+                       title: str, supervisor: str, document_date: str, client: str, doc_title=""):
+
+    (_supervisor_box, client_box,), title_box = right_box.divide_y([16., 16., ])
+    title_box.draw_text_cell(a_canvas, title, "Futura", 18, inset_y=2., inset_x=5.)
+    client_box.draw_text_cell(a_canvas, client, "Futura", 11, inset_y=2., inset_x=5.)
 
     a_canvas.saveState()
     a_canvas.setLineWidth(0.5)
     tline = a_canvas.beginPath()
-    tline.moveTo(doc_title_box.min_x, title_box.min_y)
-    tline.lineTo(title_box.max_x, title_box.min_y)
+    tline.moveTo(left_box.min_x, right_box.min_y)
+    tline.lineTo(right_box.max_x, right_box.min_y)
     a_canvas.drawPath(tline)
 
     tline2 = a_canvas.beginPath()
-    tline2.moveTo(title_box.min_x, title_box.min_y)
-    tline2.lineTo(title_box.min_x, title_box.max_y)
+    tline2.moveTo(right_box.min_x, left_box.min_y)
+    tline2.lineTo(right_box.min_x, left_box.max_y)
     a_canvas.drawPath(tline2)
     a_canvas.restoreState()
 
-    (doc_title_cell, spotting_version_cell,), _ = doc_title_box.divide_y([18., 14], direction='d')
+    (doc_title_cell, spotting_version_cell,), _ = left_box.divide_y([18., 14], direction='d')
 
     doc_title_cell.draw_text_cell(a_canvas, doc_title, 'Futura', 14., inset_y=2.)
 
-    if record.spot is not None:
-        spotting_version_cell.draw_text_cell(a_canvas, record.spot, 'Futura', 12., inset_y=2.)
+    if document_date is not None:
+        spotting_version_cell.draw_text_cell(a_canvas, document_date, 'Futura', 12., inset_y=2.)
 
-    a_canvas.setFont('Futura', 11.)
-    a_canvas.drawCentredString(footer_box.min_x + footer_box.width / 2., footer_box.min_y,
-                               record.supervisor or "")
+    if supervisor is not None:
+        a_canvas.setFont('Futura', 11.)
+        a_canvas.drawCentredString(footer_box.min_x + footer_box.width / 2., footer_box.min_y, supervisor)
 
 
 class GRect:

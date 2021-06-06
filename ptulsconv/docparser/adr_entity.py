@@ -1,5 +1,5 @@
 from ptulsconv.docparser.tag_compiler import Event
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Any
 from dataclasses import dataclass
 from fractions import Fraction
 
@@ -11,7 +11,7 @@ def make_entities(from_events: List[Event]) -> Tuple[List['GenericEvent'], List[
     adr_lines = list()
 
     for event in from_events:
-        result = make_entity(event)
+        result: Any = make_entity(event)
         if type(result) is ADRLine:
             result: ADRLine
             adr_lines.append(result)
@@ -37,6 +37,7 @@ def make_entity(from_event: Event) -> Optional[object]:
     new.start = from_event.start
     new.finish = from_event.finish
     return new
+
 
 @dataclass
 class GenericEvent:
@@ -137,4 +138,3 @@ class ADRLine(GenericEvent):
         self.omitted = False
         self.adlib = False
         self.optional = False
-

@@ -10,9 +10,11 @@ from reportlab.pdfbase.ttfonts import TTFont
 
 from ptulsconv.docparser.adr_entity import ADRLine
 
-#TODO: A Generic report useful for spotting
-#TODO: A report useful for M&E mixer's notes
-#TODO: Address all style notes this file
+
+# TODO: A Generic report useful for spotting
+# TODO: A Continuity
+# TODO: A report useful for M&E mixer's notes
+# TODO: Address all style notes this file
 
 # This is from https://code.activestate.com/recipes/576832/ for
 # generating page count messages
@@ -98,7 +100,6 @@ def time_format(mins, zero_str=""):
 
 
 def draw_header_footer(a_canvas: ReportCanvas, title_box, doc_title_box, footer_box, record: ADRLine, doc_title=""):
-
     (supervisor, client,), title = title_box.divide_y([16., 16., ])
     title.draw_text_cell(a_canvas, record.title, "Futura", 18, inset_y=2., inset_x=5.)
     client.draw_text_cell(a_canvas, record.client, "Futura", 11, inset_y=2., inset_x=5.)

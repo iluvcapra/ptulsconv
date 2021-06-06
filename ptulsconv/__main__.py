@@ -1,37 +1,60 @@
 from optparse import OptionParser, OptionGroup
 import datetime
 import sys
-import traceback
 
 from ptulsconv import __name__, __version__, __author__
-from ptulsconv.commands import convert, dump_field_map
+from ptulsconv.commands import convert
 from ptulsconv.reporting import print_status_style, print_banner_style, print_section_header_style, print_fatal_error
 
-#TODO: Support Top-level modes
+
+# TODO: Support Top-level modes
+
+# Modes we want:
+#  - "raw" : Output the parsed text export document with no further processing, as json
+#  - "tagged"? : Output the parsed result of the TagCompiler
+#  - "doc" : Generate a full panoply of PDF reports contextually based on tagging
+
+
+def dump_field_map(output=sys.stdout):
+    from ptulsconv.docparser.tag_mapping import TagMapping
+    from ptulsconv.docparser.adr_entity import ADRLine
+
+    TagMapping.print_rules(ADRLine, output=output)
+
 
 def main():
+    """Entry point for the command-line invocation"""
     parser = OptionParser()
-    parser.usage = "ptulsconv TEXT_EXPORT.txt"
+    parser.usage = "ptulsconv [options] TEXT_EXPORT.txt"
 
-    parser.add_option('-f', '--format', dest='output_format', metavar='FMT',
-                      choices=['raw', 'json', 'adr'], default='adr',
-                      help='Set output format, `raw`, `json`, `adr`. Default '
-                           'is `adr`.')
+    parser.add_option('-f', '--format',
+                      dest='output_format',
+                      metavar='FMT',
+                      choices=['raw', 'tagged', 'doc'],
+                      default='doc',
+                      help='Set output format, `raw`, `tagged`, `doc`.')
 
-    warn_options = OptionGroup(title="Warning and Validation Options", parser=parser)
-    warn_options.add_option('-W', action='store_false', dest='warnings', default=True,
+    warn_options = OptionGroup(title="Warning and Validation Options",
+                               parser=parser)
+
+    warn_options.add_option('-W', action='store_false',
+                            dest='warnings',
+                            default=True,
                             help='Suppress warnings for common errors (missing code numbers etc.)')
 
     parser.add_option_group(warn_options)
 
-    informational_options = OptionGroup(title="Informational Options", parser=parser,
+    informational_options = OptionGroup(title="Informational Options",
+                                        parser=parser,
                                         description='Print useful information and exit without processing '
                                                     'input files.')
 
-    informational_options.add_option('--show-available-tags', dest='show_tags',
+    informational_options.add_option('--show-available-tags',
+                                     dest='show_tags',
                                      action='store_true',
-                                     default=False, help='Display tag mappings for the FMP XML '
-                                                         'output style and exit.')
+                                     default=False,
+                                     help='Display tag mappings for the FMP XML '
+                                          'output style and exit.')
 
     parser.add_option_group(informational_options)
 
@@ -54,10 +77,13 @@ def main():
     try:
         output_format = options.output_format
         convert(input_file=args[1], output_format=output_format, warnings=options.warnings)
+
     except FileNotFoundError as e:
         print_fatal_error("Error trying to read input file")
         raise e
+
     except Exception as e:
+        import traceback
         print_fatal_error("Error trying to convert file")
         print("\033[31m" + e.__repr__() + "\033[0m", file=sys.stderr)
         print(traceback.format_exc())

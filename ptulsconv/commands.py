@@ -1,10 +1,10 @@
 import datetime
-import json
 import os
 
 import sys
 from itertools import chain
 import csv
+from typing import List
 
 import ptulsconv
 from .reporting import print_section_header_style, print_status_style, print_warning
@@ -31,13 +31,6 @@ class MyEncoder(JSONEncoder):
             return dict(numerator=o.numerator, denominator=o.denominator)
         else:
             return o.__dict__
-
-
-def dump_field_map(output=sys.stdout):
-    from ptulsconv.docparser.tag_mapping import TagMapping
-    from ptulsconv.docparser.adr_entity import ADRLine
-
-    TagMapping.print_rules(ADRLine, output=output)
 
 
 def output_adr_csv(lines: List[ADRLine], time_format: TimecodeFormat):
@@ -79,7 +72,7 @@ def output_avid_markers(lines):
         pass
 
 
-def create_adr_reports(lines: List[ADRLine], tc_display_format: TimecodeFormat):
+def create_adr_reports(lines: List[ADRLine], tc_display_format: TimecodeFormat, reel_list):
 
     print_section_header_style("Creating PDF Reports")
     report_date = datetime.datetime.now()
@@ -91,7 +84,7 @@ def create_adr_reports(lines: List[ADRLine], tc_display_format: TimecodeFormat):
     output_summary(lines, tc_display_format=tc_display_format)
 
     print_status_style("Creating Line Count")
-    output_line_count(lines, reel_list=['R1', 'R2', 'R3', 'R4', 'R5', 'R6'])
+    output_line_count(lines, reel_list=reel_list)
 
     print_status_style("Creating Supervisor Logs directory and reports")
     os.makedirs("Supervisor Logs", exist_ok=True)
@@ -146,7 +139,7 @@ def convert(input_file, output_format='fmpxml', output=sys.stdout, warnings=True
         compiler = TagCompiler()
         compiler.session = session
         compiled_events = list(compiler.compile_events())
-        if output_format == 'json':
+        if output_format == 'tagged':
             output.write(MyEncoder().encode(compiled_events))
 
         else:
@@ -163,8 +156,13 @@ def convert(input_file, output_format='fmpxml', output=sys.stdout, warnings=True
                                                               dependent_field='actor_name')):
                     print_warning(warning.report_message())
 
-            if output_format == 'adr':
-                create_adr_reports(lines, tc_display_format=session_tc_format)
+            if output_format == 'doc':
+
+                reels = sorted([r for r in compiler.compile_all_time_spans() if r[0] == 'Reel'],
+                               key=lambda x: x[2])
+
+                create_adr_reports(lines, tc_display_format=session_tc_format,
+                                   reel_list=sorted(reels))
 
     # elif output_format == 'csv':
     #     dump_csv(parsed['events'])

@@ -26,7 +26,7 @@ class TagCompiler:
 
     session: doc_entity.SessionDescriptor
 
-    def compile_all_timespans(self) -> List[Tuple[str, str, Fraction, Fraction]]:
+    def compile_all_time_spans(self) -> List[Tuple[str, str, Fraction, Fraction]]:
         ret_list = list()
         for element in self.parse_data():
             if element.clip_tag_mode == TagPreModes.TIMESPAN:

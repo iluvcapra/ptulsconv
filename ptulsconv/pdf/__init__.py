@@ -1,18 +1,15 @@
+import datetime
+
 from reportlab.pdfbase.pdfmetrics import (getAscent, getDescent)
 from reportlab.lib.units import inch
 from reportlab.pdfgen import canvas
-import datetime
 from reportlab.platypus.doctemplate import BaseDocTemplate, PageTemplate
 from reportlab.platypus.frames import Frame
 
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
-from ptulsconv.docparser.adr_entity import ADRLine
-
-
 # TODO: A Generic report useful for spotting
-
 # TODO: A report useful for M&E mixer's notes
 
 # This is from https://code.activestate.com/recipes/576832/ for

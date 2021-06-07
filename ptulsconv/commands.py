@@ -160,8 +160,9 @@ def convert(input_file, major_mode='fmpxml', output=sys.stdout, warnings=True):
                 os.makedirs(reports_dir, exist_ok=False)
                 os.chdir(reports_dir)
 
-                reels = sorted([r for r in compiler.compile_all_time_spans() if r[0] == 'Reel'],
-                               key=lambda x: x[2])
+                # reels = sorted([r for r in compiler.compile_all_time_spans() if r[0] == 'Reel'],
+                #                key=lambda x: x[2])
+                reels = ['R1', 'R2', 'R3', 'R4', 'R5', 'R6']
 
                 create_adr_reports(adr_lines,
                                    tc_display_format=session_tc_format,

@@ -130,7 +130,7 @@ def generate_report(page_size, lines: List[ADRLine], tc_rate: TimecodeFormat, ch
                             title=lines[0].title,
                             supervisor=lines[0].supervisor,
                             client=lines[0].client,
-                            document_date=lines[0].spot,
+                            document_subheader=lines[0].spot,
                             left_margin=0.75 * inch)
     story = build_story(lines, tc_rate)
     doc.build(story)

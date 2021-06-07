@@ -31,7 +31,7 @@ def output_report(lines: List[ADRLine], tc_display_format: TimecodeFormat):
 
         doc = make_doc_template(page_size=letter, filename=filename, document_title=title,
                                 title=char_lines[0].title,
-                                document_date=char_lines[0].spot,
+                                document_subheader=char_lines[0].spot,
                                 supervisor=char_lines[0].supervisor,
                                 client=char_lines[0].client,
                                 document_header=character_name)

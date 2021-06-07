@@ -6,9 +6,12 @@
       <w>fmpxml</w>
       <w>futura</w>
       <w>leftpadding</w>
+      <w>lineafter</w>
+      <w>linebefore</w>
       <w>ptulsconv</w>
       <w>retval</w>
       <w>smpte</w>
+      <w>subheader</w>
       <w>timecode</w>
       <w>timespan</w>
     </words>

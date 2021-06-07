@@ -14,7 +14,6 @@ from ptulsconv.docparser.adr_entity import ADRLine
 # TODO: A Generic report useful for spotting
 
 # TODO: A report useful for M&E mixer's notes
-# TODO: Address all style notes this file
 
 # This is from https://code.activestate.com/recipes/576832/ for
 # generating page count messages
@@ -62,7 +61,7 @@ def make_doc_template(page_size, filename, document_title,
                       supervisor: str,
                       document_header: str,
                       client: str,
-                      document_date: str,
+                      document_subheader: str,
                       left_margin=0.5 * inch) -> ADRDocTemplate:
     right_margin = top_margin = bottom_margin = 0.5 * inch
     page_box = GRect(0., 0., page_size[0], page_size[1])
@@ -79,7 +78,8 @@ def make_doc_template(page_size, filename, document_title,
                                  frames=[Frame(page_box.min_x, page_box.min_y, page_box.width, page_box.height)],
                                  onPage=lambda c, _: draw_header_footer(c, report_box, title_box, footer_box,
                                                                         title=title, supervisor=supervisor,
-                                                                        document_date=document_date, client=client,
+                                                                        document_subheader=document_subheader,
+                                                                        client=client,
                                                                         doc_title=document_header))
 
     pdfmetrics.registerFont(TTFont('Futura', 'Futura.ttc'))
@@ -95,7 +95,7 @@ def make_doc_template(page_size, filename, document_title,
     return doc
 
 
-def time_format(mins, zero_str=""):
+def time_format(mins, zero_str="-"):
     if mins == 0. and zero_str is not None:
         return zero_str
     elif mins < 60.:
@@ -107,7 +107,7 @@ def time_format(mins, zero_str=""):
 
 
 def draw_header_footer(a_canvas: ReportCanvas, left_box, right_box, footer_box, title: str, supervisor: str,
-                       document_date: str, client: str, doc_title=""):
+                       document_subheader: str, client: str, doc_title=""):
 
     (_supervisor_box, client_box,), title_box = right_box.divide_y([16., 16., ])
     title_box.draw_text_cell(a_canvas, title, "Futura", 18, inset_y=2., inset_x=5.)
@@ -130,8 +130,8 @@ def draw_header_footer(a_canvas: ReportCanvas, left_box, right_box, footer_box, 
 
     doc_title_cell.draw_text_cell(a_canvas, doc_title, 'Futura', 14., inset_y=2.)
 
-    if document_date is not None:
-        spotting_version_cell.draw_text_cell(a_canvas, document_date, 'Futura', 12., inset_y=2.)
+    if document_subheader is not None:
+        spotting_version_cell.draw_text_cell(a_canvas, document_subheader, 'Futura', 12., inset_y=2.)
 
     if supervisor is not None:
         a_canvas.setFont('Futura', 11.)

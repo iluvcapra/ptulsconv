@@ -10,7 +10,8 @@ from ptulsconv.pdf import make_doc_template
 # TODO: A Continuity
 
 def output_report(scenes: List[Tuple[str, Fraction, Fraction]],
-                  tc_display_format: TimecodeFormat, title: str,
+                  tc_display_format: TimecodeFormat,
+                  title: str, client: str, supervisor,
                   page_size=portrait(letter)):
 
         filename = "%s Continuity" % title
@@ -18,9 +19,9 @@ def output_report(scenes: List[Tuple[str, Fraction, Fraction]],
 
         doc = make_doc_template(page_size=page_size,
                                 filename=filename, document_title=title,
-                                title="",
-                                client="",
-                                document_date="",
-                                supervisor="",
+                                title=title,
+                                client=client,
+                                document_subheader="",
+                                supervisor=supervisor,
                                 document_header=document_header,
                                 left_margin=0.75 * inch)

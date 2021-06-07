@@ -7,7 +7,7 @@ from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter, portrait
 from reportlab.lib import colors
 
-from reportlab.platypus import Table, Paragraph
+from reportlab.platypus import Table, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
 from .__init__ import time_format, make_doc_template
@@ -36,6 +36,47 @@ def build_columns(lines: List[ADRLine], reel_list: Optional[List[str]], show_pri
         'style_getter': lambda col_index: [('LINEAFTER', (col_index, 0), (col_index, -1), 1.0, colors.black)],
         'width': 1.75 * inch,
         'summarize': False
+    })
+
+    columns.append({
+        'heading': 'TV',
+        'value_getter': lambda recs: len([r for r in recs if r.tv]),
+        'value_getter2': lambda recs: time_format(sum([r.time_budget_mins or 0.
+                                                       for r in recs if r.tv])),
+        'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER'),
+                                           ('LINEBEFORE', (col_index, 0), (col_index, -1), 1., colors.black),
+                                           ('LINEAFTER', (col_index, 0), (col_index, -1), .5, colors.gray)],
+        'width': num_column_width
+    })
+
+    columns.append({
+        'heading': 'Opt',
+        'value_getter': lambda recs: len([r for r in recs if r.optional]),
+        'value_getter2': lambda recs: time_format(sum([r.time_budget_mins or 0.
+                                                       for r in recs if r.optional])),
+        'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER'),
+                                           ('LINEAFTER', (col_index, 0), (col_index, -1), .5, colors.gray)],
+        'width': num_column_width
+    })
+
+    columns.append({
+        'heading': 'Eff',
+        'value_getter': lambda recs: len([r for r in recs if r.effort]),
+        'value_getter2': lambda recs: time_format(sum([r.time_budget_mins or 0.
+                                                       for r in recs if r.effort])),
+        'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER')],
+        'width': num_column_width
+    })
+
+    columns.append({
+        'heading': '',
+        'value_getter': lambda _: '',
+        'value_getter2': lambda _: '',
+        'style_getter': lambda col_index: [
+            ('LINEBEFORE', (col_index, 0), (col_index, -1), 1., colors.black),
+            ('LINEAFTER', (col_index, 0), (col_index, -1), 1., colors.black),
+        ],
+        'width': 2.
     })
 
     if len(reel_numbers) > 0:
@@ -79,36 +120,6 @@ def build_columns(lines: List[ADRLine], reel_list: Optional[List[str]], show_pri
             'width': num_column_width
         })
 
-    columns.append({
-        'heading': 'TV',
-        'value_getter': lambda recs: len([r for r in recs if r.tv]),
-        'value_getter2': lambda recs: time_format(sum([r.time_budget_mins or 0.
-                                                       for r in recs if r.tv])),
-        'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER'),
-                                           ('LINEBEFORE', (col_index, 0), (col_index, -1), 1., colors.black),
-                                           ('LINEAFTER', (col_index, 0), (col_index, -1), .5, colors.gray)],
-        'width': num_column_width
-    })
-
-    columns.append({
-        'heading': 'Opt',
-        'value_getter': lambda recs: len([r for r in recs if r.optional]),
-        'value_getter2': lambda recs: time_format(sum([r.time_budget_mins or 0.
-                                                       for r in recs if r.optional])),
-        'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER'),
-                                           ('LINEAFTER', (col_index, 0), (col_index, -1), .5, colors.gray)],
-        'width': num_column_width
-    })
-
-    columns.append({
-        'heading': 'Eff',
-        'value_getter': lambda recs: len([r for r in recs if r.effort]),
-        'value_getter2': lambda recs: time_format(sum([r.time_budget_mins or 0.
-                                                  for r in recs if r.effort])),
-        'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER')],
-        'width': num_column_width
-    })
-
     if include_omitted:
         columns.append({
             'heading': 'Omit',
@@ -133,7 +144,6 @@ def build_columns(lines: List[ADRLine], reel_list: Optional[List[str]], show_pri
 
 
 def populate_columns(lines: List[ADRLine], columns, include_omitted, _page_size):
-    # TODO: use page_size parameter
     data = list()
     styles = list()
     columns_widths = list()
@@ -199,7 +209,7 @@ def output_report(lines: List[ADRLine], reel_list: List[str], include_omitted=Fa
     style.append(('FONTNAME', (0, 0), (-1, -1), "Futura"))
     style.append(('FONTSIZE', (0, 0), (-1, -1), 9.))
     style.append(('LINEBELOW', (0, 0), (-1, 0), 1.0, colors.black))
-    style.append(('LINEBELOW', (0, 1), (-1, -1), 0.25, colors.gray))
+    # style.append(('LINEBELOW', (0, 1), (-1, -1), 0.25, colors.gray))
 
     pdfmetrics.registerFont(TTFont('Futura', 'Futura.ttc'))
 
@@ -207,7 +217,7 @@ def output_report(lines: List[ADRLine], reel_list: List[str], include_omitted=Fa
     filename = title + '.pdf'
     doc = make_doc_template(page_size=page_size, filename=filename,
                             document_title=title, title=lines[0].title,
-                            document_date=lines[0].spot,
+                            document_subheader=lines[0].spot,
                             client=lines[0].client,
                             supervisor=lines[0].supervisor,
                             document_header='Line Count')
@@ -217,7 +227,7 @@ def output_report(lines: List[ADRLine], reel_list: List[str], include_omitted=Fa
 
     table = Table(data=data, style=style, colWidths=columns_widths)
 
-    story = [table]
+    story = [Spacer(height=0.5 * inch, width=1.), table]
 
     style = getSampleStyleSheet()['Normal']
     style.fontName = 'Futura'
@@ -225,7 +235,9 @@ def output_report(lines: List[ADRLine], reel_list: List[str], include_omitted=Fa
     style.spaceBefore = 16.
     style.spaceAfter = 16.
 
-    if not include_omitted:
-        story.append(Paragraph("* Omitted lines are excluded.", style))
+    omitted_count = len([x for x in lines if x.omitted])
+
+    if not include_omitted and omitted_count > 0:
+        story.append(Paragraph("* %i Omitted lines are excluded." % omitted_count, style))
 
     doc.build(story)

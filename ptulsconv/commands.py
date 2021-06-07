@@ -19,6 +19,7 @@ from ptulsconv.pdf.supervisor_1pg import output_report as output_supervisor_1pg
 from ptulsconv.pdf.line_count import output_report as output_line_count
 from ptulsconv.pdf.talent_sides import output_report as output_talent_sides
 from ptulsconv.pdf.summary_log import output_report as output_summary
+from ptulsconv.pdf.continuity import output_report as output_continuity
 
 from json import JSONEncoder
 
@@ -159,6 +160,12 @@ def convert(input_file, major_mode='fmpxml', output=sys.stdout, warnings=True):
                 reports_dir = "%s_%s" % (list(titles)[0], report_date.strftime("%Y-%m-%d_%H%M%S"))
                 os.makedirs(reports_dir, exist_ok=False)
                 os.chdir(reports_dir)
+
+                scenes = sorted([s for s in compiler.compile_all_time_spans() if s[0] == 'Sc'],
+                                key=lambda x: x[2])
+
+                output_continuity(scenes=scenes, tc_display_format=session_tc_format,
+                                  title=list(titles)[0], client="", supervisor="")
 
                 # reels = sorted([r for r in compiler.compile_all_time_spans() if r[0] == 'Reel'],
                 #                key=lambda x: x[2])

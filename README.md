@@ -2,7 +2,6 @@
 ![](https://img.shields.io/pypi/pyversions/ptulsconv.svg) 
 [![](https://img.shields.io/pypi/v/ptulsconv.svg)][pypi]
 ![](https://img.shields.io/pypi/wheel/ptulsconv.svg)
-
 ![Lint and Test](https://github.com/iluvcapra/ptulsconv/actions/workflows/python-package.yml/badge.svg) 
 
 [pypi]: https://pypi.org/project/ptulsconv/

@@ -1,17 +1,33 @@
-[![Build Status](https://travis-ci.com/iluvcapra/ptulsconv.svg?branch=master)](https://travis-ci.com/iluvcapra/ptulsconv)
- ![](https://img.shields.io/github/license/iluvcapra/ptulsconv.svg) ![](https://img.shields.io/pypi/pyversions/ptulsconv.svg) [![](https://img.shields.io/pypi/v/ptulsconv.svg)](https://pypi.org/project/ptulsconv/) ![](https://img.shields.io/pypi/wheel/ptulsconv.svg)
- 
- ![Upload Python Package](https://github.com/iluvcapra/ptulsconv/workflows/Upload%20Python%20Package/badge.svg)
- 
+![](https://img.shields.io/github/license/iluvcapra/ptulsconv.svg)
+![](https://img.shields.io/pypi/pyversions/ptulsconv.svg) 
+[![](https://img.shields.io/pypi/v/ptulsconv.svg)][pypi]
+![](https://img.shields.io/pypi/wheel/ptulsconv.svg)
+
+![Lint and Test](https://github.com/iluvcapra/ptulsconv/actions/workflows/python-package.yml/badge.svg) 
+
+[pypi]: https://pypi.org/project/ptulsconv/
+
+
 # ptulsconv
-Read Pro Tools text exports and generate JSON, PDF reports.
 
-## Notice!
-
-At this time there are a lot of changes in the HEAD of this package and you 
-should use the last posted Pypi package. New features and much better 
-reporting, including native PDF reports, are coming soon!
+Read Pro Tools text exports and generate PDF reports, JSON output.
  
+
+## Theory of Operation
+
+[Avid Pro Tools][avp] can be used to make spotting notes for ADR recording
+sessions by creating spotting regions with descriptive text and exporting the
+session as text. This file can then be dropped into Excel or any CSV-reading
+app like Filemaker Pro.
+
+**ptulsconv** accepts a text export from Pro Tools and automatically creates
+PDF and CSV documents for use in ADR spotting, recording, editing and 
+reporting, and supplemental JSON documents can be output for use with other
+workflows.
+
+
+[avp]: http://www.avid.com/pro-tools
+
 ## Installation
 
 The easiest way to install on your site is to use `pip`:
@@ -22,19 +38,7 @@ This will install the necessary libraries on your host and gives you
 command-line access to the tool through an entry-point `ptulsconv`. In a 
 terminal window type `ptulsconv -h` for a list of available options.
 
-## Theory of Operation
-
-[Avid Pro Tools][avp] exports a tab-delimited text file organized in multiple 
-parts with an uneven syntax that usually can't "drop in" to other tools like 
-Excel or Filemaker. This tool accepts a text export from Pro Tools and produces 
-an
-
-...
-
-
-[avp]: http://www.avid.com/pro-tools
-
-### Fields in Clip Names
+### Adding Detailed Info to Clip Names with Fields
 
 Track names, track comments, and clip names can also contain meta-tags, or 
 "fields," to add additional columns to the output. Thus, if a clip has the 

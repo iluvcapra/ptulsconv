@@ -43,15 +43,6 @@ workflows.
 
 [avp]: http://www.avid.com/pro-tools
 
-## Installation
-
-The easiest way to install on your site is to use `pip`:
-
-    % pip3 install ptulsconv
-    
-This will install the necessary libraries on your host and gives you 
-command-line access to the tool through an entry-point `ptulsconv`. In a 
-terminal window type `ptulsconv -h` for a list of available options.
 
 ### Adding Detailed Info to Clip Names with Fields
 
@@ -124,3 +115,13 @@ combined into a single row of the output. The start time of the first clip
 will become the start time of the row, and the finish time of the last clip 
 will become the finish time of the row.
 
+
+## Installation
+
+The easiest way to install on your site is to use `pip`:
+
+    % pip3 install ptulsconv
+    
+This will install the necessary libraries on your host and gives you 
+command-line access to the tool through an entry-point `ptulsconv`. In a 
+terminal window type `ptulsconv -h` for a list of available options.

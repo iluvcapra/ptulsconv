@@ -8,7 +8,10 @@ class TimecodeFormat(namedtuple("_TimecodeFormat", "frame_duration logical_fps d
 
     def smpte_to_seconds(self, smpte: str) -> Fraction:
         frame_count = smpte_to_frame_count(smpte, self.logical_fps, drop_frame_hint=self.drop_frame)
-        return frame_count * self.frame_duration
+        if frame_count is None:
+            return None
+        else:
+            return frame_count * self.frame_duration
 
     def seconds_to_smpte(self, seconds: Fraction) -> str:
         frame_count = int(seconds / self.frame_duration)
@@ -28,7 +31,7 @@ def smpte_to_frame_count(smpte_rep_string: str, frames_per_logical_second: int, 
     """
     assert frames_per_logical_second in [24, 25, 30, 48, 50, 60]
 
-    m = re.search("(\d?\d)[:;](\d\d)[:;](\d\d)([:;])(\d\d)(\.\d+)?", smpte_rep_string)
+    m = re.search(r'(\d?\d)[:;](\d\d)[:;](\d\d)([:;])(\d\d)(\.\d+)?', smpte_rep_string)
     
     if m is None:
         return None
@@ -85,7 +88,7 @@ def frame_count_to_smpte(frame_count: int, frames_per_logical_second: int, drop_
 
 
 def footage_to_frame_count(footage_string):
-    m = re.search("(\d+)\+(\d+)(\.\d+)?", footage_string)
+    m = re.search(r'(\d+)\+(\d+)(\.\d+)?', footage_string)
     feet, frm, frac = m.groups()
     feet, frm, frac = int(feet), int(frm), float(frac or 0.0)
 

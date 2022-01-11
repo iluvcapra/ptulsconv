@@ -21,7 +21,8 @@ class SessionDescriptor:
 
     def markers_timed(self) -> Iterator[Tuple['MarkerDescriptor', Fraction]]:
         for marker in self.markers:
-            marker_time = self.header.convert_timecode(marker.location)
+            marker_time = Fraction(marker.time_reference, int(self.header.sample_rate))
+            #marker_time = self.header.convert_timecode(marker.location)
             yield marker, marker_time
 
     def tracks_clips(self) -> Iterator[Tuple['TrackDescriptor', 'TrackClipDescriptor']]:

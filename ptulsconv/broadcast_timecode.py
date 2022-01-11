@@ -29,6 +29,10 @@ def smpte_to_frame_count(smpte_rep_string: str, frames_per_logical_second: int, 
     assert frames_per_logical_second in [24, 25, 30, 48, 50, 60]
 
     m = re.search("(\d?\d)[:;](\d\d)[:;](\d\d)([:;])(\d\d)(\.\d+)?", smpte_rep_string)
+    
+    if m is None:
+        return None
+    
     hh, mm, ss, sep, ff, frac = m.groups()
     hh, mm, ss, ff, frac = int(hh), int(mm), int(ss), int(ff), float(frac or 0.0)
 

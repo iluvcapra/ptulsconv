@@ -4,7 +4,7 @@ import os.path
 
 
 class TestRobinHoodDF(unittest.TestCase):
-    path = os.path.dirname(__file__) + '/export_cases/Robin Hood SpottingDF.txt'
+    path = os.path.dirname(__file__) + '/../export_cases/Robin Hood SpottingDF.txt'
 
     def test_header_export_df(self):
         session = parse_document(self.path)

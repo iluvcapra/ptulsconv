@@ -4,7 +4,7 @@ import os.path
 
 
 class TestRobinHood1(unittest.TestCase):
-    path = os.path.dirname(__file__) + '/export_cases/Robin Hood Spotting.txt'
+    path = os.path.dirname(__file__) + '/../export_cases/Robin Hood Spotting.txt'
 
     def test_header_export(self):
 

@@ -1,38 +1,18 @@
 .\" Manpage for ptulsconv
 .\" Contact https://github.com/iluvcapra/ptulsconv
-.TH ptulsconv 1 "15 May 2020" "0.4.0" "ptulsconv man page"
+.TH ptulsconv 1 "15 May 2020" "0.8.2" "ptulsconv man page"
 .SH NAME
 .BR "ptulsconv" " \- convert 
 .IR "Avid Pro Tools" " text exports"
 .SH SYNOPSIS
 ptulsconv [OPTIONS] Export.txt
 .SH DESCRIPTION
-Convert a Pro Tools text export into a flat list of clip names with timecodes. A tagging
-language is interpreted to add columns and type the data. The default output format is
-an XML file for import into Filemaker Pro.
+Convert a Pro Tools text export into ADR reports.
 .SH OPTIONS
 .IP "-h, --help"
 show a help message and exit.
-.TP 
-.RI "-i " "TC"
-Drop events before this timecode.
-.TP 
-.RI "-o " "TC"
-Drop events after this timecode.
-.TP
-.RI "-m "
-Include muted clips.
-.TP
-.RI "--json "
-Output a JSON document instead of XML. (--xform will have no effect.)
-.TP
-.RI "--xform " "NAME"
-Convert the output with a built-in output transform.
 .TP
 .RI "--show-available-tags"
 Print a list of tags that are interpreted and exit.
-.TP
-.RI "--show-available-transforms"
-Print a list of built-in output transforms and exit.
 .SH AUTHOR
 Jamie Hardt (contact at https://github.com/iluvcapra/ptulsconv)

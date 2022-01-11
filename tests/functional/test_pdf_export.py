@@ -14,15 +14,15 @@ class TestBroadcastTimecode(unittest.TestCase):
         Setp through every text file in export_cases and make sure it can 
         be converted into PDF docs without throwing an error
         """
-        # for path in glob.glob(os.path.dirname(__file__) + "/../export_cases/*.txt"):
-        #     tempdir = tempfile.TemporaryDirectory()
-        #     os.chdir(tempdir.name)
-        #     try:
-        #         commands.convert(path, major_mode='doc')
-        #     except:
-        #         assert False, "Error processing file %s" % path
-        #     finally:
-        #         tempdir.cleanup()
+        for path in glob.glob(os.path.dirname(__file__) + "/../export_cases/Robin Hood Spotting.txt"):
+            tempdir = tempfile.TemporaryDirectory()
+            os.chdir(tempdir.name)
+            try:
+                commands.convert(path, major_mode='doc')
+            except:
+                assert False, "Error processing file %s" % path
+            finally:
+                tempdir.cleanup()
 
 
 

@@ -9,9 +9,11 @@ from reportlab.platypus.frames import Frame
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
+from typing import List
+
 # TODO: A Generic report useful for spotting
 # TODO: A report useful for M&E mixer's notes
-
+# TODO: Use a default font that doesn't need to be installed
 
 # This is from https://code.activestate.com/recipes/576832/ for
 # generating page count messages
@@ -36,7 +38,7 @@ class ReportCanvas(canvas.Canvas):
 
     def draw_page_number(self, page_count):
         self.saveState()
-        self.setFont("Futura", 10)
+        self.setFont('Helvetica', 10) #FIXME make this customizable
         self.drawString(0.5 * inch, 0.5 * inch, "Page %d of %d" % (self._pageNumber, page_count))
         right_edge = self._pagesize[0] - 0.5 * inch
         self.drawRightString(right_edge, 0.5 * inch, self._report_date.strftime("%m/%d/%Y %H:%M"))
@@ -60,7 +62,8 @@ def make_doc_template(page_size, filename, document_title,
                       document_header: str,
                       client: str,
                       document_subheader: str,
-                      left_margin=0.5 * inch) -> ADRDocTemplate:
+                      left_margin=0.5 * inch,
+                      fonts: List[TTFont] = []) -> ADRDocTemplate:
     right_margin = top_margin = bottom_margin = 0.5 * inch
     page_box = GRect(0., 0., page_size[0], page_size[1])
     _, page_box = page_box.split_x(left_margin, direction='l')
@@ -85,7 +88,9 @@ def make_doc_template(page_size, filename, document_title,
                                  frames=frames,
                                  onPage=on_page_lambda)
 
-    pdfmetrics.registerFont(TTFont('Futura', 'Futura.ttc'))
+    for font in fonts:
+        pdfmetrics.registerFont(font)
+
     doc = ADRDocTemplate(filename,
                          title=document_title,
                          author=supervisor,
@@ -112,11 +117,11 @@ def time_format(mins, zero_str="-"):
 
 
 def draw_header_footer(a_canvas: ReportCanvas, left_box, right_box, footer_box, title: str, supervisor: str,
-                       document_subheader: str, client: str, doc_title=""):
+                       document_subheader: str, client: str, doc_title="", font_name='Helvetica'):
 
     (_supervisor_box, client_box,), title_box = right_box.divide_y([16., 16., ])
-    title_box.draw_text_cell(a_canvas, title, "Futura", 18, inset_y=2., inset_x=5.)
-    client_box.draw_text_cell(a_canvas, client, "Futura", 11, inset_y=2., inset_x=5.)
+    title_box.draw_text_cell(a_canvas, title, font_name, 18, inset_y=2., inset_x=5.)
+    client_box.draw_text_cell(a_canvas, client, font_name, 11, inset_y=2., inset_x=5.)
 
     a_canvas.saveState()
     a_canvas.setLineWidth(0.5)
@@ -133,13 +138,13 @@ def draw_header_footer(a_canvas: ReportCanvas, left_box, right_box, footer_box, 
 
     (doc_title_cell, spotting_version_cell,), _ = left_box.divide_y([18., 14], direction='d')
 
-    doc_title_cell.draw_text_cell(a_canvas, doc_title, 'Futura', 14., inset_y=2.)
+    doc_title_cell.draw_text_cell(a_canvas, doc_title, font_name, 14., inset_y=2.)
 
     if document_subheader is not None:
-        spotting_version_cell.draw_text_cell(a_canvas, document_subheader, 'Futura', 12., inset_y=2.)
+        spotting_version_cell.draw_text_cell(a_canvas, document_subheader, font_name, 12., inset_y=2.)
 
     if supervisor is not None:
-        a_canvas.setFont('Futura', 11.)
+        a_canvas.setFont(font_name, 11.)
         a_canvas.drawCentredString(footer_box.min_x + footer_box.width / 2., footer_box.min_y, supervisor)
 
 

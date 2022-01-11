@@ -202,16 +202,16 @@ def populate_columns(lines: List[ADRLine], columns, include_omitted, _page_size)
 
 
 def output_report(lines: List[ADRLine], reel_list: List[str], include_omitted=False,
-                  page_size=portrait(letter)):
+                  page_size=portrait(letter), font_name='Helvetica'):
     columns = build_columns(lines, include_omitted=include_omitted, reel_list=reel_list)
     data, style, columns_widths = populate_columns(lines, columns, include_omitted, page_size)
 
-    style.append(('FONTNAME', (0, 0), (-1, -1), "Futura"))
+    style.append(('FONTNAME', (0, 0), (-1, -1), font_name))
     style.append(('FONTSIZE', (0, 0), (-1, -1), 9.))
     style.append(('LINEBELOW', (0, 0), (-1, 0), 1.0, colors.black))
     # style.append(('LINEBELOW', (0, 1), (-1, -1), 0.25, colors.gray))
 
-    pdfmetrics.registerFont(TTFont('Futura', 'Futura.ttc'))
+    #pdfmetrics.registerFont(TTFont('Futura', 'Futura.ttc'))
 
     title = "%s Line Count" % lines[0].title
     filename = title + '.pdf'
@@ -230,7 +230,7 @@ def output_report(lines: List[ADRLine], reel_list: List[str], include_omitted=Fa
     story = [Spacer(height=0.5 * inch, width=1.), table]
 
     style = getSampleStyleSheet()['Normal']
-    style.fontName = 'Futura'
+    style.fontName = font_name
     style.fontSize = 12.
     style.spaceBefore = 16.
     style.spaceAfter = 16.

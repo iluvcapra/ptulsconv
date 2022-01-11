@@ -16,9 +16,9 @@ from ..broadcast_timecode import TimecodeFormat
 from ..docparser.adr_entity import ADRLine
 
 
-def output_report(lines: List[ADRLine], tc_display_format: TimecodeFormat):
+def output_report(lines: List[ADRLine], tc_display_format: TimecodeFormat, font_name="Helvetica"):
     character_numbers = set([n.character_id for n in lines])
-    pdfmetrics.registerFont(TTFont('Futura', 'Futura.ttc'))
+    #pdfmetrics.registerFont(TTFont('Futura', 'Futura.ttc'))
 
     for n in character_numbers:
         char_lines = [line for line in lines if not line.omitted and line.character_id == n]
@@ -39,7 +39,7 @@ def output_report(lines: List[ADRLine], tc_display_format: TimecodeFormat):
         story = []
 
         prompt_style = getSampleStyleSheet()['Normal']
-        prompt_style.fontName = 'Futura'
+        prompt_style.fontName = font_name
         prompt_style.fontSize = 18.
 
         prompt_style.leading = 24.
@@ -47,7 +47,7 @@ def output_report(lines: List[ADRLine], tc_display_format: TimecodeFormat):
         prompt_style.rightIndent = 1.5 * inch
 
         number_style = getSampleStyleSheet()['Normal']
-        number_style.fontName = 'Futura'
+        number_style.fontName = font_name
         number_style.fontSize = 14
 
         number_style.leading = 24

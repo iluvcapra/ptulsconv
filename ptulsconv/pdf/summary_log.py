@@ -40,17 +40,17 @@ def build_aux_data_field(line: ADRLine):
     return "<br />".join(entries)
 
 
-def build_story(lines: List[ADRLine], tc_rate: TimecodeFormat):
+def build_story(lines: List[ADRLine], tc_rate: TimecodeFormat, font_name='Helvetica'):
     story = list()
 
     this_scene = None
     scene_style = getSampleStyleSheet()['Normal']
-    scene_style.fontName = 'Futura'
+    scene_style.fontName = font_name
     scene_style.leftIndent = 0.
     scene_style.leftPadding = 0.
     scene_style.spaceAfter = 18.
     line_style = getSampleStyleSheet()['Normal']
-    line_style.fontName = 'Futura'
+    line_style.fontName = font_name
 
     for line in lines:
         table_style = [('VALIGN', (0, 0), (-1, -1), 'TOP'),

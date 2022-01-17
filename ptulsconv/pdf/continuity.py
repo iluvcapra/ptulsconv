@@ -12,9 +12,9 @@ from ptulsconv.pdf import make_doc_template
 
 # TODO: A Continuity
 
-def table_for_scene(scene, tc_format):
+def table_for_scene(scene, tc_format, font_name = 'Helvetica'):
     scene_style = getSampleStyleSheet()['Normal']
-    scene_style.fontName = 'Futura'
+    scene_style.fontName = font_name
     scene_style.leftIndent = 0.
     scene_style.leftPadding = 0.
     scene_style.spaceAfter = 18.
@@ -29,7 +29,7 @@ def table_for_scene(scene, tc_format):
     style = [('VALIGN', (0, 0), (-1, -1), 'TOP'),
              ('LEFTPADDING', (0, 0), (0, 0), 0.0),
              ('BOTTOMPADDING', (0, 0), (-1, -1), 12.),
-             ('FONTNAME', (0, 0), (-1, -1), 'Futura')]
+             ('FONTNAME', (0, 0), (-1, -1), font_name)]
 
     return Table(data=[row], style=style, colWidths=[1.0 * inch, 6.5 * inch])
 

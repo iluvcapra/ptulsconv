@@ -4,7 +4,7 @@ import os.path
 
 
 class TestRobinHood5(unittest.TestCase):
-    path = os.path.dirname(__file__) + '/export_cases/Robin Hood Spotting5.txt'
+    path = os.path.dirname(__file__) + '/../export_cases/Robin Hood Spotting5.txt'
 
     def test_skipped_segments(self):
         session = parse_document(self.path)

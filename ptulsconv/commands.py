@@ -126,7 +126,7 @@ def create_adr_reports(lines: List[ADRLine], tc_display_format: TimecodeFormat, 
 #     return parsed
 
 
-def convert(input_file, major_mode='fmpxml', output=sys.stdout, warnings=True):
+def convert(input_file, major_mode, output=sys.stdout, warnings=True):
 
     session = parse_document(input_file)
     session_tc_format = session.header.timecode_format

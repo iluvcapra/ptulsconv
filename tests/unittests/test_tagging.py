@@ -4,7 +4,7 @@ import os.path
 
 
 class TaggingIntegratedTests(unittest.TestCase):
-    path = os.path.dirname(__file__) + '/export_cases/Tag Tests/Tag Tests.txt'
+    path = os.path.dirname(__file__) + '/../export_cases/Tag Tests/Tag Tests.txt'
 
     def test_event_list(self):
         with open(self.path, 'r') as f:

@@ -11,11 +11,12 @@ from reportlab.platypus import Paragraph
 
 from .__init__ import GRect
 
-from ptulsconv.broadcast_timecode import TimecodeFormat
+from ptulsconv.broadcast_timecode import TimecodeFormat, footage_to_frame_count
 from ptulsconv.docparser.adr_entity import ADRLine
 
 import datetime
 
+font_name = 'Helvetica'
 
 def draw_header_block(canvas, rect, record: ADRLine):
     rect.draw_text_cell(canvas, record.cue_number, "Helvetica", 44, vertical_align='m')
@@ -23,19 +24,19 @@ def draw_header_block(canvas, rect, record: ADRLine):
 
 def draw_character_row(canvas, rect, record: ADRLine):
     label_frame, value_frame = rect.split_x(1.25 * inch)
-    label_frame.draw_text_cell(canvas, "CHARACTER", "Futura", 10, force_baseline=9.)
+    label_frame.draw_text_cell(canvas, "CHARACTER", font_name, 10, force_baseline=9.)
     line = "%s / %s" % (record.character_id, record.character_name)
     if record.actor_name is not None:
         line = line + " / " + record.actor_name
-    value_frame.draw_text_cell(canvas, line, "Futura", 12, force_baseline=9.)
+    value_frame.draw_text_cell(canvas, line, font_name, 12, force_baseline=9.)
     rect.draw_border(canvas, ['min_y', 'max_y'])
 
 
 def draw_cue_number_block(canvas, rect, record: ADRLine):
     (label_frame, number_frame,), aux_frame = rect.divide_y([0.20 * inch, 0.375 * inch], direction='d')
-    label_frame.draw_text_cell(canvas, "CUE NUMBER", "Futura", 10,
+    label_frame.draw_text_cell(canvas, "CUE NUMBER", font_name, 10,
                                inset_y=5., vertical_align='t')
-    number_frame.draw_text_cell(canvas, record.cue_number, "Futura", 14,
+    number_frame.draw_text_cell(canvas, record.cue_number, font_name, 14,
                                 inset_x=10., inset_y=2., draw_baseline=True)
 
     tags = {'tv': 'TV',
@@ -49,7 +50,7 @@ def draw_cue_number_block(canvas, rect, record: ADRLine):
         if getattr(record, key):
             tag_field = tag_field + tags[key] + " "
 
-    aux_frame.draw_text_cell(canvas, tag_field, "Futura", 10,
+    aux_frame.draw_text_cell(canvas, tag_field, font_name, 10,
                              inset_x=10., inset_y=2., vertical_align='t')
     rect.draw_border(canvas, 'max_x')
 
@@ -58,13 +59,13 @@ def draw_timecode_block(canvas, rect, record: ADRLine, tc_display_format: Timeco
     (in_label_frame, in_frame, out_label_frame, out_frame), _ = rect.divide_y(
         [0.20 * inch, 0.25 * inch, 0.20 * inch, 0.25 * inch], direction='d')
 
-    in_label_frame.draw_text_cell(canvas, "IN", "Futura", 10,
+    in_label_frame.draw_text_cell(canvas, "IN", font_name, 10,
                                   vertical_align='t', inset_y=5., inset_x=5.)
-    in_frame.draw_text_cell(canvas, tc_display_format.seconds_to_smpte(record.start), "Futura", 14,
+    in_frame.draw_text_cell(canvas, tc_display_format.seconds_to_smpte(record.start), font_name, 14,
                             inset_x=10., inset_y=2., draw_baseline=True)
-    out_label_frame.draw_text_cell(canvas, "OUT", "Futura", 10,
+    out_label_frame.draw_text_cell(canvas, "OUT", font_name, 10,
                                    vertical_align='t', inset_y=5., inset_x=5.)
-    out_frame.draw_text_cell(canvas, tc_display_format.seconds_to_smpte(record.finish), "Futura", 14,
+    out_frame.draw_text_cell(canvas, tc_display_format.seconds_to_smpte(record.finish), font_name, 14,
                              inset_x=10., inset_y=2., draw_baseline=True)
 
     rect.draw_border(canvas, 'max_x')
@@ -75,16 +76,16 @@ def draw_reason_block(canvas, rect, record: ADRLine):
     reason_label, reason_value = reason_cell.split_x(.75 * inch)
     notes_label, notes_value = notes_cell.split_x(.75 * inch)
 
-    reason_label.draw_text_cell(canvas, "Reason:", "Futura", 12,
+    reason_label.draw_text_cell(canvas, "Reason:", font_name, 12,
                                 inset_x=5., inset_y=5., vertical_align='b')
-    reason_value.draw_text_cell(canvas, record.reason or "", "Futura", 12,
+    reason_value.draw_text_cell(canvas, record.reason or "", font_name, 12,
                                 inset_x=5., inset_y=5., draw_baseline=True,
                                 vertical_align='b')
-    notes_label.draw_text_cell(canvas, "Note:", "Futura", 12,
+    notes_label.draw_text_cell(canvas, "Note:", font_name, 12,
                                inset_x=5., inset_y=5., vertical_align='t')
 
     style = getSampleStyleSheet()['BodyText']
-    style.fontName = 'Futura'
+    style.fontName = font_name
     style.fontSize = 12
     style.leading = 14
 
@@ -96,10 +97,10 @@ def draw_reason_block(canvas, rect, record: ADRLine):
 def draw_prompt(canvas, rect, prompt=""):
     label, block = rect.split_y(0.20 * inch, direction='d')
 
-    label.draw_text_cell(canvas, "PROMPT", "Futura", 10, vertical_align='t', inset_y=5., inset_x=0.)
+    label.draw_text_cell(canvas, "PROMPT", font_name, 10, vertical_align='t', inset_y=5., inset_x=0.)
 
     style = getSampleStyleSheet()['BodyText']
-    style.fontName = 'Futura'
+    style.fontName = font_name
     style.fontSize = 14
 
     style.leading = 24
@@ -116,10 +117,10 @@ def draw_prompt(canvas, rect, prompt=""):
 def draw_notes(canvas, rect, note=""):
     label, block = rect.split_y(0.20 * inch, direction='d')
 
-    label.draw_text_cell(canvas, "NOTES", "Futura", 10, vertical_align='t', inset_y=5., inset_x=0.)
+    label.draw_text_cell(canvas, "NOTES", font_name, 10, vertical_align='t', inset_y=5., inset_x=0.)
 
     style = getSampleStyleSheet()['BodyText']
-    style.fontName = 'Futura'
+    style.fontName = font_name
     style.fontSize = 14
     style.leading = 24
 
@@ -175,12 +176,12 @@ def draw_aux_block(canvas, rect, recording_time_sec_this_line, recording_time_se
     lines, last_line = content_rect.divide_y([12., 12., 24., 24., 24., 24.], direction='d')
 
     lines[0].draw_text_cell(canvas,
-                            "Time for this line: %.1f mins" % (recording_time_sec_this_line / 60.), "Futura", 9.)
-    lines[1].draw_text_cell(canvas, "Running time: %03.1f mins" % (recording_time_sec / 60.), "Futura", 9.)
-    lines[2].draw_text_cell(canvas, "Actual Start: ______________", "Futura", 9., vertical_align='b')
-    lines[3].draw_text_cell(canvas, "Record Date: ______________", "Futura", 9., vertical_align='b')
-    lines[4].draw_text_cell(canvas, "Engineer: ______________", "Futura", 9., vertical_align='b')
-    lines[5].draw_text_cell(canvas, "Location: ______________", "Futura", 9., vertical_align='b')
+                            "Time for this line: %.1f mins" % (recording_time_sec_this_line / 60.), font_name, 9.)
+    lines[1].draw_text_cell(canvas, "Running time: %03.1f mins" % (recording_time_sec / 60.), font_name, 9.)
+    lines[2].draw_text_cell(canvas, "Actual Start: ______________", font_name, 9., vertical_align='b')
+    lines[3].draw_text_cell(canvas, "Record Date: ______________", font_name, 9., vertical_align='b')
+    lines[4].draw_text_cell(canvas, "Engineer: ______________", font_name, 9., vertical_align='b')
+    lines[5].draw_text_cell(canvas, "Location: ______________", font_name, 9., vertical_align='b')
 
 
 def draw_footer(canvas, rect, record: ADRLine, report_date, line_no, total_lines):
@@ -189,7 +190,7 @@ def draw_footer(canvas, rect, record: ADRLine, report_date, line_no, total_lines
     spotting_name = [record.spot] if record.spot is not None else []
     pages_s = ["Line %i of %i" % (line_no, total_lines)]
     footer_s = " - ".join(report_date_s + spotting_name + pages_s)
-    rect.draw_text_cell(canvas, footer_s, font_name="Futura", font_size=10., inset_y=2.)
+    rect.draw_text_cell(canvas, footer_s, font_name=font_name, font_size=10., inset_y=2.)
 
 
 def create_report_for_character(records, report_date, tc_display_format: TimecodeFormat):
@@ -200,7 +201,7 @@ def create_report_for_character(records, report_date, tc_display_format: Timecod
     assert outfile is not None
     assert outfile[-4:] == '.pdf', "Output file must have 'pdf' extension!"
 
-    pdfmetrics.registerFont(TTFont('Futura', 'Futura.ttc'))
+    #pdfmetrics.registerFont(TTFont('Futura', 'Futura.ttc'))
 
     page: GRect = GRect(0, 0, letter[0], letter[1])
     page = page.inset(inch * 0.5)

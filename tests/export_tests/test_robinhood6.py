@@ -4,7 +4,7 @@ import os.path
 
 
 class TestRobinHood6(unittest.TestCase):
-    path = os.path.dirname(__file__) + '/export_cases/Robin Hood Spotting6.txt'
+    path = os.path.dirname(__file__) + '/../export_cases/Robin Hood Spotting6.txt'
 
     def test_a_track(self):
         session = parse_document(self.path)

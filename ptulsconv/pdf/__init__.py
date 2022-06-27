@@ -104,6 +104,9 @@ def make_doc_template(page_size, filename, document_title,
 
 
 def time_format(mins, zero_str="-"):
+    """
+    Formats a duration `mins` into a string
+    """
     if mins is None:
         return zero_str
     if mins == 0. and zero_str is not None:

@@ -34,9 +34,9 @@ def build_aux_data_field(line: ADRLine):
     elif line.adlib:
         bg_color = 'purple'
         tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font> " % (bg_color, fg_color, "ADLIB")
-    elif line.omitted:
+    elif line.optional:
         bg_color = 'green'
-        tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font>" % (bg_color, fg_color, "OMITTED")
+        tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font>" % (bg_color, fg_color, "OPTIONAL")
 
     entries.append(tag_field)
 

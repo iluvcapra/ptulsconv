@@ -148,7 +148,7 @@ def populate_columns(lines: List[ADRLine], columns, include_omitted, _page_size)
     styles = list()
     columns_widths = list()
 
-    sorted_character_numbers = sorted(set([x.character_id for x in lines]),
+    sorted_character_numbers: List[str] = sorted(set([x.character_id for x in lines]),
                                       key=lambda x: str(x))
 
     # construct column styles
@@ -164,18 +164,21 @@ def populate_columns(lines: List[ADRLine], columns, include_omitted, _page_size)
 
     for n in sorted_character_numbers:
         char_records = [x for x in lines if x.character_id == n]
-        row_data = list()
-        row_data2 = list()
-        for col in columns:
-            row1_index = len(data)
-            row2_index = row1_index + 1
-            row_data.append(col['value_getter'](list(char_records)))
-            row_data2.append(col['value_getter2'](list(char_records)))
-            styles.extend([('TEXTCOLOR', (0, row2_index), (-1, row2_index), colors.red),
-                           ('LINEBELOW', (0, row2_index), (-1, row2_index), 0.5, colors.black)])
+        if len(char_records) > 0:
+            row_data = list()
+            row_data2 = list()
 
-        data.append(row_data)
-        data.append(row_data2)
+            for col in columns:
+                row1_index = len(data)
+                row2_index = row1_index + 1
+                row_data.append(col['value_getter'](list(char_records)))
+                row_data2.append(col['value_getter2'](list(char_records)))
+
+                styles.extend([('TEXTCOLOR', (0, row2_index), (-1, row2_index), colors.red),
+                               ('LINEBELOW', (0, row2_index), (-1, row2_index), 0.5, colors.black)])
+
+            data.append(row_data)
+            data.append(row_data2)
 
     summary_row1 = list()
     summary_row2 = list()

@@ -5,6 +5,7 @@ import sys
 from itertools import chain
 import csv
 from typing import List
+from fractions import Fraction
 
 from .docparser.adr_entity import make_entities
 from .reporting import print_section_header_style, print_status_style, print_warning
@@ -59,10 +60,12 @@ def output_adr_csv(lines: List[ADRLine], time_format: TimecodeFormat):
                                  'Reason', 'Note', 'TV'])
 
                 for event in these_lines:
+                    this_start = event.start or 0
+                    this_finish = event.finish or 0
                     this_row = [event.title, event.character_name, event.cue_number,
                                 event.reel, event.version,
-                                time_format.seconds_to_smpte(event.start), time_format.seconds_to_smpte(event.finish),
-                                float(event.start), float(event.finish),
+                                time_format.seconds_to_smpte(this_start), time_format.seconds_to_smpte(this_finish),
+                                float(this_start), float(this_finish),
                                 event.prompt,
                                 event.reason, event.note, "TV" if event.tv else ""]
 

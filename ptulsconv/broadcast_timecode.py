@@ -2,7 +2,7 @@ from fractions import Fraction
 import re
 import math
 from collections import namedtuple
-from typing import Optional
+from typing import Optional, SupportsFloat
 
 class TimecodeFormat(namedtuple("_TimecodeFormat", "frame_duration logical_fps drop_frame")):
 
@@ -13,7 +13,7 @@ class TimecodeFormat(namedtuple("_TimecodeFormat", "frame_duration logical_fps d
         else:
             return frame_count * self.frame_duration
 
-    def seconds_to_smpte(self, seconds: Fraction) -> str:
+    def seconds_to_smpte(self, seconds: SupportsFloat) -> str:
         frame_count = int(seconds / self.frame_duration)
         return frame_count_to_smpte(frame_count, self.logical_fps, self.drop_frame)
 

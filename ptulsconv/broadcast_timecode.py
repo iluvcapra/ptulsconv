@@ -18,7 +18,7 @@ class TimecodeFormat(namedtuple("_TimecodeFormat", "frame_duration logical_fps d
         return frame_count_to_smpte(frame_count, self.logical_fps, self.drop_frame)
 
 
-def smpte_to_frame_count(smpte_rep_string: str, frames_per_logical_second: int, drop_frame_hint=False) -> int:
+def smpte_to_frame_count(smpte_rep_string: str, frames_per_logical_second: int, drop_frame_hint=False) -> Optional[int]:
     """
     Convert a string with a SMPTE timecode representation into a frame count.
 
@@ -54,14 +54,14 @@ def smpte_to_frame_count(smpte_rep_string: str, frames_per_logical_second: int, 
         frames_dropped_per_inst = (frames_per_logical_second / 15)
         mins = hh * 60 + mm
         inst_count = mins - math.floor(mins / 10)
-        dropped_frames = frames_dropped_per_inst * inst_count
+        dropped_frames = int(frames_dropped_per_inst) * inst_count
         frames = raw_frames - dropped_frames
 
     return frames
 
 
 def frame_count_to_smpte(frame_count: int, frames_per_logical_second: int, drop_frame: bool = False,
-                         fractional_frame: float = None) -> str:
+                         fractional_frame: Optional[float] = None) -> str:
     assert frames_per_logical_second in [24, 25, 30, 48, 50, 60]
     assert fractional_frame is None or fractional_frame < 1.0
 
@@ -87,8 +87,10 @@ def frame_count_to_smpte(frame_count: int, frames_per_logical_second: int, drop_
         return "%02i:%02i:%02i%s%02i" % (hh, mm, ss, separator, ff)
 
 
-def footage_to_frame_count(footage_string):
+def footage_to_frame_count(footage_string) -> Optional[int]:
     m = re.search(r'(\d+)\+(\d+)(\.\d+)?', footage_string)
+    if m is None:
+        return None
     feet, frm, frac = m.groups()
     feet, frm, frac = int(feet), int(frm), float(frac or 0.0)
 

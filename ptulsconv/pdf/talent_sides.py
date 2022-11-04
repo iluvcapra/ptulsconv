@@ -24,7 +24,7 @@ def output_report(lines: List[ADRLine], tc_display_format: TimecodeFormat, font_
         char_lines = [line for line in lines if not line.omitted and line.character_id == n]
         character_name = char_lines[0].character_name
 
-        sorted(char_lines, key=lambda line: line.start)
+        char_lines = sorted(char_lines, key=lambda line: line.start)
 
         title = "%s (%s) %s ADR Script" % (char_lines[0].title, character_name, n)
         filename = "%s_%s_%s_ADR Script.pdf" % (char_lines[0].title, n, character_name)

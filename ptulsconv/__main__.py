@@ -17,8 +17,9 @@ from ptulsconv.reporting import print_status_style, print_banner_style, print_se
 
 def dump_field_map(output=sys.stdout):
     from ptulsconv.docparser.tag_mapping import TagMapping
-    from ptulsconv.docparser.adr_entity import ADRLine
-
+    from ptulsconv.docparser.adr_entity import ADRLine, GenericEvent
+    
+    TagMapping.print_rules(GenericEvent, output=output)
     TagMapping.print_rules(ADRLine, output=output)
 
 

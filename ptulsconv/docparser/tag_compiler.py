@@ -1,4 +1,3 @@
-import sys
 from collections import namedtuple
 from fractions import Fraction
 from typing import Iterator, Tuple, Callable, Generator, Dict, List
@@ -72,9 +71,9 @@ class TagCompiler:
     def _marker_tags(self, at):
         retval = dict()
         applicable = [(m, t) for (m, t) in self.session.markers_timed() if t <= at]
-        for marker, time in sorted(applicable, key=lambda x: x[1]):
-            retval.update(parse_tags(marker.comments).tag_dict)
-            retval.update(parse_tags(marker.name).tag_dict)
+        for marker, _ in sorted(applicable, key=lambda x: x[1]):
+            retval.update(parse_tags(marker.comments or "").tag_dict)
+            retval.update(parse_tags(marker.name or "").tag_dict)
 
         return retval
 

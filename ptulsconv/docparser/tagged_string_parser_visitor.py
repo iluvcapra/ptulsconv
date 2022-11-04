@@ -28,14 +28,14 @@ tag_grammar = Grammar(
 )
 
 
-def parse_tags(prompt) -> "TaggedStringResult":
+def parse_tags(prompt: str) -> "TaggedStringResult":
     ast = tag_grammar.parse(prompt)
     return TagListVisitor().visit(ast)
 
 
 class TaggedStringResult:
-    content: Optional[str]
-    tag_dict: Optional[Dict[str, str]]
+    content: str
+    tag_dict: Dict[str, str]
     mode: TagPreModes
 
     def __init__(self, content, tag_dict, mode):

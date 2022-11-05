@@ -61,7 +61,7 @@ def main():
 
     (options, args) = parser.parse_args(sys.argv)
 
-    print_banner_style("%s %s (c) 2021 %s. All rights reserved." % (__name__, __version__, __author__))
+    print_banner_style("%s %s (c) 2022 %s. All rights reserved." % (__name__, __version__, __author__))
 
     print_section_header_style("Startup")
     print_status_style("This run started %s" % (datetime.datetime.now().isoformat()))

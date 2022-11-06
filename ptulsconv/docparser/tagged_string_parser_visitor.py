@@ -18,11 +18,11 @@ tag_grammar = Grammar(
     key_tag        = "[" key "]" word_sep?
     short_tag      = "$" key "=" word word_sep?
     full_text_tag  = "{" key "=" value "}" word_sep?
-    key            = ~"[A-Za-z][A-Za-z0-9_]*"
-    value          = ~"[^}]+"
+    key            = ~r"[A-Za-z][A-Za-z0-9_]*"
+    value          = ~r"[^}]+"
     tag_junk       = word word_sep?
-    word           = ~"[^ \[\{\$][^ ]*"
-    word_sep       = ~" +"
+    word           = ~r"[^ \[\{\$][^ ]*"
+    word_sep       = ~r" +"
     modifier       = ("@" / "&") word_sep?
     """
 )

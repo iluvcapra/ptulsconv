@@ -67,8 +67,8 @@ protools_text_export_grammar = Grammar(
     fs = "\t"
     rs = "\n"
     block_ending = rs rs
-    string_value   = ~"[^\t\n]*"
-    integer_value  = ~"\d+"
-    float_value    = ~"\d+(\.\d+)?"
-    isp            = ~"[^\d\t\n]*"    
+    string_value   = ~r"[^\t\n]*"
+    integer_value  = ~r"\d+"
+    float_value    = ~r"\d+(\.\d+)?"
+    isp            = ~r"[^\d\t\n]*"    
     """)

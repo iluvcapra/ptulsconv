@@ -1,10 +1,11 @@
 # How To Use `ptulsconv`
 
-### Theory of Operation
+## Theory of Operation
 
 [Avid Pro Tools][avp] exports a tab-delimited text file organized in multiple 
 parts with an uneven syntax that usually can't "drop in" to other tools like 
-Excel or Filemaker. `ptulsconv` will accept a text expoet from Pro Tools 
+Excel or Filemaker. `ptulsconv` will accept a text export from Pro Tools and,
+by default, create a set of PDF reports useful for ADR reporting.
 
 ## Tagging 
 

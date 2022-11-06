@@ -2,7 +2,7 @@ from optparse import OptionParser, OptionGroup
 import datetime
 import sys
 
-from ptulsconv import __name__, __version__, __author__
+from ptulsconv import __name__, __version__, __author__,__copyright__
 from ptulsconv.commands import convert
 from ptulsconv.reporting import print_status_style, print_banner_style, print_section_header_style, print_fatal_error
 
@@ -59,9 +59,10 @@ def main():
 
     parser.add_option_group(informational_options)
 
+    print_banner_style(__copyright__)
+    
     (options, args) = parser.parse_args(sys.argv)
 
-    print_banner_style("%s %s (c) 2022 %s. All rights reserved." % (__name__, __version__, __author__))
 
     print_section_header_style("Startup")
     print_status_style("This run started %s" % (datetime.datetime.now().isoformat()))

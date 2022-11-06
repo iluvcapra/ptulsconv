@@ -29,8 +29,8 @@ with *tagging*.
 
 So for example, some ADR spot's clip name might look like:
 
-> "Get to the ladder! {R=Noise} $QN=J1001"
-> "Forget your feelings! {R=TV Cover} $QN=J1002 [TV]"
+    "Get to the ladder! {R=Noise} $QN=J1001"
+    "Forget your feelings! {R=TV Cover} $QN=J1002 [TV]"
 
 These tags can appear in any order.
 

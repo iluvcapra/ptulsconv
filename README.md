@@ -9,6 +9,10 @@
 # ptulsconv
 
 Read Pro Tools text exports and generate PDF reports, JSON output.
+
+## Quick Start
+
+For a quick overview of how to cue ADR with `ptulsconv`, check out the [Quickstart](doc/QUICKSTART.md).
  
 
 ## Theory of Operation

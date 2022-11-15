@@ -1,11 +1,21 @@
-from fractions import Fraction
-import re
+"""
+broadcast_timecode.py
+
+Useful functions for parsing and working with timecode.
+"""
+
 import math
+import re
 from collections import namedtuple
+from fractions import Fraction
 from typing import Optional, SupportsFloat
 
-class TimecodeFormat(namedtuple("_TimecodeFormat", "frame_duration logical_fps drop_frame")):
 
+class TimecodeFormat(namedtuple("_TimecodeFormat", "frame_duration logical_fps drop_frame")):
+    """
+    A struct reperesenting a timecode datum.
+    """
+    
     def smpte_to_seconds(self, smpte: str) -> Optional[Fraction]:
         frame_count = smpte_to_frame_count(smpte, self.logical_fps, drop_frame_hint=self.drop_frame)
         if frame_count is None:

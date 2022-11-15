@@ -51,7 +51,7 @@ class TagListVisitor(NodeVisitor):
         modifier_opt, line_opt, _, tag_list_opt = visited_children
 
         return TaggedStringResult(content=next(iter(line_opt), None),
-                                  tag_dict=next(iter(tag_list_opt), []),
+                                  tag_dict=next(iter(tag_list_opt), dict()),
                                   mode=TagPreModes(next(iter(modifier_opt), 'Normal'))
                                   )
 

@@ -1,15 +1,8 @@
-# How To Use `ptulsconv`
+Tagging
+=======
 
-## Theory of Operation
-
-[Avid Pro Tools][avp] exports a tab-delimited text file organized in multiple 
-parts with an uneven syntax that usually can't "drop in" to other tools like 
-Excel or Filemaker. `ptulsconv` will accept a text export from Pro Tools and,
-by default, create a set of PDF reports useful for ADR reporting.
-
-## Tagging 
-
-### Fields in Clip Names
+Fields in Clip Names
+--------------------
 
 Track names, track comments, and clip names can also contain meta-tags, or 
 "fields," to add additional columns to the CSV output. Thus, if a clip has the 
@@ -19,17 +12,21 @@ name:
 
 The row output for this clip will contain columns for the values:
 
-|...| Clip Name| note | V | FX | DESIGN | ...|
-|---|------------|------|---|----|--------|----|
-|...| Fireworks explosion| Replace for final | 1 | FX | DESIGN | ... |
+
++-----+---------------------+-------------------+---+----+--------+-----+
+| ... | Clip Name           | note              | V | FX | DESIGN | ... |
++=====+=====================+===================+===+====+========+=====+
+| ... | Fireworks explosion | Replace for final | 1 | FX | DESIGN | ... |
++-----+---------------------+-------------------+---+----+--------+-----+
+
 
 These fields can be defined in the clip name in three ways:
 * `$NAME=VALUE` creates a field named `NAME` with a one-word value `VALUE`.
 * `{NAME=VALUE}` creates a field named `NAME` with the value `VALUE`. `VALUE` 
-  in this case may contain spaces or any chartacter up to the closing bracket.
+in this case may contain spaces or any chartacter up to the closing bracket.
 * `[NAME]` creates a field named `NAME` with a value `NAME`. This can be used 
-  to create a boolean-valued field; in the CSV output, clips with the field 
-  will have it, and clips without will have the column with an empty value.
+to create a boolean-valued field; in the CSV output, clips with the field 
+will have it, and clips without will have the column with an empty value.
 
 For example, if two clips are named:
 
@@ -39,13 +36,19 @@ For example, if two clips are named:
 
 The output will contain the range:
 
-|...| PT.Clip.Name| Ch | FUTZ | ADR | ...|
-|---|------------|------|---|----|-----|
-|...| "Squad fifty-one, what is your status?"| Dispatcher | FUTZ | ADR | ... |
-|...| "We are ten-eight at Rampart Hospital."| Gage |  | ADR | ... |
 
 
-### Fields in Track Names and Markers
++-----+-----------------------------------------+------------+------+-----+
+| ... | Clip Name                               | Ch         | FUTZ | ADR |
++=====+=========================================+============+======+=====+
+| ... | "Squad fifty-one, what is your status?" | Dispatcher | FUTZ | ADR |
++-----+-----------------------------------------+------------+------+-----+
+| ... | "We are ten-eight at Rampart Hospital." | Gage       |      | ADR |
++-----+-----------------------------------------+------------+------+-----+
+
+
+Fields in Track Names and Markers
+---------------------------------
 
 Fields set in track names, and in track comments, will be applied to *each* 
 clip on that track. If a track comment contains the text `{Dept=Foley}` for 
@@ -63,7 +66,8 @@ An important note here is that, always, fields set on the clip name have the
 highest precedence. If a field is set in a clip name, the same field set on the 
 track, the value set on the clip will prevail.
 
-### Using `@` to Apply Fields to a Span of Clips
+Using @ to Apply Fields to a Time Range of Clips
+--------------------------------------------------
 
 A clip name beginning with "@" will not be included in the CSV output, but its 
 fields will be applied to clips within its time range on lower tracks.
@@ -71,7 +75,8 @@ fields will be applied to clips within its time range on lower tracks.
 If track 1 has a clip named `@ {Sc=1- The House}`, any clips beginning within 
 that range on lower tracks will have a field `Sc` with that value.
 
-### Using `&` to Combine Clips
+Using & to Combine Clips
+--------------------------
 
 A clip name beginning with `&` will have its parsed clip name appended to the 
 preceding cue, and the fields of following cues will be applied, earlier clips 
@@ -79,14 +84,3 @@ having precedence. The clips need not be touching, and the clips will be
 combined into a single row of the output. The start time of the first clip will
 become the start time of the row, and the finish time of the last clip will 
 become the finish time of the row.
-
-
-## What is `ptulsconv` Useful For?
-
-The main purpose of `ptulsconv` is to read a Pro Tools text export and convert 
-it into PDFs useful for ADR recording.
-
-
-## Is it useful for anything else?
-
-

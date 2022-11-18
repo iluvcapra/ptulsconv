@@ -1,3 +1,4 @@
+[![Documentation Status](https://readthedocs.org/projects/ptulsconv/badge/?version=latest)](https://ptulsconv.readthedocs.io/en/latest/?badge=latest)
 ![](https://img.shields.io/github/license/iluvcapra/ptulsconv.svg)
 ![](https://img.shields.io/pypi/pyversions/ptulsconv.svg) 
 [![](https://img.shields.io/pypi/v/ptulsconv.svg)][pypi]
@@ -12,7 +13,7 @@ Read Pro Tools text exports and generate PDF reports, JSON output.
 
 ## Quick Start
 
-For a quick overview of how to cue ADR with `ptulsconv`, check out the [Quickstart](doc/QUICKSTART.md).
+For a quick overview of how to cue ADR with `ptulsconv`, check out the [Quickstart](docs/QUICKSTART.rst).
 
 
 ## Installation

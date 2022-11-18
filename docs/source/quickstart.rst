@@ -1,32 +1,40 @@
-# Quick Start for ADR Spotting and Reporting with `ptulsconv`
+Quick Start
+===========
 
-## Step 1: Use Pro Tools to spot ADR Lines
+The workflow for creating ADR reports in `ptulsconv` is similar to other ADR 
+spotting programs: spot ADR lines in Pro Tools with clips using a special 
+code to take notes, export the tracks as text and then run the program.
+
+
+Step 1: Use Pro Tools to Spot ADR Lines
+---------------------------------------
 
 `ptulsconv` can be used to spot ADR lines similarly to other programs.
 
-1. Create a new Pro Tools session, name this session after your project.
-1. Create new tracks, one for each character. Name each track after a 
+#. Create a new Pro Tools session, name this session after your project.
+#. Create new tracks, one for each character. Name each track after a 
    character.
-1. On each track, create a clip group (or edit in some audio) at the time you 
+#. On each track, create a clip group (or edit in some audio) at the time you 
    would like an ADR line to appear in the report. Name the clip after the 
    dialogue you are replacing at that time.
 
 
-## Step 2: Add More Information to Your Spots
+Step 2: Add More Information to Your Spots
+------------------------------------------
 
 Clips, tracks and markers in your session can contain additional information 
 to make your ADR reports more complete and useful. You add this information 
 with *tagging*.
 
-- Every ADR clip must have a unique cue number. After the name of each clip,
+* Every ADR clip must have a unique cue number. After the name of each clip,
   add the letters "$QN=" and then a unique number (any combination of letters 
   or numbers that don't contain a space). You can type these yourself or add 
   them with batch-renaming when you're done spotting.
-- ADR spots should usually have a reason indicated, so you can remember exactly
+* ADR spots should usually have a reason indicated, so you can remember exactly
   why you're replacing a particular line. Do this by adding the the text "{R="
   to your clip names after the prompt and then some short text describing the 
   reason, and then a closing "}". You can type anything, including spaces.
-- If a line is a TV cover line, you can add the text "[TV]" to the end.
+* If a line is a TV cover line, you can add the text "[TV]" to the end.
 
 So for example, some ADR spot's clip name might look like:
 
@@ -35,23 +43,19 @@ So for example, some ADR spot's clip name might look like:
 
 These tags can appear in any order.
 
-- You can add the name of an actor to a character's track, so this information
+* You can add the name of an actor to a character's track, so this information
   will appear on your reports. In the track name, or in the track comments,
   type "{Actor=xxx}" replacing the xxx with the actor's name.
-- Characters need to have a number (perhaps from the cast list) to express how
+* Characters need to have a number (perhaps from the cast list) to express how
   they should be collated. Add "$CN=xxx" with a unique number to each track (or
   the track's comments.)
-- Set the scene for each line with markers. Create a marker at the beginning of 
+* Set the scene for each line with markers. Create a marker at the beginning of 
   a scene and make it's name "{Sc=xxx}", replacing the xxx with the scene 
   number and name.
 
-Many tags are available to express different details of each line, like 
-priority, time budget, picture version and reel, notes etc. charater or the 
-project, find them by running `ptulsconv` with the `--show-available-tags`
-option.
 
-
-## Step 3: Export Relevant Tracks from Pro Tools as a Text File
+Step 3: Export Tracks from Pro Tools as a Text File
+---------------------------------------------------
 
 Export the file as a UTF-8 and be sure to include clips and markers. Export 
 using the Timecode time format.
@@ -59,7 +63,8 @@ using the Timecode time format.
 Do not export crossfades.
 
 
-## Step 4: Run `ptulsconv` on the Text Export
+Step 4: Run `ptulsconv` on the Text Export
+------------------------------------------
 
 In your Terminal, run the following command:
 

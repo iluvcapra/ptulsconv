@@ -1,11 +1,15 @@
 Tagging
 =======
 
+Tags are used to add additional data to a clip in an organized way. The
+tagging system in `ptulsconv` allows is flexible and can be used to add
+any kind of extra data to a clip.
+
 Fields in Clip Names
 --------------------
 
 Track names, track comments, and clip names can also contain meta-tags, or 
-"fields," to add additional columns to the CSV output. Thus, if a clip has the 
+"fields," to add additional columns to the output. Thus, if a clip has the 
 name:
 
 `Fireworks explosion {note=Replace for final} $V=1 [FX] [DESIGN]`
@@ -25,26 +29,29 @@ These fields can be defined in the clip name in three ways:
 * `{NAME=VALUE}` creates a field named `NAME` with the value `VALUE`. `VALUE` 
 in this case may contain spaces or any chartacter up to the closing bracket.
 * `[NAME]` creates a field named `NAME` with a value `NAME`. This can be used 
-to create a boolean-valued field; in the CSV output, clips with the field 
+to create a boolean-valued field; in the output, clips with the field 
 will have it, and clips without will have the column with an empty value.
 
-For example, if two clips are named:
+For example, if three clips are named:
 
 `"Squad fifty-one, what is your status?" [FUTZ] {Ch=Dispatcher} [ADR]`
 
 `"We are ten-eight at Rampart Hospital." {Ch=Gage} [ADR]`
 
+`(1M) FC callouts rescuing trapped survivors. {Ch=Group} $QN=1001 [GROUP]`
+
 The output will contain the range:
 
 
-
-+-----+-----------------------------------------+------------+------+-----+
-| ... | Clip Name                               | Ch         | FUTZ | ADR |
-+=====+=========================================+============+======+=====+
-| ... | "Squad fifty-one, what is your status?" | Dispatcher | FUTZ | ADR |
-+-----+-----------------------------------------+------------+------+-----+
-| ... | "We are ten-eight at Rampart Hospital." | Gage       |      | ADR |
-+-----+-----------------------------------------+------------+------+-----+
++----------------------------------------------+------------+------+-----+------+-------+
+| Clip Name                                    | Ch         | FUTZ | ADR | QN   | GROUP |
++==============================================+============+======+=====+======+=======+
+| "Squad fifty-one, what is your status?"      | Dispatcher | FUTZ | ADR |      |       |
++----------------------------------------------+------------+------+-----+------+-------+
+| "We are ten-eight at Rampart Hospital."      | Gage       |      | ADR |      |       |
++----------------------------------------------+------------+------+-----+------+-------+
+| (1M) FC callouts rescuing trapped survivors. | Group      |      |     | 1001 | GROUP |
++----------------------------------------------+------------+------+-----+------+-------+
 
 
 Fields in Track Names and Markers
@@ -69,7 +76,7 @@ track, the value set on the clip will prevail.
 Using @ to Apply Fields to a Time Range of Clips
 --------------------------------------------------
 
-A clip name beginning with "@" will not be included in the CSV output, but its 
+A clip name beginning with "@" will not be included in the output, but its 
 fields will be applied to clips within its time range on lower tracks.
 
 If track 1 has a clip named `@ {Sc=1- The House}`, any clips beginning within 

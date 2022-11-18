@@ -1,3 +1,5 @@
+.. _adr-reports:
+
 For ADR Report Generation
 =========================
 

@@ -54,6 +54,9 @@ The output will contain the range:
 +----------------------------------------------+------------+------+-----+------+-------+
 
 
+.. _tag-track:
+.. _tag-marker:
+
 Fields in Track Names and Markers
 ---------------------------------
 
@@ -73,6 +76,9 @@ An important note here is that, always, fields set on the clip name have the
 highest precedence. If a field is set in a clip name, the same field set on the 
 track, the value set on the clip will prevail.
 
+
+.. _tag-range:
+
 Using @ to Apply Fields to a Time Range of Clips
 --------------------------------------------------
 
@@ -81,6 +87,7 @@ fields will be applied to clips within its time range on lower tracks.
 
 If track 1 has a clip named `@ {Sc=1- The House}`, any clips beginning within 
 that range on lower tracks will have a field `Sc` with that value.
+
 
 Using & to Combine Clips
 --------------------------

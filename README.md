@@ -14,7 +14,7 @@ Read Pro Tools text exports and generate PDF reports, JSON output.
 
 ## Quick Start
 
-For a quick overview of how to cue ADR with `ptulsconv`, check out the [Quickstart](docs/QUICKSTART.rst).
+For a quick overview of how to cue ADR with `ptulsconv`, check out the [Quickstart][quickstart].
 
 
 ## Installation
@@ -41,5 +41,6 @@ reporting, and supplemental JSON documents can be output for use with other
 workflows.
 
 [avp]: http://www.avid.com/pro-tools
+[quickstart]: https://ptulsconv.readthedocs.io/en/latest/quickstart.html
 
 

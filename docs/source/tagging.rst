@@ -10,9 +10,9 @@ Fields in Clip Names
 
 Track names, track comments, and clip names can also contain meta-tags, or 
 "fields," to add additional columns to the output. Thus, if a clip has the 
-name:
+name:::
 
-`Fireworks explosion {note=Replace for final} $V=1 [FX] [DESIGN]`
+    `Fireworks explosion {note=Replace for final} $V=1 [FX] [DESIGN]`
 
 The row output for this clip will contain columns for the values:
 
@@ -32,13 +32,13 @@ in this case may contain spaces or any chartacter up to the closing bracket.
 to create a boolean-valued field; in the output, clips with the field 
 will have it, and clips without will have the column with an empty value.
 
-For example, if three clips are named:
+For example, if three clips are named:::
 
-`"Squad fifty-one, what is your status?" [FUTZ] {Ch=Dispatcher} [ADR]`
+    `"Squad fifty-one, what is your status?" [FUTZ] {Ch=Dispatcher} [ADR]`
 
-`"We are ten-eight at Rampart Hospital." {Ch=Gage} [ADR]`
+    `"We are ten-eight at Rampart Hospital." {Ch=Gage} [ADR]`
 
-`(1M) FC callouts rescuing trapped survivors. {Ch=Group} $QN=1001 [GROUP]`
+    `(1M) FC callouts rescuing trapped survivors. {Ch=Group} $QN=1001 [GROUP]`
 
 The output will contain the range:
 

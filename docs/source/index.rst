@@ -12,6 +12,7 @@ Welcome to ptulsconv's documentation!
 
    quickstart
    tagging
+   for_adr
 
 Indices and tables
 ==================

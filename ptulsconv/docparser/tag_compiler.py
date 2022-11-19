@@ -61,10 +61,11 @@ class TagCompiler:
 
     def compile_events(self) -> Iterator[Event]:
         step0 = self.parse_data()
-        step1 = self.apply_appends(step0)
-        step2 = self.collect_time_spans(step1)
-        step3 = self.apply_tags(step2)
-        for datum in step3:
+        step1 = self.filter_out_directives(step0)
+        step2 = self.apply_appends(step1)
+        step3 = self.collect_time_spans(step2)
+        step4 = self.apply_tags(step3)
+        for datum in step4:
             yield Event(clip_name=datum[0], track_name=datum[1], session_name=datum[2],
                         tags=datum[3], start=datum[4], finish=datum[5])
 
@@ -76,6 +77,14 @@ class TagCompiler:
             retval.update(parse_tags(marker.name or "").tag_dict)
 
         return retval
+
+    def filter_out_directives(self, clips : Iterator[Intermediate]) -> Iterator[Intermediate]:
+        for clip in clips:
+            if clip.clip_tag_mode == 'Directive':
+                continue
+            else:
+                yield clip
+
 
     @staticmethod
     def _coalesce_tags(clip_tags: dict, track_tags: dict,

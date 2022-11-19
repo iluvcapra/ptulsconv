@@ -1,5 +1,5 @@
 from parsimonious import NodeVisitor, Grammar
-from typing import Dict, Optional
+from typing import Dict, Union
 from enum import Enum
 
 
@@ -7,6 +7,7 @@ class TagPreModes(Enum):
     NORMAL = 'Normal'
     APPEND = 'Append'
     TIMESPAN = 'Timespan'
+    DIRECTIVE = 'Directive'
 
 
 tag_grammar = Grammar(
@@ -23,7 +24,7 @@ tag_grammar = Grammar(
     tag_junk       = word word_sep?
     word           = ~r"[^ \[\{\$][^ ]*"
     word_sep       = ~r" +"
-    modifier       = ("@" / "&" / "!") word_sep?
+    modifier       = ("@" / "&" /"!") word_sep?
     """
 )
 
@@ -51,7 +52,7 @@ class TagListVisitor(NodeVisitor):
         modifier_opt, line_opt, _, tag_list_opt = visited_children
 
         return TaggedStringResult(content=next(iter(line_opt), None),
-                                  tag_dict=next(iter(tag_list_opt), dict()),
+                                    tag_dict=next(iter(tag_list_opt), dict()),
                                   mode=TagPreModes(next(iter(modifier_opt), 'Normal'))
                                   )
 
@@ -65,6 +66,8 @@ class TagListVisitor(NodeVisitor):
             return TagPreModes.TIMESPAN
         elif node.text.startswith('&'):
             return TagPreModes.APPEND
+        elif node.text.startswith('!'):
+            return TagPreModes.DIRECTIVE
         else:
             return TagPreModes.NORMAL
 

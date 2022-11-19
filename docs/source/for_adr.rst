@@ -24,6 +24,10 @@ all of the clips in the session.
     The title of the project. This will appear at the top
     of every report.
 
+.. warning::
+    `ptulsconv` at this time only supports one title per export. If you attempt to
+    use multiple titles in one export it will fail.
+
 `Supv`:
     The supervisor of the project. This appears at the bottom
     of every report.

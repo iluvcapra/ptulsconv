@@ -19,11 +19,11 @@ name:::
 The row output for this clip will contain columns for the values:
 
 
-+-----+---------------------+-------------------+---+----+--------+-----+
-| ... | Clip Name           | note              | V | FX | DESIGN | ... |
-+=====+=====================+===================+===+====+========+=====+
-| ... | Fireworks explosion | Replace for final | 1 | FX | DESIGN | ... |
-+-----+---------------------+-------------------+---+----+--------+-----+
++---------------------+-------------------+---+----+--------+
+| Clip Name           | note              | V | FX | DESIGN |
++=====================+===================+===+====+========+
+| Fireworks explosion | Replace for final | 1 | FX | DESIGN |
++---------------------+-------------------+---+----+--------+
 
 
 These fields can be defined in the clip name in three ways:

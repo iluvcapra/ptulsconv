@@ -13,12 +13,21 @@ exports into JSON documents for processing by other applications.
 .. toctree::
    :numbered:
    :maxdepth: 2
-   :caption: Contents:
+   :caption: User Documentation
 
    quickstart
    tagging
    for_adr
    cli_reference
+
+.. toctree::
+   :numbered:
+   :maxdepth: 2
+   :caption: Developer Documentation
+
+   modules
+   classes
+
 
 Indices and tables
 ==================

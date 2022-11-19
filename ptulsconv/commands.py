@@ -37,6 +37,9 @@ class MyEncoder(JSONEncoder):
     force_denominator: Optional[int]
 
     def default(self, o):
+        """
+        
+        """
         if isinstance(o, Fraction):
             return dict(numerator=o.numerator, denominator=o.denominator)
         else:

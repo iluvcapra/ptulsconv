@@ -1,12 +1,18 @@
-ptulsconv Modules
-=================
+ptulsconv Auxiliary and Helper Modules
+======================================
+
+Commands Module
+---------------
+
+.. automodule:: ptulsconv.commands
+    :members:
+
 
 Broadcast Timecode Module
 -------------------------
 
 .. automodule:: ptulsconv.broadcast_timecode
     :members:
-    :undoc-members:
 
 
 Footage Module
@@ -14,11 +20,18 @@ Footage Module
 
 .. automodule:: ptulsconv.footage
     :members:
-    :undoc-members:
+
+
+Reporting Module
+----------------
 
 .. automodule:: ptulsconv.reporting
     :members:
     :undoc-members:
+
+
+Validations Module
+------------------
 
 .. automodule:: ptulsconv.validations
     :members:

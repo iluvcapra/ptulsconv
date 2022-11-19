@@ -1,3 +1,8 @@
+"""
+This module defines classes and methods for converting :class:`Event` objects into 
+:class:`ADRLine` objects.
+"""
+
 from ptulsconv.docparser.tag_compiler import Event
 from typing import Optional, List, Tuple 
 from dataclasses import dataclass
@@ -7,6 +12,15 @@ from ptulsconv.docparser.tag_mapping import TagMapping
 
 
 def make_entities(from_events: List[Event]) -> Tuple[List['GenericEvent'], List['ADRLine']]:
+    """
+    Accepts a list of Events and converts them into either ADRLine events or
+    GenricEvents by calling :func:`make_entity` on each member.
+
+    :param from_events: A list of `Event` objects.
+
+    :returns: A tuple of two lists, the first containing :class:`GenericEvent` and the 
+        second containing :class:`ADRLine`.
+    """
     generic_events = list()
     adr_lines = list()
 
@@ -21,6 +35,14 @@ def make_entities(from_events: List[Event]) -> Tuple[List['GenericEvent'], List[
 
 
 def make_entity(from_event: Event) -> Optional[object]:
+    """
+    Accepts an event and creates either an :class:`ADRLine` or a 
+    :class:`GenericEvent`. An event is an "ADRLine" if it has a cue number/"QN"
+    tag field.
+
+    :param from_event:  An :class:`Event`.
+
+    """
     instance = GenericEvent
     tag_map = GenericEvent.tag_mapping
     if 'QN' in from_event.tags.keys():
@@ -67,6 +89,7 @@ class GenericEvent:
 
 @dataclass
 class ADRLine(GenericEvent):
+    
     priority: Optional[int] = None
     cue_number: Optional[str] = None
     character_id: Optional[str] = None
@@ -109,30 +132,4 @@ class ADRLine(GenericEvent):
                    formatter=(lambda x: len(x) > 0))
     ]
 
-    # def __init__(self):
-    #     self.title = None
-    #     self.supervisor = None
-    #     self.client = None
-    #     self.scene = None
-    #     self.version = None
-    #     self.reel = None
-    #     self.start = None
-    #     self.finish = None
-    #     self.priority = None
-    #     self.cue_number = None
-    #     self.character_id = None
-    #     self.character_name = None
-    #     self.actor_name = None
-    #     self.prompt = None
-    #     self.reason = None
-    #     self.requested_by = None
-    #     self.time_budget_mins = None
-    #     self.note = None
-    #     self.spot = None
-    #     self.shot = None
-    #     self.effort = False
-    #     self.tv = False
-    #     self.tbw = False
-    #     self.omitted = False
-    #     self.adlib = False
-    #     self.optional = False
+

@@ -4,5 +4,6 @@ ptulsconv Classes
 Docparser Classes
 -----------------
 
-.. automodule:: ptulsconv.docparser.adr_entity
+.. autoclass:: ptulsconv.docparser.adr_entity.ADRLine
     :members:
+    :undoc-members:

@@ -1,3 +1,7 @@
+"""
+This module provides the main implementation of input document
+parsing and transformation.
+"""
 import datetime
 import os
 

@@ -1,3 +1,9 @@
+"""
+Reporting logic. These methods provide reporting methods to the package and
+take some pains to provide nice-looking escape codes if we're writing to a
+tty.
+"""
+
 import sys
 
 

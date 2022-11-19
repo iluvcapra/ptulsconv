@@ -1,6 +1,4 @@
 """
-broadcast_timecode.py
-
 Useful functions for parsing and working with timecode.
 """
 

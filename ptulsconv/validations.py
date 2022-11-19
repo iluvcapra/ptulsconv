@@ -1,3 +1,7 @@
+"""
+Validation logic for enforcing various consistency rules.
+"""
+
 from dataclasses import dataclass
 from ptulsconv.docparser.adr_entity import ADRLine
 from typing import Iterator, Optional

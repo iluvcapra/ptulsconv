@@ -25,6 +25,7 @@ exports into JSON documents for processing by other applications.
    :maxdepth: 2
    :caption: Developer Documentation
 
+   dev/contributing
    dev/modules
    dev/classes
 
@@ -32,5 +33,6 @@ exports into JSON documents for processing by other applications.
 Indices and tables
 ==================
 
+* :ref:`modindex`
 * :ref:`genindex`
 * :ref:`search`

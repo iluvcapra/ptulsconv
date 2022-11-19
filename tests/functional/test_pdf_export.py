@@ -8,7 +8,7 @@ import glob
 
 from ptulsconv import commands
 
-class TestBroadcastTimecode(unittest.TestCase):
+class TestPDFExport(unittest.TestCase):
     def test_report_generation(self):
         """
         Setp through every text file in export_cases and make sure it can 

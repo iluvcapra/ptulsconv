@@ -81,8 +81,8 @@ track, the value set on the clip will prevail.
 
 .. _tag-range:
 
-Using @ to Apply Fields to a Time Range of Clips
---------------------------------------------------
+Apply Fields to a Time Range of Clips
+-------------------------------------
 
 A clip name beginning with "@" will not be included in the output, but its 
 fields will be applied to clips within its time range on lower tracks.
@@ -91,8 +91,8 @@ If track 1 has a clip named `@ {Sc=1- The House}`, any clips beginning within
 that range on lower tracks will have a field `Sc` with that value.
 
 
-Using & to Combine Clips
---------------------------
+Combining Clips with Long Names or Many Tags
+--------------------------------------------
 
 A clip name beginning with `&` will have its parsed clip name appended to the 
 preceding cue, and the fields of following cues will be applied, earlier clips 
@@ -100,3 +100,31 @@ having precedence. The clips need not be touching, and the clips will be
 combined into a single row of the output. The start time of the first clip will
 become the start time of the row, and the finish time of the last clip will 
 become the finish time of the row.
+
+
+Setting Document Options
+------------------------
+
+.. note::
+    Document options are not yet implemented.
+
+A clip beginning with `!` sends a command to `ptulsconv`. These commands can 
+appear anywhere in the document and apply to the entire document. Commands are 
+a list of words
+
+The following commands are available:
+
+pagesize `(letter|legal|a4)`
+    Sets the PDF page size for the output.
+
+font -n `name` -p `path`
+    Sets the primary font for the output.
+
+sub [-t `tag`] -t `text_to_replace` `replacement text`
+    Declares a substitution. Whereever text_to_replace is encountered in the 
+    document it will be replaced with "replacement text".
+
+    If `tag` is set, this substitution will only be applied to the values of 
+    that tag.
+
+

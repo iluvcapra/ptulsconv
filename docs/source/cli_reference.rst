@@ -12,10 +12,10 @@ Invocations of ptulsconv take the following form:
 Flags
 -----
 
-`-h`, `--help`:
+`-h`, `--help`
     Show the help message.
 
-`f FMT`, `--format=FMT`:
+`f FMT`, `--format=FMT`
     Select the output format. By default this is `doc`, which will 
     generate :ref:`ADR reports<adr-reports>`.
 
@@ -29,10 +29,10 @@ Informational Options
 These options display information and exit without processing any
 input documents.
 
-`--show-formats`:
+`--show-formats`
     Display information about available output formats.
 
-`--show-available-tags`:
+`--show-available-tags`
     Display information about tags that are used by the 
     report generator.
 
@@ -58,8 +58,8 @@ processing is done.
 
 .. _tagged-output:
 
-`tagged` Output:
-""""""""""""""""
+`tagged` Output
+"""""""""""""""
 
 The "tagged" output format is also a JSON document based on the parsed input data, after the additional 
 step of processing all of the :ref:`tags<tags>` in the document.

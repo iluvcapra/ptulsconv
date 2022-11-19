@@ -26,9 +26,9 @@ exports into JSON documents for processing by other applications.
    :caption: Developer Documentation
 
    dev/contributing
+   dev/parsing
    dev/modules
-   dev/classes
-
+ 
 
 Indices and tables
 ==================

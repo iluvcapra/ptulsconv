@@ -1,7 +1,7 @@
 .. _adr-reports:
 
-For ADR Report Generation
-=========================
+`ptulsconv` For ADR Report Generation
+=====================================
 
 Reports Created by the ADR Report Generator
 -------------------------------------------
@@ -120,6 +120,6 @@ Boolean-valued ADR Tag Fields
 `ADLIB`:
     Ad-lib.
 
-`OPT``: 
+`OPT`: 
     Optional. Lines with this tag are subtotaled in the line count report.
 

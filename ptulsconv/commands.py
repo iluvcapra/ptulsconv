@@ -89,9 +89,39 @@ def output_adr_csv(lines: List[ADRLine], time_format: TimecodeFormat):
         os.chdir("..")
 
 
-def create_adr_reports(lines: List[ADRLine], tc_display_format: TimecodeFormat, reel_list):
+def generate_documents(session_tc_format, scenes, adr_lines: Iterator[ADRLine], title):
     """
-    Creates a directory heirarchy and a respective set of reports, given a list of lines.
+    Create PDF output.
+    """
+    print_section_header_style("Creating PDF Reports")
+    report_date = datetime.datetime.now()
+    reports_dir = "%s_%s" % (title, report_date.strftime("%Y-%m-%d_%H%M%S"))
+    os.makedirs(reports_dir, exist_ok=False)
+    os.chdir(reports_dir)
+
+    client = next((x.client for x in adr_lines), "")
+    supervisor = next((x.supervisor for x in adr_lines), "")
+
+    output_continuity(scenes=scenes, tc_display_format=session_tc_format,
+                                  title=title, client=client, supervisor=supervisor)
+
+                # reels = sorted([r for r in compiler.compile_all_time_spans() if r[0] == 'Reel'],
+                #                key=lambda x: x[2])
+    reels = ['R1', 'R2', 'R3', 'R4', 'R5', 'R6']
+
+    if len(adr_lines) == 0:
+        print_status_style("No ADR lines were found in the "
+            "input document. ADR reports will not be generated.")
+
+    else:
+        create_adr_reports(adr_lines, tc_display_format=session_tc_format, 
+            reel_list=sorted(reels))
+
+
+def create_adr_reports(lines: List[ADRLine], tc_display_format: TimecodeFormat, reel_list: List[str]):
+    """
+    Creates a directory heirarchy and a respective set of ADR reports, 
+    given a list of lines.
     """
     
     print_status_style("Creating ADR Report")
@@ -146,8 +176,11 @@ def convert(input_file, major_mode, output=sys.stdout, warnings=True):
         if major_mode == 'tagged':
             output.write(MyEncoder().encode(compiled_events))
 
-        else:
+        elif major_mode == 'doc':
             generic_events, adr_lines = make_entities(compiled_events)
+
+            scenes = sorted([s for s in compiler.compile_all_time_spans() if s[0] == 'Sc'],
+                            key=lambda x: x[2])
 
             # TODO: Breakdown by titles
             titles = set([x.title for x in (generic_events + adr_lines)])
@@ -156,40 +189,16 @@ def convert(input_file, major_mode, output=sys.stdout, warnings=True):
                 "found multiple titles: %s Exiting." % titles)
                 exit(-1)
 
+            title = list(titles)[0]
+
             print_status_style("%i generic events found." % len(generic_events))
             print_status_style("%i ADR events found." % len(adr_lines))
 
             if warnings:
                 perform_adr_validations(adr_lines)
 
-            if major_mode == 'doc':
+            generate_documents(session_tc_format, scenes, adr_lines, title, client)
                 
-                if len(adr_lines) == 0:
-                    print_warning("No ADR lines were found in the "
-                    "input document. Make sure you have set cue numbers for all "
-                    "of your ADR cues. Exiting.")
-                    exit(-1)
-
-                print_section_header_style("Creating PDF Reports")
-                report_date = datetime.datetime.now()
-                reports_dir = "%s_%s" % (list(titles)[0], report_date.strftime("%Y-%m-%d_%H%M%S"))
-                os.makedirs(reports_dir, exist_ok=False)
-                os.chdir(reports_dir)
-
-                scenes = sorted([s for s in compiler.compile_all_time_spans() if s[0] == 'Sc'],
-                                key=lambda x: x[2])
-
-                output_continuity(scenes=scenes, tc_display_format=session_tc_format,
-                                  title=list(titles)[0], client="", supervisor="")
-
-                # reels = sorted([r for r in compiler.compile_all_time_spans() if r[0] == 'Reel'],
-                #                key=lambda x: x[2])
-                reels = ['R1', 'R2', 'R3', 'R4', 'R5', 'R6']
-
-                create_adr_reports(adr_lines,
-                                   tc_display_format=session_tc_format,
-                                   reel_list=sorted(reels))
-
 
 def perform_adr_validations(lines : Iterator[ADRLine]):
     """

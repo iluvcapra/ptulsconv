@@ -151,18 +151,24 @@ def convert(input_file, major_mode, output=sys.stdout, warnings=True):
 
             # TODO: Breakdown by titles
             titles = set([x.title for x in (generic_events + adr_lines)])
-            assert len(titles) == 1, "Multiple titles per export is not supported"
+            if len(titles) != 1:
+                print_warning("Multiple titles per export is not supported, "
+                "found multiple titles: %s Exiting." % titles)
+                exit(-1)
 
-            print(titles)
+            print_status_style("%i generic events found." % len(generic_events))
+            print_status_style("%i ADR events found." % len(adr_lines))
 
             if warnings:
                 perform_adr_validations(adr_lines)
 
             if major_mode == 'doc':
                 
-                assert len(adr_lines) > 0, "No ADR lines were found in the "
-                "input document. Make sure you have set cue numbers for all "
-                "of your ADR cues."
+                if len(adr_lines) == 0:
+                    print_warning("No ADR lines were found in the "
+                    "input document. Make sure you have set cue numbers for all "
+                    "of your ADR cues. Exiting.")
+                    exit(-1)
 
                 print_section_header_style("Creating PDF Reports")
                 report_date = datetime.datetime.now()

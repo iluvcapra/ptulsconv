@@ -22,7 +22,7 @@ exports into JSON documents for processing by other applications.
 
 .. toctree::
    :numbered:
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Developer Documentation
 
    dev/contributing

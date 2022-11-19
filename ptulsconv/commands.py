@@ -1,6 +1,6 @@
 """
-This module provides the main implementation of input document
-parsing and transformation.
+This module provides the main input document parsing and transform
+implementation.
 """
 import datetime
 import os
@@ -30,6 +30,10 @@ from json import JSONEncoder
 
 
 class MyEncoder(JSONEncoder):
+    """
+    A subclass of :class:`JSONEncoder` which encodes :class:`Fraction` objects
+    as a dict.
+    """
     force_denominator: Optional[int]
 
     def default(self, o):
@@ -40,6 +44,11 @@ class MyEncoder(JSONEncoder):
 
 
 def output_adr_csv(lines: List[ADRLine], time_format: TimecodeFormat):
+    """
+    Writes ADR lines as CSV to the current working directory. Creates directories
+    for each character number and name pair, and within that directory, creates
+    a CSV file for each reel.
+    """
     reels = set([ln.reel for ln in lines])
 
     for n, name in [(n.character_id, n.character_name) for n in lines]:
@@ -76,16 +85,12 @@ def output_adr_csv(lines: List[ADRLine], time_format: TimecodeFormat):
                     writer.writerow(this_row)
         os.chdir("..")
 
-#
-# def output_avid_markers(lines):
-#     reels = set([ln['Reel'] for ln in lines if 'Reel' in ln.keys()])
-#
-#     for reel in reels:
-#         pass
-
 
 def create_adr_reports(lines: List[ADRLine], tc_display_format: TimecodeFormat, reel_list):
-
+    """
+    Creates a directory heirarchy and a respective set of reports, given a list of lines.
+    """
+    
     print_status_style("Creating ADR Report")
     output_summary(lines, tc_display_format=tc_display_format)
 
@@ -110,31 +115,20 @@ def create_adr_reports(lines: List[ADRLine], tc_display_format: TimecodeFormat, 
     output_adr_csv(lines, time_format=tc_display_format)
     os.chdir("..")
 
-    # print_status_style("Creating Avid Marker XML files")
-    # os.makedirs("Avid Markers", exist_ok=True)
-    # os.chdir("Avid Markers")
-    # output_avid_markers(lines)
-    # os.chdir("..")
-
     print_status_style("Creating Scripts directory and reports")
     os.makedirs("Talent Scripts", exist_ok=True)
     os.chdir("Talent Scripts")
     output_talent_sides(lines, tc_display_format=tc_display_format)
 
 
-# def parse_text_export(file):
-#     ast = ptulsconv.protools_text_export_grammar.parse(file.read())
-#     dict_parser = ptulsconv.DictionaryParserVisitor()
-#     parsed = dict_parser.visit(ast)
-#     print_status_style('Session title: %s' % parsed['header']['session_name'])
-#     print_status_style('Session timecode format: %f' % parsed['header']['timecode_format'])
-#     print_status_style('Fount %i tracks' % len(parsed['tracks']))
-#     print_status_style('Found %i markers' % len(parsed['markers']))
-#     return parsed
-
-
 def convert(input_file, major_mode, output=sys.stdout, warnings=True):
+    """
+    Primary worker function, accepts the input file and decides
+    what to do with it based on the `major_mode`.
 
+    :param input_file: a path to the input file.
+    :param major_mode: the selected output mode, 'raw', 'tagged' or 'doc'.
+    """
     session = parse_document(input_file)
     session_tc_format = session.header.timecode_format
 
@@ -162,6 +156,11 @@ def convert(input_file, major_mode, output=sys.stdout, warnings=True):
                 perform_adr_validations(adr_lines)
 
             if major_mode == 'doc':
+                
+                assert len(adr_lines) > 0, "No ADR lines were found in the "
+                "input document. Make sure you have set cue numbers for all "
+                "of your ADR cues."
+
                 print_section_header_style("Creating PDF Reports")
                 report_date = datetime.datetime.now()
                 reports_dir = "%s_%s" % (list(titles)[0], report_date.strftime("%Y-%m-%d_%H%M%S"))
@@ -183,7 +182,10 @@ def convert(input_file, major_mode, output=sys.stdout, warnings=True):
                                    reel_list=sorted(reels))
 
 
-def perform_adr_validations(lines):
+def perform_adr_validations(lines : Iterator[ADRLine]):
+    """
+    Performs validations on the input.
+    """
     for warning in chain(validate_unique_field(lines,
                                                field='cue_number',
                                                scope='title'),
@@ -200,4 +202,3 @@ def perform_adr_validations(lines):
                                                   key_field='character_id',
                                                   dependent_field='actor_name')):
         print_warning(warning.report_message())
-

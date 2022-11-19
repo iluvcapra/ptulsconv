@@ -23,7 +23,7 @@ tag_grammar = Grammar(
     tag_junk       = word word_sep?
     word           = ~r"[^ \[\{\$][^ ]*"
     word_sep       = ~r" +"
-    modifier       = ("@" / "&") word_sep?
+    modifier       = ("@" / "&" / "!") word_sep?
     """
 )
 

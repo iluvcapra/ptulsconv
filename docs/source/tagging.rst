@@ -114,13 +114,13 @@ a list of words
 
 The following commands are available:
 
-pagesize `(letter|legal|a4)`
+page $SIZE=`(letter|legal|a4)`
     Sets the PDF page size for the output.
 
-font -n `name` -p `path`
+font {NAME=`name`} {PATH=`path`}
     Sets the primary font for the output.
 
-sub [-t `tag`] -t `text_to_replace` `replacement text`
+sub `replacement text` {FOR=`text_to_replace`} {IN=`tag`}
     Declares a substitution. Whereever text_to_replace is encountered in the 
     document it will be replaced with "replacement text".
 

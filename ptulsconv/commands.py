@@ -105,8 +105,8 @@ def generate_documents(session_tc_format, scenes, adr_lines: Iterator[ADRLine], 
     output_continuity(scenes=scenes, tc_display_format=session_tc_format,
                                   title=title, client=client, supervisor=supervisor)
 
-                # reels = sorted([r for r in compiler.compile_all_time_spans() if r[0] == 'Reel'],
-                #                key=lambda x: x[2])
+    # reels = sorted([r for r in compiler.compile_all_time_spans() if r[0] == 'Reel'],
+    #                key=lambda x: x[2])
     reels = ['R1', 'R2', 'R3', 'R4', 'R5', 'R6']
 
     if len(adr_lines) == 0:
@@ -197,7 +197,7 @@ def convert(input_file, major_mode, output=sys.stdout, warnings=True):
             if warnings:
                 perform_adr_validations(adr_lines)
 
-            generate_documents(session_tc_format, scenes, adr_lines, title, client)
+            generate_documents(session_tc_format, scenes, adr_lines, title)
                 
 
 def perform_adr_validations(lines : Iterator[ADRLine]):

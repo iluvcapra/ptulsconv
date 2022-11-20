@@ -7,14 +7,6 @@ from ptulsconv.commands import convert
 from ptulsconv.reporting import print_status_style, print_banner_style, print_section_header_style, print_fatal_error
 
 
-# TODO: Support Top-level modes
-
-# Modes we want:
-#  - "raw" : Output the parsed text export document with no further processing, as json
-#  - "tagged"? : Output the parsed result of the TagCompiler
-#  - "doc" : Generate a full panoply of PDF reports contextually based on tagging
-
-
 def dump_field_map(output=sys.stdout):
     from ptulsconv.docparser.tag_mapping import TagMapping
     from ptulsconv.docparser.adr_entity import ADRLine, GenericEvent

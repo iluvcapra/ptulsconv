@@ -19,6 +19,10 @@ class Event:
 
 
 class TagCompiler:
+    """
+    Uses a `SessionDescriptor` as a data source to produce `Intermediate` 
+    items.
+    """
 
     Intermediate = namedtuple('Intermediate', 'track_content track_tags track_comment_tags '
                                               'clip_content clip_tags clip_tag_mode start finish')
@@ -26,6 +30,9 @@ class TagCompiler:
     session: doc_entity.SessionDescriptor
 
     def compile_all_time_spans(self) -> List[Tuple[str, str, Fraction, Fraction]]:
+        """
+        :returns: A `List` of (key: str, value: str, start: Fraction, finish: Fraction)
+        """
         ret_list = list()
         for element in self.parse_data():
             if element.clip_tag_mode == TagPreModes.TIMESPAN:

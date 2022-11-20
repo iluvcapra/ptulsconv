@@ -36,11 +36,11 @@ def table_for_scene(scene, tc_format, font_name = 'Helvetica'):
 
 def output_report(scenes: List[Tuple[str, str, Fraction, Fraction]],
                   tc_display_format: TimecodeFormat,
-                  title: str, client: str, supervisor):
+                  title: str, client: str, supervisor, paper_size = letter):
     filename = "%s Continuity.pdf" % title
     document_header = "Continuity"
 
-    doc = make_doc_template(page_size=portrait(letter),
+    doc = make_doc_template(page_size=portrait(paper_size),
                             filename=filename,
                             document_title="Continuity",
                             title=title,

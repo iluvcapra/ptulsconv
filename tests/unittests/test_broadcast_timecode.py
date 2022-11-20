@@ -70,6 +70,16 @@ class TestBroadcastTimecode(unittest.TestCase):
         s1 = tc_format.seconds_to_smpte(secs)
         self.assertEqual(s1, "00:00:01:01")
 
+    def test_unparseable_footage(self):
+        time_str = "10.1"
+        s1 = broadcast_timecode.footage_to_frame_count(time_str)
+        self.assertIsNone(s1)
+
+    def test_unparseable_timecode(self):
+        time_str = "11.32-19"
+        s1 = broadcast_timecode.smpte_to_frame_count(time_str, frames_per_logical_second=24)
+        self.assertIsNone(s1)
+
 
 if __name__ == '__main__':
     unittest.main()

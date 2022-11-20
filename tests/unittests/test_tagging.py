@@ -1,5 +1,5 @@
 import unittest
-from ptulsconv.docparser import doc_entity, doc_parser_visitor, ptuls_grammar, tag_compiler
+from ptulsconv.docparser import doc_entity, pt_doc_parser, ptuls_grammar, tag_compiler
 import os.path
 
 
@@ -9,7 +9,7 @@ class TaggingIntegratedTests(unittest.TestCase):
     def test_event_list(self):
         with open(self.path, 'r') as f:
             document_ast = ptuls_grammar.protools_text_export_grammar.parse(f.read())
-            document: doc_entity.SessionDescriptor = doc_parser_visitor.DocParserVisitor().visit(document_ast)
+            document: doc_entity.SessionDescriptor = pt_doc_parser.DocParserVisitor().visit(document_ast)
             compiler = tag_compiler.TagCompiler()
             compiler.session = document
 
@@ -29,7 +29,7 @@ class TaggingIntegratedTests(unittest.TestCase):
     def test_append(self):
         with open(self.path, 'r') as f:
             document_ast = ptuls_grammar.protools_text_export_grammar.parse(f.read())
-            document: doc_entity.SessionDescriptor = doc_parser_visitor.DocParserVisitor().visit(document_ast)
+            document: doc_entity.SessionDescriptor = pt_doc_parser.DocParserVisitor().visit(document_ast)
             compiler = tag_compiler.TagCompiler()
             compiler.session = document
 
@@ -52,7 +52,7 @@ class TaggingIntegratedTests(unittest.TestCase):
     def test_successive_appends(self):
         with open(self.path, 'r') as f:
             document_ast = ptuls_grammar.protools_text_export_grammar.parse(f.read())
-            document: doc_entity.SessionDescriptor = doc_parser_visitor.DocParserVisitor().visit(document_ast)
+            document: doc_entity.SessionDescriptor = pt_doc_parser.DocParserVisitor().visit(document_ast)
             compiler = tag_compiler.TagCompiler()
             compiler.session = document
 

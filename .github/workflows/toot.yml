@@ -16,4 +16,4 @@ jobs:
       with:
         message: |
           This is a test toot, automatically posted by a github action.
-          https://github.com/iluvcapra/ptulsconv
+          ${{ github.repositoryUrl }}

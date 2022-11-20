@@ -27,3 +27,4 @@ This will install the necessary libraries on your host and gives you
 command-line access to the tool through an entry-point `ptulsconv`. In a 
 terminal window type `ptulsconv -h` for a list of available options.
 
+[quickstart]: https://ptulsconv.readthedocs.io/en/latest/user/quickstart.html

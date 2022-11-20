@@ -107,3 +107,5 @@ venv_docs/
 /example/Charade/Session File Backups/
 lcov.info
 
+.vim
+.vscode

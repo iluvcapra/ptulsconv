@@ -9,14 +9,15 @@ import os
 sys.path.insert(0, os.path.abspath("../.."))
 print(sys.path)
 
+import ptulsconv
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'ptulsconv'
-copyright = '2022, Jamie Hardt'
-author = 'Jamie Hardt'
-release = 'Version 2'
+copyright = ptulsconv.__copyright__
+author = ptulsconv.__author__
+release = ptulsconv.__version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

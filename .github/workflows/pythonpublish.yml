@@ -32,7 +32,7 @@ jobs:
       with:
         message: |
           I just released a new version of ptulsconv, my ADR cue sheet generator!
-          
+          #python #protools #pdf #filmmaking 
           ${{ github.server_url }}/${{ github.repository }}
       env:
         MASTODON_URL: ${{ secrets.MASTODON_URL }}

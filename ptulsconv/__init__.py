@@ -1,3 +1,7 @@
+"""
+Parse and convert Pro Tools text exports
+"""
+
 __version__ = '1.0.6'
 # __author__  = 'Jamie Hardt'
 # __license__ = 'MIT'

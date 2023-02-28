@@ -15,8 +15,8 @@ import ptulsconv
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'ptulsconv'
-copyright = ptulsconv.__copyright__
-author = ptulsconv.__author__
+# copyright = ptulsconv.__copyright__
+# author = ptulsconv.__author__
 release = ptulsconv.__version__
 
 # -- General configuration ---------------------------------------------------

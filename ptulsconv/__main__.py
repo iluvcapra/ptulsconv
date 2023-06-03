@@ -2,7 +2,7 @@ from optparse import OptionParser, OptionGroup
 import datetime
 import sys
 
-from ptulsconv import __name__, __version__, __author__,__copyright__
+from ptulsconv import __name__, __version__, __author__, __copyright__
 from ptulsconv.commands import convert
 from ptulsconv.reporting import print_status_style, print_banner_style, print_section_header_style, print_fatal_error
 

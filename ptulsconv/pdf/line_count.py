@@ -14,9 +14,12 @@ from .__init__ import time_format, make_doc_template
 from ..docparser.adr_entity import ADRLine
 
 
-def build_columns(lines: List[ADRLine], reel_list: Optional[List[str]], show_priorities=False, include_omitted=False):
+def build_columns(lines: List[ADRLine], reel_list: Optional[List[str]],
+                  show_priorities=False, include_omitted=False):
     columns = list()
-    reel_numbers = reel_list or sorted(set([x.reel for x in lines if x.reel is not None]))
+    reel_numbers = reel_list or sorted(
+            set([x.reel for x in lines if x.reel is not None])
+            )
 
     num_column_width = 15. / 32. * inch
 
@@ -33,19 +36,26 @@ def build_columns(lines: List[ADRLine], reel_list: Optional[List[str]], show_pri
         'heading': 'Role',
         'value_getter': lambda recs: recs[0].character_name,
         'value_getter2': lambda recs: recs[0].actor_name or "",
-        'style_getter': lambda col_index: [('LINEAFTER', (col_index, 0), (col_index, -1), 1.0, colors.black)],
+        'style_getter': lambda col_index: [('LINEAFTER',
+                                            (col_index, 0),
+                                            (col_index, -1),
+                                            1.0, colors.black)],
         'width': 1.75 * inch,
         'summarize': False
     })
 
     columns.append({
         'heading': 'TV',
-        'value_getter': lambda recs: len([r for r in recs if r.tv]),
-        'value_getter2': lambda recs: time_format(sum([r.time_budget_mins or 0.
-                                                       for r in recs if r.tv])),
-        'style_getter': lambda col_index: [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER'),
-                                           ('LINEBEFORE', (col_index, 0), (col_index, -1), 1., colors.black),
-                                           ('LINEAFTER', (col_index, 0), (col_index, -1), .5, colors.gray)],
+        'value_getter': (lambda recs: len([r for r in recs if r.tv])),
+        'value_getter2': (lambda recs: 
+                          time_format(sum([r.time_budget_mins or 0.           
+                                           for r in recs if r.tv]))),
+        'style_getter': (lambda col_index: 
+                         [('ALIGN', (col_index, 0), (col_index, -1), 'CENTER'),
+                          ('LINEBEFORE', (col_index, 0), (col_index, -1),
+                           1., colors.black),
+                          ('LINEAFTER', (col_index, 0), (col_index, -1),
+                           .5, colors.gray)]),
         'width': num_column_width
     })
 

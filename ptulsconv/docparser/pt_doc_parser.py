@@ -79,15 +79,14 @@ protools_text_export_grammar = Grammar(
     """)
 
 
-def parse_document(path: str) -> SessionDescriptor:
+def parse_document(session_text: str) -> SessionDescriptor:
     """
     Parse a Pro Tools text export.
-    :param path: path to a file
+    :param session_text: Pro Tools session text export
     :return: the session descriptor
     """
-    with open(path, 'r') as f:
-        ast = protools_text_export_grammar.parse(f.read())
-        return DocParserVisitor().visit(ast)
+    ast = protools_text_export_grammar.parse(session_text)
+    return DocParserVisitor().visit(ast)
 
 
 class DocParserVisitor(NodeVisitor):

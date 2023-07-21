@@ -30,7 +30,7 @@ def dump_formats():
 def main():
     """Entry point for the command-line invocation"""
     parser = OptionParser()
-    parser.usage = "ptulsconv [options] TEXT_EXPORT.txt"
+    parser.usage = "ptulsconv [options] [TEXT_EXPORT.txt]"
 
     parser.add_option('-f', '--format',
                       dest='output_format',
@@ -85,15 +85,17 @@ def main():
     elif options.show_formats:
         dump_formats()
         sys.exit(0)
-
-    if len(args) < 2:
-        print_fatal_error("Error: No input file")
-        parser.print_help(sys.stderr)
-        sys.exit(22)
-
     try:
         major_mode = options.output_format
-        convert(input_file=args[1], major_mode=major_mode, warnings=options.warnings)
+        
+        if len(args) < 2:
+            print_status_style("No input file provided, will connect to Pro Tools with PTSL...")
+            convert(major_mode=major_mode, 
+                    warnings=options.warnings)
+        else:
+            convert(input_file=args[1], 
+                    major_mode=major_mode, 
+                    warnings=options.warnings)
 
     except FileNotFoundError as e:
         print_fatal_error("Error trying to read input file")

@@ -11,6 +11,8 @@ import csv
 from typing import List
 from fractions import Fraction
 
+import ptsl
+
 from .docparser.adr_entity import make_entities
 from .reporting import print_section_header_style, print_status_style, print_warning
 from .validations import *
@@ -154,7 +156,7 @@ def create_adr_reports(lines: List[ADRLine], tc_display_format: TimecodeFormat, 
     output_talent_sides(lines, tc_display_format=tc_display_format)
 
 
-def convert(input_file, major_mode, output=sys.stdout, warnings=True):
+def convert(major_mode, input_file = None, output=sys.stdout, warnings=True):
     """
     Primary worker function, accepts the input file and decides
     what to do with it based on the `major_mode`.
@@ -162,7 +164,24 @@ def convert(input_file, major_mode, output=sys.stdout, warnings=True):
     :param input_file: a path to the input file.
     :param major_mode: the selected output mode, 'raw', 'tagged' or 'doc'.
     """
-    session = parse_document(input_file)
+    session_text = ""
+    if input_file is not None:
+        with open(input_file, "r") as file:
+            session_text = file.read()
+    else:
+        with ptsl.open_engine(
+                company_name="The ptulsconv developers", 
+                application_name="ptulsconv") as engine:
+            req = engine.export_session_as_text()
+            req.utf8_encoding()
+            req.include_track_edls()
+            req.include_markers()
+            req.time_type("tc")
+            req.dont_show_crossfades()
+            req.selected_tracks_only()
+            session_text = req.export_string()
+    
+    session = parse_document(session_text)
     session_tc_format = session.header.timecode_format
 
     if major_mode == 'raw':

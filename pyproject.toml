@@ -25,7 +25,12 @@ requires-python = ">=3.7"
 dynamic = ["version", "description"]
 keywords = ["text-processing", "parsers", "film", 
     "broadcast", "editing", "editorial"]
-dependencies = ['parsimonious', 'tqdm', 'reportlab']
+dependencies = [
+  'parsimonious',
+  'tqdm',
+  'reportlab',
+  'py-ptsl >= 101.1.0'
+  ]
 
 [project.optional-dependencies]
 doc = [

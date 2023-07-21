@@ -48,7 +48,8 @@ class TagMapping:
         for rule in rules:
             if rule.target in done:
                 continue
-            if rule.apply(tags, clip_content, track_content, session_content, to):
+            if rule.apply(tags, clip_content, track_content, session_content,
+                          to):
                 done.update(rule.target)
 
     def __init__(self, source: str,

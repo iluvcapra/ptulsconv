@@ -1,0 +1,4 @@
+[flake8]
+per-file-ignores = 
+  ptulsconv/__init__.py: F401
+  ptulsconv/docparser/__init__.py: F401

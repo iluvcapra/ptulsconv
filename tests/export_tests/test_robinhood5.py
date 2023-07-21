@@ -7,23 +7,30 @@ class TestRobinHood5(unittest.TestCase):
     path = os.path.dirname(__file__) + '/../export_cases/Robin Hood Spotting5.txt'
 
     def test_skipped_segments(self):
-        session = parse_document(self.path)
+        with open(self.path,"r") as file:
+            session = parse_document(file.read())
+
         self.assertIsNone(session.files)
         self.assertIsNone(session.clips)
 
     def test_plugins(self):
-        session = parse_document(self.path)
+        with open(self.path,"r") as file:
+            session = parse_document(file.read())
+
         self.assertEqual(len(session.plugins), 2)
 
     def test_stereo_track(self):
-        session = parse_document(self.path)
+        with open(self.path,"r") as file:
+            session = parse_document(file.read())
+
         self.assertEqual(session.tracks[1].name, 'MX WT (Stereo)')
         self.assertEqual(len(session.tracks[1].clips), 2)
         self.assertEqual(session.tracks[1].clips[0].clip_name, 'RobinHood.1-01.L')
         self.assertEqual(session.tracks[1].clips[1].clip_name, 'RobinHood.1-01.R')
 
     def test_a_track(self):
-        session = parse_document(self.path)
+        with open(self.path,"r") as file:
+            session = parse_document(file.read())
 
         guy_track = session.tracks[8]
         self.assertEqual(guy_track.name, 'Guy')

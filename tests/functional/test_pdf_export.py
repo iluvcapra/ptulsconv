@@ -20,7 +20,7 @@ class TestPDFExport(unittest.TestCase):
             tempdir = tempfile.TemporaryDirectory()
             os.chdir(tempdir.name)
             try:
-                commands.convert(path, major_mode='doc')
+                commands.convert(input_file=path, major_mode='doc')
             except:
                 assert False, "Error processing file %s" % path
             finally:

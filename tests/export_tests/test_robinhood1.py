@@ -7,8 +7,8 @@ class TestRobinHood1(unittest.TestCase):
     path = os.path.dirname(__file__) + '/../export_cases/Robin Hood Spotting.txt'
 
     def test_header_export(self):
-
-        session = parse_document(self.path)
+        with open(self.path,"r") as file:
+            session = parse_document(file.read())
 
         self.assertIsNotNone(session.header)
         self.assertEqual(session.header.session_name, 'Robin Hood Spotting')
@@ -19,7 +19,8 @@ class TestRobinHood1(unittest.TestCase):
 
     def test_all_sections(self):
 
-        session = parse_document(self.path)
+        with open(self.path,"r") as file:
+            session = parse_document(file.read())
 
         self.assertIsNotNone(session.header)
         self.assertIsNotNone(session.files)
@@ -30,7 +31,8 @@ class TestRobinHood1(unittest.TestCase):
 
     def test_tracks(self):
 
-        session = parse_document(self.path)
+        with open(self.path,"r") as file:
+            session = parse_document(file.read())
 
         self.assertEqual(len(session.tracks), 14)
         self.assertListEqual(["Scenes", "Robin", "Will", "Marian", "John",
@@ -54,7 +56,10 @@ class TestRobinHood1(unittest.TestCase):
                              list(map(lambda t: t.comments, session.tracks)))
 
     def test_a_track(self):
-        session = parse_document(self.path)
+
+        with open(self.path,"r") as file:
+            session = parse_document(file.read())
+        
         guy_track = session.tracks[5]
         self.assertEqual(guy_track.name, 'Guy')
         self.assertEqual(guy_track.comments, '[ADR] {Actor=Basil Rathbone} $CN=5')
@@ -71,7 +76,8 @@ class TestRobinHood1(unittest.TestCase):
         self.assertEqual(guy_track.clips[5].state, 'Unmuted')
 
     def test_memory_locations(self):
-        session = parse_document(self.path)
+        with open(self.path,"r") as file:
+            session = parse_document(file.read())
 
         self.assertEqual(len(session.markers), 1)
         self.assertEqual(session.markers[0].number, 1)

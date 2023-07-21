@@ -7,11 +7,16 @@ class TestRobinHoodDF(unittest.TestCase):
     path = os.path.dirname(__file__) + '/../export_cases/Robin Hood SpottingDF.txt'
 
     def test_header_export_df(self):
-        session = parse_document(self.path)
+        
+        with open(self.path, "r") as file:
+            session = parse_document(file.read())
+        
         self.assertEqual(session.header.timecode_drop_frame, True)
 
     def test_a_track(self):
-        session = parse_document(self.path)
+
+        with open(self.path, "r") as file:
+            session = parse_document(file.read())
 
         guy_track = session.tracks[4]
         self.assertEqual(guy_track.name, 'Robin')

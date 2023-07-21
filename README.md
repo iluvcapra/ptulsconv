@@ -2,7 +2,7 @@
 ![](https://img.shields.io/github/license/iluvcapra/ptulsconv.svg)
 ![](https://img.shields.io/pypi/pyversions/ptulsconv.svg) 
 [![](https://img.shields.io/pypi/v/ptulsconv.svg)][pypi]
-![GitHub last commit](https://img.shields.io/github/last-commit/iluvcapra/pycmx)
+![GitHub last commit](https://img.shields.io/github/last-commit/iluvcapra/ptulsconv)
 [![Lint and Test](https://github.com/iluvcapra/ptulsconv/actions/workflows/python-package.yml/badge.svg)](https://github.com/iluvcapra/ptulsconv/actions/workflows/python-package.yml)
 
 [pypi]: https://pypi.org/project/ptulsconv/

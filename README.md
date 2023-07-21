@@ -10,7 +10,7 @@
 
 # ptulsconv
 
-Read Pro Tools text exports and generate PDF reports, JSON output.
+Parse Pro Tools text exports and generate PDF reports, JSON output.
 
 ## Quick Start
 

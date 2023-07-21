@@ -8,8 +8,8 @@ from typing import Optional
 
 def footage_to_seconds(footage: str) -> Optional[Fraction]:
     """
-    Converts a string representation of a footage (35mm, 24fps) 
-    into a :class:`Fraction`, this fraction being a some number of 
+    Converts a string representation of a footage (35mm, 24fps)
+    into a :class:`Fraction`, this fraction being a some number of
     seconds.
 
     :param footage: A string reprenentation of a footage of the form

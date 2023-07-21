@@ -4,7 +4,7 @@ from typing import Tuple, List
 from reportlab.lib.pagesizes import portrait, letter
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
-from reportlab.platypus import Paragraph, Table, Spacer
+from reportlab.platypus import Paragraph, Table
 
 from ptulsconv.broadcast_timecode import TimecodeFormat
 from ptulsconv.pdf import make_doc_template
@@ -12,14 +12,15 @@ from ptulsconv.pdf import make_doc_template
 
 # TODO: A Continuity
 
-def table_for_scene(scene, tc_format, font_name = 'Helvetica'):
+def table_for_scene(scene, tc_format, font_name='Helvetica'):
     scene_style = getSampleStyleSheet()['Normal']
     scene_style.fontName = font_name
     scene_style.leftIndent = 0.
     scene_style.leftPadding = 0.
     scene_style.spaceAfter = 18.
 
-    tc_data = "<em>%s</em><br />%s" % (tc_format.seconds_to_smpte(scene[2]), tc_format.seconds_to_smpte(scene[3]))
+    tc_data = "<em>%s</em><br />%s" % (tc_format.seconds_to_smpte(scene[2]),
+                                       tc_format.seconds_to_smpte(scene[3]))
 
     row = [
         Paragraph(tc_data, scene_style),
@@ -36,7 +37,7 @@ def table_for_scene(scene, tc_format, font_name = 'Helvetica'):
 
 def output_report(scenes: List[Tuple[str, str, Fraction, Fraction]],
                   tc_display_format: TimecodeFormat,
-                  title: str, client: str, supervisor, paper_size = letter):
+                  title: str, client: str, supervisor, paper_size=letter):
     filename = "%s Continuity.pdf" % title
     document_header = "Continuity"
 

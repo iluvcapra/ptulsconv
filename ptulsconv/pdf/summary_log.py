@@ -27,23 +27,28 @@ def build_aux_data_field(line: ADRLine):
     tag_field = ""
     if line.effort:
         bg_color = 'red'
-        tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font> " % (bg_color, fg_color, "EFF")
+        tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font> " \
+            % (bg_color, fg_color, "EFF")
     elif line.tv:
         bg_color = 'blue'
-        tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font> " % (bg_color, fg_color, "TV")
+        tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font> " \
+            % (bg_color, fg_color, "TV")
     elif line.adlib:
         bg_color = 'purple'
-        tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font> " % (bg_color, fg_color, "ADLIB")
+        tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font> " \
+            % (bg_color, fg_color, "ADLIB")
     elif line.optional:
         bg_color = 'green'
-        tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font>" % (bg_color, fg_color, "OPTIONAL")
+        tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font>" \
+            % (bg_color, fg_color, "OPTIONAL")
 
     entries.append(tag_field)
 
     return "<br />".join(entries)
 
 
-def build_story(lines: List[ADRLine], tc_rate: TimecodeFormat, font_name='Helvetica'):
+def build_story(lines: List[ADRLine], tc_rate: TimecodeFormat,
+                font_name='Helvetica'):
     story = list()
 
     this_scene = None
@@ -60,7 +65,8 @@ def build_story(lines: List[ADRLine], tc_rate: TimecodeFormat, font_name='Helvet
                        ('LEFTPADDING', (0, 0), (0, 0), 0.0),
                        ('BOTTOMPADDING', (0, 0), (-1, -1), 24.)]
 
-        cue_number_field = "%s<br /><font fontSize=7>%s</font>" % (line.cue_number, line.character_name)
+        cue_number_field = "%s<br /><font fontSize=7>%s</font>" \
+            % (line.cue_number, line.character_name)
 
         time_data = time_format(line.time_budget_mins)
 
@@ -79,7 +85,8 @@ def build_story(lines: List[ADRLine], tc_rate: TimecodeFormat, font_name='Helvet
                             ]]
 
         line_table = Table(data=line_table_data,
-                           colWidths=[inch * 0.75, inch, inch * 3., 0.5 * inch, inch * 2.],
+                           colWidths=[inch * 0.75, inch, inch * 3., 0.5 * inch,
+                                      inch * 2.],
                            style=table_style)
 
         if (line.scene or "[No Scene]") != this_scene:
@@ -97,7 +104,7 @@ def build_story(lines: List[ADRLine], tc_rate: TimecodeFormat, font_name='Helvet
 
 def build_tc_data(line: ADRLine, tc_format: TimecodeFormat):
     tc_data = tc_format.seconds_to_smpte(line.start) + "<br />" + \
-              tc_format.seconds_to_smpte(line.finish)
+        tc_format.seconds_to_smpte(line.finish)
     third_line = []
     if line.reel is not None:
         if line.reel[0:1] == 'R':
@@ -111,11 +118,12 @@ def build_tc_data(line: ADRLine, tc_format: TimecodeFormat):
     return tc_data
 
 
-def generate_report(page_size, lines: List[ADRLine], tc_rate: TimecodeFormat, character_number=None,
-                    include_omitted=True):
+def generate_report(page_size, lines: List[ADRLine], tc_rate: TimecodeFormat,
+                    character_number=None, include_omitted=True):
     if character_number is not None:
         lines = [r for r in lines if r.character_id == character_number]
-        title = "%s ADR Report (%s)" % (lines[0].title, lines[0].character_name)
+        title = "%s ADR Report (%s)" % (lines[0].title,
+                                        lines[0].character_name)
         document_header = "%s ADR Report" % lines[0].character_name
     else:
         title = "%s ADR Report" % lines[0].title

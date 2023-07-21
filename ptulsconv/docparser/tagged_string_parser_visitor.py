@@ -1,5 +1,5 @@
 from parsimonious import NodeVisitor, Grammar
-from typing import Dict, Union
+from typing import Dict
 from enum import Enum
 
 
@@ -52,8 +52,9 @@ class TagListVisitor(NodeVisitor):
         modifier_opt, line_opt, _, tag_list_opt = visited_children
 
         return TaggedStringResult(content=next(iter(line_opt), None),
-                                    tag_dict=next(iter(tag_list_opt), dict()),
-                                  mode=TagPreModes(next(iter(modifier_opt), 'Normal'))
+                                  tag_dict=next(iter(tag_list_opt), dict()),
+                                  mode=TagPreModes(
+                                      next(iter(modifier_opt), 'Normal'))
                                   )
 
     @staticmethod

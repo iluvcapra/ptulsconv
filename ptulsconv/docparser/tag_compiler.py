@@ -20,24 +20,29 @@ class Event:
 
 class TagCompiler:
     """
-    Uses a `SessionDescriptor` as a data source to produce `Intermediate` 
+    Uses a `SessionDescriptor` as a data source to produce `Intermediate`
     items.
     """
 
-    Intermediate = namedtuple('Intermediate', 'track_content track_tags track_comment_tags '
-                                              'clip_content clip_tags clip_tag_mode start finish')
+    Intermediate = namedtuple('Intermediate',
+                              'track_content track_tags track_comment_tags '
+                              'clip_content clip_tags clip_tag_mode start '
+                              'finish')
 
     session: doc_entity.SessionDescriptor
 
-    def compile_all_time_spans(self) -> List[Tuple[str, str, Fraction, Fraction]]:
+    def compile_all_time_spans(self) -> List[Tuple[str, str, Fraction,
+                                                   Fraction]]:
         """
-        :returns: A `List` of (key: str, value: str, start: Fraction, finish: Fraction)
+        :returns: A `List` of (key: str, value: str, start: Fraction,
+            finish: Fraction)
         """
         ret_list = list()
         for element in self.parse_data():
             if element.clip_tag_mode == TagPreModes.TIMESPAN:
                 for k in element.clip_tags.keys():
-                    ret_list.append((k, element.clip_tags[k], element.start, element.finish))
+                    ret_list.append((k, element.clip_tags[k], element.start,
+                                     element.finish))
 
         return ret_list
 
@@ -73,25 +78,30 @@ class TagCompiler:
         step3 = self.collect_time_spans(step2)
         step4 = self.apply_tags(step3)
         for datum in step4:
-            yield Event(clip_name=datum[0], track_name=datum[1], session_name=datum[2],
-                        tags=datum[3], start=datum[4], finish=datum[5])
+            yield Event(clip_name=datum[0], track_name=datum[1],
+                        session_name=datum[2], tags=datum[3], start=datum[4],
+                        finish=datum[5])
 
     def _marker_tags(self, at):
         retval = dict()
-        applicable = [(m, t) for (m, t) in self.session.markers_timed() if t <= at]
+
+        applicable = [(m, t) for (m, t) in
+                      self.session.markers_timed() if t <= at]
+
         for marker, _ in sorted(applicable, key=lambda x: x[1]):
             retval.update(parse_tags(marker.comments or "").tag_dict)
             retval.update(parse_tags(marker.name or "").tag_dict)
 
         return retval
 
-    def filter_out_directives(self, clips : Iterator[Intermediate]) -> Iterator[Intermediate]:
+    def filter_out_directives(self,
+                              clips: Iterator[Intermediate]) \
+            -> Iterator[Intermediate]:
         for clip in clips:
             if clip.clip_tag_mode == 'Directive':
                 continue
             else:
                 yield clip
-
 
     @staticmethod
     def _coalesce_tags(clip_tags: dict, track_tags: dict,
@@ -117,29 +127,33 @@ class TagCompiler:
             track_comments_parsed = parse_tags(track.comments)
             clip_parsed = parse_tags(clip.clip_name)
 
-            yield TagCompiler.Intermediate(track_content=track_parsed.content,
-                                           track_tags=track_parsed.tag_dict,
-                                           track_comment_tags=track_comments_parsed.tag_dict,
-                                           clip_content=clip_parsed.content,
-                                           clip_tags=clip_parsed.tag_dict,
-                                           clip_tag_mode=clip_parsed.mode,
-                                           start=start, finish=finish)
+            yield TagCompiler.Intermediate(
+                track_content=track_parsed.content,
+                track_tags=track_parsed.tag_dict,
+                track_comment_tags=track_comments_parsed.tag_dict,
+                clip_content=clip_parsed.content,
+                clip_tags=clip_parsed.tag_dict,
+                clip_tag_mode=clip_parsed.mode,
+                start=start, finish=finish)
 
     @staticmethod
-    def apply_appends(parsed: Iterator[Intermediate]) -> Iterator[Intermediate]:
+    def apply_appends(parsed: Iterator[Intermediate]) -> \
+            Iterator[Intermediate]:
 
         def should_append(a, b):
-            return b.clip_tag_mode == TagPreModes.APPEND and b.start >= a.finish
+            return b.clip_tag_mode == TagPreModes.APPEND and \
+                b.start >= a.finish
 
         def do_append(a, b):
             merged_tags = dict(a.clip_tags)
             merged_tags.update(b.clip_tags)
-            return TagCompiler.Intermediate(track_content=a.track_content,
-                                            track_tags=a.track_tags,
-                                            track_comment_tags=a.track_comment_tags,
-                                            clip_content=a.clip_content + ' ' + b.clip_content,
-                                            clip_tags=merged_tags, clip_tag_mode=a.clip_tag_mode,
-                                            start=a.start, finish=b.finish)
+            return TagCompiler.Intermediate(
+                track_content=a.track_content,
+                track_tags=a.track_tags,
+                track_comment_tags=a.track_comment_tags,
+                clip_content=a.clip_content + ' ' + b.clip_content,
+                clip_tags=merged_tags, clip_tag_mode=a.clip_tag_mode,
+                start=a.start, finish=b.finish)
 
         yield from apply_appends(parsed, should_append, do_append)
 
@@ -158,12 +172,14 @@ class TagCompiler:
     @staticmethod
     def _time_span_tags(at_time: Fraction, applicable_spans) -> dict:
         retval = dict()
-        for tags in reversed([a[0] for a in applicable_spans if a[1] <= at_time <= a[2]]):
+        for tags in reversed([a[0] for a in applicable_spans
+                              if a[1] <= at_time <= a[2]]):
             retval.update(tags)
 
         return retval
 
-    def apply_tags(self, parsed_with_time_spans) -> Iterator[Tuple[str, str, str, dict, Fraction, Fraction]]:
+    def apply_tags(self, parsed_with_time_spans) ->\
+            Iterator[Tuple[str, str, str, dict, Fraction, Fraction]]:
 
         session_parsed = parse_tags(self.session.header.session_name)
 
@@ -171,14 +187,16 @@ class TagCompiler:
             event: 'TagCompiler.Intermediate'
             marker_tags = self._marker_tags(event.start)
             time_span_tags = self._time_span_tags(event.start, time_spans)
-            tags = self._coalesce_tags(clip_tags=event.clip_tags,
-                                       track_tags=event.track_tags,
-                                       track_comment_tags=event.track_comment_tags,
-                                       timespan_tags=time_span_tags,
-                                       marker_tags=marker_tags,
-                                       session_tags=session_parsed.tag_dict)
+            tags = self._coalesce_tags(
+                    clip_tags=event.clip_tags,
+                    track_tags=event.track_tags,
+                    track_comment_tags=event.track_comment_tags,
+                    timespan_tags=time_span_tags,
+                    marker_tags=marker_tags,
+                    session_tags=session_parsed.tag_dict)
 
-            yield event.clip_content, event.track_content, session_parsed.content, tags, event.start, event.finish
+            yield (event.clip_content, event.track_content,
+                   session_parsed.content, tags, event.start, event.finish)
 
 
 def apply_appends(source: Iterator,

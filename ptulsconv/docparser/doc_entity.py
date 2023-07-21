@@ -21,19 +21,24 @@ class SessionDescriptor:
 
     def markers_timed(self) -> Iterator[Tuple['MarkerDescriptor', Fraction]]:
         for marker in self.markers:
-            marker_time = Fraction(marker.time_reference, int(self.header.sample_rate))
-            #marker_time = self.header.convert_timecode(marker.location)
+            marker_time = Fraction(marker.time_reference,
+                                   int(self.header.sample_rate))
+            # marker_time = self.header.convert_timecode(marker.location)
             yield marker, marker_time
 
-    def tracks_clips(self) -> Iterator[Tuple['TrackDescriptor', 'TrackClipDescriptor']]:
+    def tracks_clips(self) -> Iterator[Tuple['TrackDescriptor',
+                                             'TrackClipDescriptor']]:
         for track in self.tracks:
             for clip in track.clips:
                 yield track, clip
 
-    def track_clips_timed(self) -> Iterator[Tuple["TrackDescriptor", "TrackClipDescriptor",
-                                                  Fraction, Fraction, Fraction]]:
+    def track_clips_timed(self) -> Iterator[Tuple["TrackDescriptor",
+                                                  "TrackClipDescriptor",
+                                                  Fraction, Fraction, Fraction]
+                                            ]:
         """
-        :return: A Generator that yields track, clip, start time, finish time, and timestamp
+        :return: A Generator that yields track, clip, start time, finish time,
+        and timestamp
         """
         for track, clip in self.tracks_clips():
             start_time = self.header.convert_timecode(clip.start_timecode)
@@ -105,7 +110,8 @@ class HeaderDescriptor:
         if self.timecode_fps in frame_rates.keys():
             return frame_rates[self.timecode_fps]
         else:
-            raise ValueError("Unrecognized TC rate (%s)" % self.timecode_format)
+            raise ValueError("Unrecognized TC rate (%s)" %
+                             self.timecode_format)
 
 
 class TrackDescriptor:

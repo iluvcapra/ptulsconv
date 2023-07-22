@@ -187,7 +187,7 @@ def convert(major_mode, input_file=None, output=sys.stdout, warnings=True):
             req.time_type("tc")
             req.dont_show_crossfades()
             req.selected_tracks_only()
-            session_text = req.export_string
+            session_text = req.export_string()
 
     session = parse_document(session_text)
     session_tc_format = session.header.timecode_format

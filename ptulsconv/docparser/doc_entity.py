@@ -20,6 +20,9 @@ class SessionDescriptor:
         self.markers = kwargs['markers']
 
     def markers_timed(self) -> Iterator[Tuple['MarkerDescriptor', Fraction]]:
+        """
+        Iterate each marker in the session with its respective time reference.
+        """
         for marker in self.markers:
             marker_time = Fraction(marker.time_reference,
                                    int(self.header.sample_rate))
@@ -28,6 +31,9 @@ class SessionDescriptor:
 
     def tracks_clips(self) -> Iterator[Tuple['TrackDescriptor',
                                              'TrackClipDescriptor']]:
+        """
+        Iterate each track clip with its respective owning clip.
+        """
         for track in self.tracks:
             for clip in track.clips:
                 yield track, clip
@@ -37,7 +43,10 @@ class SessionDescriptor:
                                                   Fraction, Fraction, Fraction]
                                             ]:
         """
-        :return: A Generator that yields track, clip, start time, finish time,
+        Iterate each track clip with its respective owning clip and timing
+        information.
+        
+        :returns: A Generator that yields track, clip, start time, finish time,
         and timestamp
         """
         for track, clip in self.tracks_clips():

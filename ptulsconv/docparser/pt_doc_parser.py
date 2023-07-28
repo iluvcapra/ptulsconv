@@ -108,8 +108,12 @@ def parse_document(session_text: str) -> SessionDescriptor:
 
 class DocParserVisitor(NodeVisitor):
 
-    @staticmethod
-    def visit_document(_, visited_children) -> SessionDescriptor:
+    def __init__(self):
+        self.track_index = 0
+
+    # @staticmethod
+    def visit_document(self, _, visited_children) -> SessionDescriptor:
+        self.track_index = 0
         files = next(iter(visited_children[1]), None)
         clips = next(iter(visited_children[2]), None)
         plugins = next(iter(visited_children[3]), None)
@@ -196,8 +200,8 @@ class DocParserVisitor(NodeVisitor):
     def visit_frame_rate(node, _):
         return node.text
 
-    def visit_track_listing(self, _, visited_children):
-        self.track_index = 0
+    @staticmethod
+    def visit_track_listing(_, visited_children):
         return visited_children[1]
 
     @staticmethod

@@ -88,7 +88,9 @@ class TestTagCompiler(unittest.TestCase):
                                            state='Unmuted',
                                            timestamp=None),
         ]
-        test_track = doc_entity.TrackDescriptor(name="Track 1 [A] {Color=Red} $Mode=1",
+        test_track = doc_entity.TrackDescriptor(
+            index=0,
+            name="Track 1 [A] {Color=Red} $Mode=1",
                                                 comments="{Comment=This is some text in the comments}",
                                                 user_delay_samples=0,
                                                 plugins=[],

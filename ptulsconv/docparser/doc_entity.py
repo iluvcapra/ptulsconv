@@ -124,6 +124,7 @@ class HeaderDescriptor:
 
 
 class TrackDescriptor:
+    index: int
     name: str
     comments: str
     user_delay_samples: int
@@ -132,6 +133,7 @@ class TrackDescriptor:
     clips: List["TrackClipDescriptor"]
 
     def __init__(self, **kwargs):
+        self.index = kwargs['index']
         self.name = kwargs['name']
         self.comments = kwargs['comments']
         self.user_delay_samples = kwargs['user_delay_samples']

@@ -166,8 +166,8 @@ class DocParserVisitor(NodeVisitor):
                                          count_instances=child[10]),
                         visited_children[2]))
 
-    @staticmethod
-    def visit_track_block(_, visited_children):
+    # @staticmethod
+    def visit_track_block(self, _, visited_children):
         track_header, track_clip_list = visited_children
         clips = []
         for clip in track_clip_list:
@@ -178,8 +178,12 @@ class DocParserVisitor(NodeVisitor):
         for plugin_opt in track_header[16]:
             for plugin in plugin_opt[1]:
                 plugins.append(plugin[1])
+        
+        this_index = self.track_index
+        self.track_index += 1
 
         return TrackDescriptor(
+            index=this_index,
             name=track_header[2],
             comments=track_header[6],
             user_delay_samples=track_header[10],
@@ -192,8 +196,8 @@ class DocParserVisitor(NodeVisitor):
     def visit_frame_rate(node, _):
         return node.text
 
-    @staticmethod
-    def visit_track_listing(_, visited_children):
+    def visit_track_listing(self, _, visited_children):
+        self.track_index = 0
         return visited_children[1]
 
     @staticmethod

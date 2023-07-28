@@ -182,7 +182,7 @@ class DocParserVisitor(NodeVisitor):
         for plugin_opt in track_header[16]:
             for plugin in plugin_opt[1]:
                 plugins.append(plugin[1])
-        
+
         this_index = self.track_index
         self.track_index += 1
 

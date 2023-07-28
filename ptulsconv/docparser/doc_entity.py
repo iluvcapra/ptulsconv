@@ -45,7 +45,7 @@ class SessionDescriptor:
         """
         Iterate each track clip with its respective owning clip and timing
         information.
-        
+
         :returns: A Generator that yields track, clip, start time, finish time,
         and timestamp
         """

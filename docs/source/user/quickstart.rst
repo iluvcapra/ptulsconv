@@ -54,23 +54,17 @@ These tags can appear in any order.
   number and name.
 
 
-Step 3: Export Tracks from Pro Tools as a Text File
----------------------------------------------------
+Step 3: Run `ptulsconv`
+------------------------
 
-Export the file as a UTF-8 and be sure to include clips and markers. Export 
-using the Timecode time format.
+In Pro Tools, select the tracks that contain your spot clips.
 
-Do not export crossfades.
+Then, in your Terminal, run the following command:::
 
+    ptulsconv
 
-Step 4: Run `ptulsconv` on the Text Export
-------------------------------------------
-
-In your Terminal, run the following command:
-
-    ptulsconv path/to/your/TEXT_EXPORT.txt
-
-`ptulsconv` will create a folder named "Title_CURRENT_DATE", and within that 
+`ptulsconv` will connect to Pro Tools and read all of the clips on the selected
+track. It will then create a folder named "Title_CURRENT_DATE", and within that 
 folder it will create several PDFs and folders:
 
 - "TITLE ADR Report" 📄 a PDF tabular report of every ADR line you've spotted.

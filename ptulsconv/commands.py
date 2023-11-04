@@ -32,7 +32,7 @@ from ptulsconv.pdf.continuity import output_report as output_continuity
 from json import JSONEncoder
 
 
-class MyEncoder(JSONEncoder):
+class FractionEncoder(JSONEncoder):
     """
     A subclass of :class:`JSONEncoder` which encodes :class:`Fraction` objects
     as a dict.
@@ -193,7 +193,7 @@ def convert(major_mode, input_file=None, output=sys.stdout, warnings=True):
     session_tc_format = session.header.timecode_format
 
     if major_mode == 'raw':
-        output.write(MyEncoder().encode(session))
+        output.write(FractionEncoder().encode(session))
 
     else:
         compiler = TagCompiler()
@@ -201,7 +201,7 @@ def convert(major_mode, input_file=None, output=sys.stdout, warnings=True):
         compiled_events = list(compiler.compile_events())
 
         if major_mode == 'tagged':
-            output.write(MyEncoder().encode(compiled_events))
+            output.write(FractionEncoder().encode(compiled_events))
 
         elif major_mode == 'doc':
             generic_events, adr_lines = make_entities(compiled_events)

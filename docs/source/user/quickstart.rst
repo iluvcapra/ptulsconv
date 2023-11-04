@@ -24,17 +24,19 @@ Step 2: Add More Information to Your Spots
 
 Clips, tracks and markers in your session can contain additional information 
 to make your ADR reports more complete and useful. You add this information 
-with *tagging*.
+with :ref:`tagging<tags>`.
 
 * Every ADR clip must have a unique cue number. After the name of each clip,
-  add the letters "$QN=" and then a unique number (any combination of letters 
+  add the letters ``$QN=`` and then a unique number (any combination of letters 
   or numbers that don't contain a space). You can type these yourself or add 
   them with batch-renaming when you're done spotting.
 * ADR spots should usually have a reason indicated, so you can remember exactly
-  why you're replacing a particular line. Do this by adding the the text "{R="
-  to your clip names after the prompt and then some short text describing the 
-  reason, and then a closing "}". You can type anything, including spaces.
-* If a line is a TV cover line, you can add the text "[TV]" to the end.
+  why you're replacing a particular line. Do this by adding the the text 
+  ``{R=`` to your clip names after the prompt and then some short text 
+  describing the reason, and then a closing ``}``. You can type anything, 
+  including spaces.
+* If, for example, a line is a TV cover line, you can add the text ``[TV]`` to 
+  the end.
 
 So for example, some ADR spot's clip name might look like::
 
@@ -45,12 +47,12 @@ These tags can appear in any order.
 
 * You can add the name of an actor to a character's track, so this information
   will appear on your reports. In the track name, or in the track comments,
-  type "{Actor=xxx}" replacing the xxx with the actor's name.
+  type ``{Actor=xxx}`` replacing the xxx with the actor's name.
 * Characters need to have a number (perhaps from the cast list) to express how
-  they should be collated. Add "$CN=xxx" with a unique number to each track (or
-  the track's comments.)
+  they should be collated. Add ``$CN=xxx`` with 
+  a unique number to each track (or the track's comments.)
 * Set the scene for each line with markers. Create a marker at the beginning of 
-  a scene and make it's name "{Sc=xxx}", replacing the xxx with the scene 
+  a scene and make it's name ``{Sc=xxx}``, replacing the xxx with the scene 
   number and name.
 
 

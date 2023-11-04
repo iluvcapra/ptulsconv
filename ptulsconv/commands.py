@@ -97,7 +97,7 @@ def output_adr_csv(lines: List[ADRLine], time_format: TimecodeFormat):
         os.chdir("..")
 
 
-def generate_documents(session_tc_format, scenes, adr_lines: Iterator[ADRLine],
+def generate_documents(session_tc_format, scenes, adr_lines: List[ADRLine],
                        title):
     """
     Create PDF output.
@@ -112,7 +112,7 @@ def generate_documents(session_tc_format, scenes, adr_lines: Iterator[ADRLine],
     supervisor = next((x.supervisor for x in adr_lines), "")
 
     output_continuity(scenes=scenes, tc_display_format=session_tc_format,
-                      title=title, client=client,
+                      title=title, client=client or "",
                       supervisor=supervisor)
 
     reels = ['R1', 'R2', 'R3', 'R4', 'R5', 'R6']
@@ -227,7 +227,7 @@ def convert(major_mode, input_file=None, output=sys.stdout, warnings=True):
             if warnings:
                 perform_adr_validations(iter(adr_lines))
 
-            generate_documents(session_tc_format, scenes, iter(adr_lines),
+            generate_documents(session_tc_format, scenes, adr_lines,
                                title)
 
 

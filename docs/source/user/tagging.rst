@@ -27,12 +27,13 @@ The row output for this clip will contain columns for the values:
 
 
 These fields can be defined in the clip name in three ways:
-* `$NAME=VALUE` creates a field named `NAME` with a one-word value `VALUE`.
-* `{NAME=VALUE}` creates a field named `NAME` with the value `VALUE`. `VALUE` 
-in this case may contain spaces or any chartacter up to the closing bracket.
-* `[NAME]` creates a field named `NAME` with a value `NAME`. This can be used 
-to create a boolean-valued field; in the output, clips with the field 
-will have it, and clips without will have the column with an empty value.
+
+  * `$NAME=VALUE` creates a field named `NAME` with a one-word value `VALUE`.
+  * `{NAME=VALUE}` creates a field named `NAME` with the value `VALUE`. `VALUE` 
+    in this case may contain spaces or any chartacter up to the closing bracket.
+  * `[NAME]` creates a field named `NAME` with a value `NAME`. This can be used 
+    to create a boolean-valued field; in the output, clips with the field 
+    will have it, and clips without will have the column with an empty value.
 
 For example, if three clips are named:::
 

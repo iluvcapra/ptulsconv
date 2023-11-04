@@ -36,7 +36,7 @@ with *tagging*.
   reason, and then a closing "}". You can type anything, including spaces.
 * If a line is a TV cover line, you can add the text "[TV]" to the end.
 
-So for example, some ADR spot's clip name might look like:
+So for example, some ADR spot's clip name might look like::
 
     Get to the ladder! {R=Noise} $QN=J1001
     "Forget your feelings! {R=TV Cover} $QN=J1002 [TV]
@@ -59,7 +59,7 @@ Step 3: Run `ptulsconv`
 
 In Pro Tools, select the tracks that contain your spot clips.
 
-Then, in your Terminal, run the following command:::
+Then, in your Terminal, run the following command::
 
     ptulsconv
 

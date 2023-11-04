@@ -225,9 +225,10 @@ def convert(major_mode, input_file=None, output=sys.stdout, warnings=True):
             print_status_style("%i ADR events found." % len(adr_lines))
 
             if warnings:
-                perform_adr_validations(adr_lines)
+                perform_adr_validations(iter(adr_lines))
 
-            generate_documents(session_tc_format, scenes, adr_lines, title)
+            generate_documents(session_tc_format, scenes, iter(adr_lines),
+                               title)
 
 
 def perform_adr_validations(lines: Iterator[ADRLine]):

@@ -1,8 +1,8 @@
 from parsimonious.nodes import NodeVisitor
 from parsimonious.grammar import Grammar
 
-from .doc_entity import SessionDescriptor, HeaderDescriptor, TrackDescriptor,\
-    FileDescriptor, TrackClipDescriptor, ClipDescriptor, PluginDescriptor,\
+from .doc_entity import SessionDescriptor, HeaderDescriptor, TrackDescriptor, \
+    FileDescriptor, TrackClipDescriptor, ClipDescriptor, PluginDescriptor, \
     MarkerDescriptor
 
 

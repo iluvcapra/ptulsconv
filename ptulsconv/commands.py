@@ -14,9 +14,9 @@ from fractions import Fraction
 import ptsl
 
 from .docparser.adr_entity import make_entities, ADRLine
-from .reporting import print_section_header_style, print_status_style,\
+from .reporting import print_section_header_style, print_status_style, \
     print_warning
-from .validations import validate_unique_field, validate_non_empty_field,\
+from .validations import validate_unique_field, validate_non_empty_field, \
     validate_dependent_value
 
 from ptulsconv.docparser import parse_document

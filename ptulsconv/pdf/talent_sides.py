@@ -5,7 +5,7 @@ from .__init__ import make_doc_template
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 
-from reportlab.platypus import Paragraph, Spacer, KeepTogether, Table,\
+from reportlab.platypus import Paragraph, Spacer, KeepTogether, Table, \
     HRFlowable
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors

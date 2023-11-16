@@ -26,10 +26,10 @@ Clips, tracks and markers in your session can contain additional information
 to make your ADR reports more complete and useful. You add this information 
 with :ref:`tagging<tags>`.
 
-* Every ADR clip must have a unique cue number. After the name of each clip,
-  add the letters ``$QN=`` and then a unique number (any combination of letters 
-  or numbers that don't contain a space). You can type these yourself or add 
-  them with batch-renaming when you're done spotting.
+* **Every ADR clip must have a unique cue number.** After the name of each
+  clip, add the letters ``$QN=`` and then a unique number (any combination of
+  letters or numbers that don't contain a space). You can type these yourself
+  or add them with batch-renaming when you're done spotting.
 * ADR spots should usually have a reason indicated, so you can remember exactly
   why you're replacing a particular line. Do this by adding the the text 
   ``{R=`` to your clip names after the prompt and then some short text 

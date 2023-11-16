@@ -41,6 +41,11 @@ def main():
                       default='doc',
                       help='Set output format, `raw`, `tagged`, `doc`.')
 
+    parser.add_option('-m', '--movie-opts',
+                      dest='movie_opts',
+                      metavar="MOVIE_OPTS",
+                      help="Set movie options")
+
     warn_options = OptionGroup(title="Warning and Validation Options",
                                parser=parser)
 

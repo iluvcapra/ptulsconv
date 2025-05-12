@@ -81,10 +81,12 @@ protools_text_export_grammar = Grammar(
                              "TIME REFERENCE    " fs
                              "UNITS    " fs
                              "NAME                             " fs
+                             ("TRACK NAME                       " fs
+                             "TRACK TYPE   " fs)?
                              "COMMENTS" rs
 
     marker_record = integer_value isp fs string_value fs integer_value isp fs
-                    string_value fs string_value fs string_value rs
+                    string_value fs string_value fs (string_value fs string_value fs)? string_value rs
 
     fs = "\t"
     rs = "\n"
@@ -241,12 +243,15 @@ class DocParserVisitor(NodeVisitor):
 
     @staticmethod
     def visit_marker_record(_, visited_children):
+        if isinstance(visited_children[12], list):
+            pass
+
         return MarkerDescriptor(number=visited_children[0],
                                 location=visited_children[3],
                                 time_reference=visited_children[5],
                                 units=visited_children[8],
                                 name=visited_children[10],
-                                comments=visited_children[12])
+                                comments=visited_children[13])
 
     @staticmethod
     def visit_formatted_clip_name(_, visited_children):

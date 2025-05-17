@@ -1,0 +1,24 @@
+SESSION NAME:	Test for ptulsconv
+SAMPLE RATE:	48000.000000
+BIT DEPTH:	24-bit
+SESSION START TIMECODE:	00:00:00:00
+TIMECODE FORMAT:	23.976 Frame
+# OF AUDIO TRACKS:	1
+# OF AUDIO CLIPS:	0
+# OF AUDIO FILES:	0
+
+
+T R A C K  L I S T I N G
+TRACK NAME:	Hamlet
+COMMENTS:	{Actor=Laurence Olivier}
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	Test Line 1 $QN=T1001         	   00:00:00:00	   00:00:02:00	   00:00:02:00	Unmuted
+1       	2       	Test Line 2 $QN=T1002         	   00:00:04:00	   00:00:06:00	   00:00:02:00	Unmuted
+
+
+M A R K E R S  L I S T I N G
+#   	LOCATION     	TIME REFERENCE    	UNITS    	NAME                             	TRACK NAME                       	TRACK TYPE   	COMMENTS
+1   	00:00:00:00  	0                 	Samples  	$Title=Multiple Marker Rulers Project	Markers                          	Ruler                            	
+2   	00:00:04:00  	192192            	Samples  	Track Marker                     	Hamlet                           	Track                            	

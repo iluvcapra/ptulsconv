@@ -244,15 +244,17 @@ class DocParserVisitor(NodeVisitor):
 
     @staticmethod
     def visit_marker_record(_, visited_children):
+        is_track_marker = False
         if isinstance(visited_children[12], list):
-            pass
+            is_track_marker = visited_children[12][2] == "Track"
 
         return MarkerDescriptor(number=visited_children[0],
                                 location=visited_children[3],
                                 time_reference=visited_children[5],
                                 units=visited_children[8],
                                 name=visited_children[10],
-                                comments=visited_children[13])
+                                comments=visited_children[13],
+                                track_marker=is_track_marker)
 
     @staticmethod
     def visit_formatted_clip_name(_, visited_children):

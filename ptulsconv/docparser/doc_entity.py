@@ -19,11 +19,17 @@ class SessionDescriptor:
         self.tracks = kwargs['tracks']
         self.markers = kwargs['markers']
 
-    def markers_timed(self) -> Iterator[Tuple['MarkerDescriptor', Fraction]]:
+    def markers_timed(self,
+                      only_ruler_markers: bool = True) -> \
+            Iterator[Tuple['MarkerDescriptor', Fraction]]:
         """
         Iterate each marker in the session with its respective time reference.
         """
         for marker in self.markers:
+
+            if marker.track_marker and only_ruler_markers:
+                continue
+
             marker_time = Fraction(marker.time_reference,
                                    int(self.header.sample_rate))
             # marker_time = self.header.convert_timecode(marker.location)
@@ -182,6 +188,7 @@ class MarkerDescriptor:
     units: str
     name: str
     comments: str
+    track_marker: bool
 
     def __init__(self, **kwargs):
         self.number = kwargs['number']
@@ -190,3 +197,4 @@ class MarkerDescriptor:
         self.units = kwargs['units']
         self.name = kwargs['name']
         self.comments = kwargs['comments']
+        self.track_marker = kwargs['track_marker']

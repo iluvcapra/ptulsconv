@@ -86,7 +86,8 @@ protools_text_export_grammar = Grammar(
                              "COMMENTS" rs
 
     marker_record = integer_value isp fs string_value fs integer_value isp fs
-                    string_value fs string_value fs (string_value fs string_value fs)? string_value rs
+                    string_value fs string_value fs (string_value fs 
+                    string_value fs)? string_value rs
 
     fs = "\t"
     rs = "\n"

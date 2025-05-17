@@ -102,14 +102,14 @@ class TestTagCompiler(unittest.TestCase):
                                                time_reference=48000 * 3600,
                                                units="Samples",
                                                name="Marker 1 {Part=1}",
-                                               comments=""
+                                               comments="", track_marker=False,
                                                ),
                    doc_entity.MarkerDescriptor(number=2,
                                                location="01:00:01:00",
                                                time_reference=48000 * 3601,
                                                units="Samples",
                                                name="Marker 2 {Part=2}",
-                                               comments="[M1]"
+                                               comments="[M1]", track_marker=False,
                                                ),
                    ]
 

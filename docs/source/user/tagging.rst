@@ -76,7 +76,10 @@ Fields set in markers, and in marker comments, will be applied to all clips
 whose finish is *after* that marker. Fields in markers are applied cumulatively 
 from breakfast to dinner in the session. The latest marker applying to a clip has
 precedence, so if one marker comes after the other, but both define a field, the 
-value in the later marker
+value in the later marker.
+
+All markers on all rulers will be scanned for tags. All markers on tracks will 
+be ignored.
 
 An important note here is that, always, fields set on the clip name have the 
 highest precedence. If a field is set in a clip name, the same field set on the 

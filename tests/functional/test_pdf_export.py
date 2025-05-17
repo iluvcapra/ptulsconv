@@ -2,6 +2,7 @@ import unittest
 
 import tempfile
 
+import sys
 import os.path
 import os
 import glob
@@ -15,14 +16,17 @@ class TestPDFExport(unittest.TestCase):
         be converted into PDF docs without throwing an error
         """
         files = [os.path.dirname(__file__) + "/../export_cases/Robin Hood Spotting.txt"] 
-        #files.append(os.path.dirname(__file__) + "/../export_cases/Robin Hood Spotting2.txt")
+        files.append(os.path.dirname(__file__) + "/../export_cases/Test for ptulsconv.txt")
         for path in files:
             tempdir = tempfile.TemporaryDirectory()
             os.chdir(tempdir.name)
             try:
                 commands.convert(input_file=path, major_mode='doc')
             except:
-                assert False, "Error processing file %s" % path
+                print("Error in test_report_generation")
+                print(f"File: {path}")
+                print(repr(sys.exception()))
+                raise sys.exception()
             finally:
                 tempdir.cleanup()
 

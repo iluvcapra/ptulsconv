@@ -86,8 +86,8 @@ protools_text_export_grammar = Grammar(
                              "COMMENTS" rs
 
     marker_record = integer_value isp fs string_value fs integer_value isp fs
-                    string_value fs string_value fs (string_value fs
-                    string_value fs)? string_value rs
+                    string_value fs string_value fs
+                    (string_value fs string_value fs)? string_value rs
 
     fs = "\t"
     rs = "\n"
@@ -245,8 +245,8 @@ class DocParserVisitor(NodeVisitor):
     @staticmethod
     def visit_marker_record(_, visited_children):
         is_track_marker = False
-        if isinstance(visited_children[12], list):
-            is_track_marker = visited_children[12][2] == "Track"
+        if isinstance(visited_children[12][0], list):
+            is_track_marker = visited_children[12][0][2] == "Track"
 
         return MarkerDescriptor(number=visited_children[0],
                                 location=visited_children[3],

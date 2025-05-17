@@ -20,5 +20,5 @@ CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	D
 
 M A R K E R S  L I S T I N G
 #   	LOCATION     	TIME REFERENCE    	UNITS    	NAME                             	TRACK NAME                       	TRACK TYPE   	COMMENTS
-1   	00:00:00:00  	0                 	Samples  	$Title=Multiple Marker Rulers Project	Markers                          	Ruler                            	
+1   	00:00:00:00  	0                 	Samples  	{Title=Multiple Marker Rulers Project}	Markers                          	Ruler                            	
 2   	00:00:04:00  	192192            	Samples  	Track Marker                     	Hamlet                           	Track                            	

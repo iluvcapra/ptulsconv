@@ -8,6 +8,7 @@ import os
 import glob
 from ptulsconv import commands
 
+
 class TestPDFExport(unittest.TestCase):
     def test_report_generation(self):
         """
@@ -15,7 +16,8 @@ class TestPDFExport(unittest.TestCase):
         be converted into PDF docs without throwing an error
         """
         files = []
-        files = [os.path.dirname(__file__) + "/../export_cases/Robin Hood Spotting.txt"] 
+        files = [os.path.dirname(__file__) +
+                 "/../export_cases/Robin Hood Spotting.txt"]
         for path in files:
             tempdir = tempfile.TemporaryDirectory()
             os.chdir(tempdir.name)
@@ -31,7 +33,8 @@ class TestPDFExport(unittest.TestCase):
 
     def test_report_generation_track_markers(self):
         files = []
-        files.append(os.path.dirname(__file__) + "/../export_cases/Test for ptulsconv.txt")
+        files.append(os.path.dirname(__file__) +
+                     "/../export_cases/Test for ptulsconv.txt")
         for path in files:
             tempdir = tempfile.TemporaryDirectory()
             os.chdir(tempdir.name)
@@ -44,8 +47,6 @@ class TestPDFExport(unittest.TestCase):
                 raise e
             finally:
                 tempdir.cleanup()
-
-
 
 
 if __name__ == '__main__':

@@ -75,7 +75,7 @@ protools_text_export_grammar = Grammar(
 
     track_clip_state     = ("Muted" / "Unmuted")
 
-    markers_block        = markers_block_header 
+    markers_block        = markers_block_header
                            (markers_list / markers_list_simple)
 
     markers_list_simple  = markers_column_header_simple marker_record_simple*
@@ -84,18 +84,18 @@ protools_text_export_grammar = Grammar(
 
     markers_block_header = "M A R K E R S  L I S T I N G" rs
 
-    markers_column_header_simple = 
+    markers_column_header_simple =
                           "#   	LOCATION     	TIME REFERENCE    	"
                           "UNITS    	NAME                             	"
                           "COMMENTS" rs
 
-    markers_column_header = 
+    markers_column_header =
                           "#   	LOCATION     	TIME REFERENCE    	"
                           "UNITS    	NAME                             	"
                           "TRACK NAME                       	"
                           "TRACK TYPE   	COMMENTS" rs
 
-    marker_record_simple   = integer_value isp fs string_value fs 
+    marker_record_simple   = integer_value isp fs string_value fs
                             integer_value isp fs string_value fs string_value
                             fs string_value rs
 

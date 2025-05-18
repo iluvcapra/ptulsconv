@@ -9,7 +9,8 @@ from .doc_entity import SessionDescriptor, HeaderDescriptor, TrackDescriptor, \
 protools_text_export_grammar = Grammar(
     r"""
     document = header files_section? clips_section? plugin_listing?
-               track_listing? markers_listing?
+               track_listing? markers_block?
+
     header   = "SESSION NAME:" fs string_value rs
                "SAMPLE RATE:" fs float_value rs
                "BIT DEPTH:" fs integer_value "-bit" rs
@@ -74,20 +75,27 @@ protools_text_export_grammar = Grammar(
 
     track_clip_state     = ("Muted" / "Unmuted")
 
-    markers_listing        = markers_listing_header markers_column_header
-                             marker_record*
-    markers_listing_header = "M A R K E R S  L I S T I N G" rs
-    markers_column_header  = "#   " fs "LOCATION     " fs
-                             "TIME REFERENCE    " fs
-                             "UNITS    " fs
-                             "NAME                             " fs
-                             ("TRACK NAME                       " fs
-                             "TRACK TYPE   " fs)?
-                             "COMMENTS" rs
+    markers_block        = markers_block_header (markers_list / markers_list_simple)
+
+    markers_list_simple  = markers_column_header_simple marker_record_simple*
+
+    markers_list         = markers_column_header marker_record*
+
+    markers_block_header = "M A R K E R S  L I S T I N G" rs
+
+    markers_column_header_simple = 
+                          "#   	LOCATION     	TIME REFERENCE    	UNITS    	NAME                             	COMMENTS" rs
+
+    markers_column_header = 
+"#   	LOCATION     	TIME REFERENCE    	UNITS    	NAME                             	TRACK NAME                       	TRACK TYPE   	COMMENTS" rs
+
+    marker_record_simple   = integer_value isp fs string_value fs 
+                            integer_value isp fs string_value fs string_value
+                            fs string_value rs
 
     marker_record = integer_value isp fs string_value fs integer_value isp fs
-                    string_value fs string_value fs
-                    (string_value fs string_value fs)? string_value rs
+                    string_value fs string_value fs string_value fs
+                    string_value fs string_value rs
 
     fs = "\t"
     rs = "\n"
@@ -234,26 +242,36 @@ class DocParserVisitor(NodeVisitor):
         return node.text
 
     @staticmethod
-    def visit_markers_listing(_, visited_children):
+    def visit_markers_block(_, visited_children):
         markers = []
 
-        for marker in visited_children[2]:
+        for marker in visited_children[1][0][1]:
             markers.append(marker)
 
         return markers
 
     @staticmethod
-    def visit_marker_record(_, visited_children):
-        is_track_marker = False
-        if isinstance(visited_children[12][0], list):
-            is_track_marker = visited_children[12][0][2] == "Track"
+    def visit_marker_record_simple(_, visited_children):
 
         return MarkerDescriptor(number=visited_children[0],
                                 location=visited_children[3],
                                 time_reference=visited_children[5],
                                 units=visited_children[8],
                                 name=visited_children[10],
-                                comments=visited_children[13],
+                                comments=visited_children[12],
+                                track_marker=False)
+
+    @staticmethod
+    def visit_marker_record(_, visited_children):
+        track_type = visited_children[15]
+        is_track_marker = (track_type == "Track")
+
+        return MarkerDescriptor(number=visited_children[0],
+                                location=visited_children[3],
+                                time_reference=visited_children[5],
+                                units=visited_children[8],
+                                name=visited_children[10],
+                                comments=visited_children[16],
                                 track_marker=is_track_marker)
 
     @staticmethod

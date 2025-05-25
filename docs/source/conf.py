@@ -3,6 +3,7 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import importlib
 import sys
 import os
 
@@ -15,9 +16,9 @@ import ptulsconv
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'ptulsconv'
-copyright = '2019-2023 Jamie Hardt. All rights reserved'
+copyright = ptulsconv.__oopyright__
 # author = ptulsconv.__author__
-release = ptulsconv.__version__
+release = importlib.metadata.version("ptulsconv")
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

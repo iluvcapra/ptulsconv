@@ -6,7 +6,12 @@ Usage Form
 
 Invocations of ptulsconv take the following form:
 
-    ptulsconv [options] IN_FILE
+    ptulsconv [options] [IN_FILE]
+
+
+`IN_FILE` is a Pro Tools text export in UTF-8 encoding. If `IN_FILE` is 
+missing, `ptulsconv` will attempt to connect to Pro Tools and read cue data 
+from the selected tracks of the currently-open session.
 
 
 Flags

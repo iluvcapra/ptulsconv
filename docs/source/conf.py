@@ -16,7 +16,7 @@ import ptulsconv
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'ptulsconv'
-copyright = ptulsconv.__oopyright__
+copyright = '2019-2025 Jamie Hardt. All rights reserved'
 # author = ptulsconv.__author__
 release = importlib.metadata.version("ptulsconv")
 

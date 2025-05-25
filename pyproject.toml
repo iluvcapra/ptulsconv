@@ -1,3 +1,22 @@
+[project]
+name = "ptulsconv"
+license = { file = "LICENSE" }
+classifiers = [
+    'License :: OSI Approved :: MIT License',
+    'Topic :: Multimedia',
+    'Topic :: Multimedia :: Sound/Audio',
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Development Status :: 5 - Production/Stable",
+    "Topic :: Text Processing :: Filters"
+]
+requires-python = ">=3.8"
+keywords = ["text-processing", "parsers", "film", 
+    "broadcast", "editing", "editorial"]
+
 [tool.poetry]
 name = "ptulsconv"
 version = "2.2.2"
@@ -18,6 +37,7 @@ doc = ['sphinx', 'sphinx_rtd_theme']
 
 [tool.poetry.scripts]
 wavinfo = 'ptulsconv.__main__:main'
+
 
 [project.urls]
 Source = 'https://github.com/iluvcapra/ptulsconv'

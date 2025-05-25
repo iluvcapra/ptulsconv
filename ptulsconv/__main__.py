@@ -2,7 +2,8 @@ from optparse import OptionParser, OptionGroup
 import datetime
 import sys
 
-from ptulsconv import __name__, __copyright__
+from ptulsconv import __name__
+import ptulsconv
 from ptulsconv.commands import convert
 from ptulsconv.reporting import print_status_style, \
     print_banner_style, print_section_header_style, \
@@ -82,7 +83,7 @@ def main():
 
     parser.add_option_group(informational_options)
 
-    print_banner_style(__copyright__)
+    print_banner_style(ptulsconv.__copyright__)
 
     (options, args) = parser.parse_args(sys.argv)
 

@@ -1,13 +1,5 @@
-[build-system]
-requires = ["flit_core >=3.2,<4"]
-build-backend = "flit_core.buildapi"
-
 [project]
 name = "ptulsconv"
-authors = [
-    {name = "Jamie Hardt", email = "jamiehardt@me.com"},
-]
-readme = "README.md"
 license = { file = "LICENSE" }
 classifiers = [
     'License :: OSI Approved :: MIT License',
@@ -22,32 +14,36 @@ classifiers = [
     "Topic :: Text Processing :: Filters"
 ]
 requires-python = ">=3.8"
-dynamic = ["version", "description"]
 keywords = ["text-processing", "parsers", "film", 
     "broadcast", "editing", "editorial"]
-dependencies = [
-  'parsimonious',
-  'tqdm',
-  'reportlab',
-  'py-ptsl >= 101.1.0'
-  ]
 
-[project.optional-dependencies]
-doc = [
-    "Sphinx ~= 5.3.0",
-    "sphinx-rtd-theme >= 1.1.1"
-]
-
-[tool.flit.module]
+[tool.poetry]
 name = "ptulsconv"
+version = "2.2.2"
+description = "Read Pro Tools Text exports and generate PDF ADR Reports, JSON"
+authors = ["Jamie Hardt <jamiehardt@me.com>"]
+license = "MIT"
+readme = "README.md"
 
-[project.scripts]
-ptulsconv = "ptulsconv.__main__:main"
+[tool.poetry.dependencies]
+python = "^3.8"
+parsimonious = "^0.10.0"
+tqdm = "^4.67.1"
+reportlab = "^4.4.1"
+py-ptsl = "^101.1.0"
 
-[project.entry_points.console_scripts]
-ptulsconv = 'ptulsconv.__main__:main'
+[tool.poetry.extras]
+doc = ['sphinx', 'sphinx_rtd_theme']
+
+[tool.poetry.scripts]
+wavinfo = 'ptulsconv.__main__:main'
+
 
 [project.urls]
 Source = 'https://github.com/iluvcapra/ptulsconv'
 Issues = 'https://github.com/iluvcapra/ptulsconv/issues'
 Documentation = 'https://ptulsconv.readthedocs.io/'
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

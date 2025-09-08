@@ -19,7 +19,7 @@ keywords = ["text-processing", "parsers", "film",
 
 [tool.poetry]
 name = "ptulsconv"
-version = "2.2.4"
+version = "3.0.0"
 description = "Read Pro Tools Text exports and generate PDF ADR Reports, JSON"
 authors = ["Jamie Hardt <jamiehardt@me.com>"]
 license = "MIT"

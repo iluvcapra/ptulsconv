@@ -1,6 +1,12 @@
 [project]
 name = "ptulsconv"
+version = "4.0.0"
+description = "Read Pro Tools Text exports and generate PDF ADR Reports, JSON"
+readme = "README.md"
+requires-python = ">=3.9"
 license = { file = "LICENSE" }
+keywords = ["text-processing", "parsers", "film", 
+    "broadcast", "editing", "editorial"]
 classifiers = [
     'License :: OSI Approved :: MIT License',
     'Topic :: Multimedia',
@@ -13,39 +19,34 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Topic :: Text Processing :: Filters"
 ]
-requires-python = ">=3.8"
-keywords = ["text-processing", "parsers", "film", 
-    "broadcast", "editing", "editorial"]
-
-[tool.poetry]
-name = "ptulsconv"
-version = "4.0.0"
-description = "Read Pro Tools Text exports and generate PDF ADR Reports, JSON"
-authors = ["Jamie Hardt <jamiehardt@me.com>"]
-license = "MIT"
-readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.9"
-parsimonious = "^0.10.0"
-tqdm = "^4.67.1"
-reportlab = "^4.4.1"
-py-ptsl = "^600.0.0"
-sphinx_rtd_theme = {version= '>= 1.1.1', optional=true}
-sphinx = {version= '>= 5.3.0', optional=true}
-
-[tool.poetry.extras]
-doc = ['sphinx', 'sphinx_rtd_theme']
-
-[tool.poetry.scripts]
-ptulsconv = 'ptulsconv.__main__:main'
-
+authors = [{name = "Jamie Hardt", email = "<jamiehardt@me.com>"}]
+dependencies = [
+    "parsimonious>=0.10.0",
+    "py-ptsl>=600.0.0",
+    "reportlab>=4.4.4",
+    "tqdm>=4.67.1",
+]
 
 [project.urls]
 Source = 'https://github.com/iluvcapra/ptulsconv'
 Issues = 'https://github.com/iluvcapra/ptulsconv/issues'
 Documentation = 'https://ptulsconv.readthedocs.io/'
 
+[project.optional-dependencies]
+doc = [
+    "sphinx>=7.4.7",
+    "sphinx-rtd-theme>=3.0.2",
+]
+
+
+[project.scripts]
+ptulsconv = "ptulsconv:__main__.main"
+
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.8.18,<0.9.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "flake8>=7.3.0",
+]

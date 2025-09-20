@@ -2,6 +2,8 @@ from optparse import OptionParser, OptionGroup
 import datetime
 import sys
 
+import importlib.metadata
+
 from ptulsconv import __name__
 import ptulsconv
 from ptulsconv.commands import convert
@@ -82,8 +84,9 @@ def main():
         'and exit.')
 
     parser.add_option_group(informational_options)
-
-    print_banner_style(ptulsconv.__name__)
+    
+    version = importlib.metadata.version(ptulsconv.__name__)
+    print_banner_style(f"{ptulsconv.__name__} - version {version}")
     print_banner_style(ptulsconv.__copyright__)
 
     (options, args) = parser.parse_args(sys.argv)

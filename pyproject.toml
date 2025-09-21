@@ -4,7 +4,8 @@ version = "4.0.0"
 description = "Read Pro Tools Text exports and generate PDF ADR Reports, JSON"
 readme = "README.md"
 requires-python = ">=3.9"
-license = { file = "LICENSE" }
+
+license-files = ["LICENSE"]
 keywords = ["text-processing", "parsers", "film", 
     "broadcast", "editing", "editorial"]
 classifiers = [
@@ -27,6 +28,9 @@ dependencies = [
     "tqdm>=4.67.1",
 ]
 
+# [tool.uv.build-backend]
+# data = { headers = "include/headers", scripts = "bin" }
+
 [project.urls]
 Source = 'https://github.com/iluvcapra/ptulsconv'
 Issues = 'https://github.com/iluvcapra/ptulsconv/issues'
@@ -48,5 +52,9 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
-    "flake8>=7.3.0",
+    "ruff>=0.13.1",
+]
+doc = [
+    "sphinx>=7.4.7",
+    "sphinx-rtd-theme>=3.0.2",
 ]

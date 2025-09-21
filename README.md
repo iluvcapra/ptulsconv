@@ -22,7 +22,11 @@ For a quick overview of how to cue ADR with `ptulsconv`, check out the [Quicksta
 The easiest way to install on your site is to use `pip`:
 
     % pip3 install ptulsconv
-    
+
+If you are using `uv` you can also do a tool install...
+
+    % uv tool install ptulsconv
+
 This will install the necessary libraries on your host and gives you 
 command-line access to the tool through an entry-point `ptulsconv`. In a 
 terminal window type `ptulsconv -h` for a list of available options.

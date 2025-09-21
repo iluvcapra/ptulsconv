@@ -55,8 +55,8 @@ def output_adr_csv(lines: List[ADRLine], time_format: TimecodeFormat):
     directories for each character number and name pair, and within that
     directory, creates a CSV file for each reel.
     """
-    reels: set[str | None] = set([ln.reel for ln in lines])
 
+    reels: set[str | None] = set([ln.reel for ln in lines])
     for n, name in [(n.character_id, n.character_name) for n in lines]:
         dir_name = "%s_%s" % (n, name)
         os.makedirs(dir_name, exist_ok=True)

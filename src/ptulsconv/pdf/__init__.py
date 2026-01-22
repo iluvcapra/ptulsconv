@@ -79,13 +79,13 @@ def make_doc_template(page_size, filename, document_title,
     header_box, page_box = page_box.split_y(0.75 * inch, direction='d')
     title_box, report_box = header_box.split_x(3.5 * inch, direction='r')
 
-    on_page_lambda = (lambda c, _:
-                      draw_header_footer(c, report_box, title_box,
-                                         footer_box, title=title,
-                                         supervisor=supervisor,
-                                         document_subheader=document_subheader,
-                                         client=client,
-                                         doc_title=document_header))
+    def on_page_lambda(c, _):
+        draw_header_footer(c, report_box, title_box,
+                     footer_box, title=title,
+                     supervisor=supervisor,
+                     document_subheader=document_subheader,
+                     client=client,
+                     doc_title=document_header)
 
     frames = [Frame(page_box.min_x, page_box.min_y,
                     page_box.width, page_box.height)]

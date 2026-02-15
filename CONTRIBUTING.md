@@ -1,4 +1,6 @@
 # Contributing to ptulsconv
+\
+Contributions made by Large Language Models are politely declined.
 
 ## Testing
 

@@ -15,7 +15,7 @@ build:
       - pip install --upgrade --upgrade-strategy only-if-needed --group doc .
     build:
       html:
-        python -m sphinx -T -b html -d _build/doctrees -D language=en . $READTHEDOCS_OUTPUT/html
+      - python -m sphinx -T -b html -d _build/doctrees -D language=en . $READTHEDOCS_OUTPUT/html
     post_build:
       - echo "Command run at 'post_build' step"
       - echo `date`

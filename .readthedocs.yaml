@@ -12,6 +12,7 @@ build:
     python: "3.10"
   jobs:
     pre_install:
+      - pip install --upgrade pip
       - pip install --upgrade --upgrade-strategy only-if-needed --group doc .
     build:
       html:

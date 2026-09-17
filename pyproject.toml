@@ -47,12 +47,12 @@ doc = [
 ptulsconv = "ptulsconv:__main__.main"
 
 [build-system]
-requires = ["uv_build>=0.8.18,<0.9.0"]
+requires = ["uv_build>=0.8.18,<0.12.0"]
 build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
-    "ruff>=0.13.1",
+    "ruff>=0.16.8",
 ]
 doc = [
     "sphinx>=7.4.7",

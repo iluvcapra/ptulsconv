@@ -4,19 +4,18 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 import importlib
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.abspath("../.."))
 print(sys.path)
 
-import ptulsconv
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'ptulsconv'
-copyright = '2019-2025 Jamie Hardt. All rights reserved'
+project = "ptulsconv"
+copyright = "2019-2025 Jamie Hardt. All rights reserved"
 version = "Version 2"
 release = importlib.metadata.version("ptulsconv")
 
@@ -24,31 +23,29 @@ release = importlib.metadata.version("ptulsconv")
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.todo",
+    "sphinx.ext.coverage",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.githubpages",
 ]
 
-templates_path = ['_templates']
+templates_path = ["_templates"]
 exclude_patterns = []
 
 
-master_doc = 'index'
+master_doc = "index"
 
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'sphinx_rtd_theme'
-html_static_path = ['_static']
-
+html_theme = "sphinx_rtd_theme"
+html_static_path = ["_static"]
 
 
 latex_documents = [
-    (master_doc, 'ptulsconv.tex', u'ptulsconv Documentation',
-     u'Jamie Hardt', 'manual'),
+    (master_doc, "ptulsconv.tex", "ptulsconv Documentation", "Jamie Hardt", "manual"),
 ]
 
 
@@ -67,7 +64,7 @@ epub_title = project
 # epub_uid = ''
 
 # A list of files that should not be packed into the epub file.
-epub_exclude_files = ['search.html']
+epub_exclude_files = ["search.html"]
 
 
 # -- Extension configuration -------------------------------------------------

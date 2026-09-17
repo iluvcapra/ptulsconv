@@ -1,13 +1,14 @@
-from parsimonious import NodeVisitor, Grammar
-from typing import Dict
 from enum import Enum
+from typing import Dict
+
+from parsimonious import Grammar, NodeVisitor
 
 
 class TagPreModes(Enum):
-    NORMAL = 'Normal'
-    APPEND = 'Append'
-    TIMESPAN = 'Timespan'
-    DIRECTIVE = 'Directive'
+    NORMAL = "Normal"
+    APPEND = "Append"
+    TIMESPAN = "Timespan"
+    DIRECTIVE = "Directive"
 
 
 tag_grammar = Grammar(
@@ -46,16 +47,15 @@ class TaggedStringResult:
 
 
 class TagListVisitor(NodeVisitor):
-
     @staticmethod
     def visit_document(_, visited_children) -> TaggedStringResult:
         modifier_opt, line_opt, _, tag_list_opt = visited_children
 
-        return TaggedStringResult(content=next(iter(line_opt), None),
-                                  tag_dict=next(iter(tag_list_opt), dict()),
-                                  mode=TagPreModes(
-                                      next(iter(modifier_opt), 'Normal'))
-                                  )
+        return TaggedStringResult(
+            content=next(iter(line_opt), None),
+            tag_dict=next(iter(tag_list_opt), dict()),
+            mode=TagPreModes(next(iter(modifier_opt), "Normal")),
+        )
 
     @staticmethod
     def visit_line(node, _):
@@ -63,11 +63,11 @@ class TagListVisitor(NodeVisitor):
 
     @staticmethod
     def visit_modifier(node, _):
-        if node.text.startswith('@'):
+        if node.text.startswith("@"):
             return TagPreModes.TIMESPAN
-        elif node.text.startswith('&'):
+        elif node.text.startswith("&"):
             return TagPreModes.APPEND
-        elif node.text.startswith('!'):
+        elif node.text.startswith("!"):
             return TagPreModes.DIRECTIVE
         else:
             return TagPreModes.NORMAL

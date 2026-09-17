@@ -3,16 +3,17 @@ This module defines classes and methods for converting :class:`Event` objects
 into :class:`ADRLine` objects.
 """
 
-from ptulsconv.docparser.tag_compiler import Event
-from typing import Optional, List, Tuple
 from dataclasses import dataclass
 from fractions import Fraction
+from typing import List, Optional, Tuple
 
+from ptulsconv.docparser.tag_compiler import Event
 from ptulsconv.docparser.tag_mapping import TagMapping
 
 
-def make_entities(from_events: List[Event]) -> Tuple[List['GenericEvent'],
-                                                     List['ADRLine']]:
+def make_entities(
+    from_events: List[Event],
+) -> Tuple[List["GenericEvent"], List["ADRLine"]]:
     """
     Accepts a list of Events and converts them into either ADRLine events or
     GenricEvents by calling :func:`make_entity` on each member.
@@ -46,14 +47,19 @@ def make_entity(from_event: Event) -> Optional[object]:
     """
     instance = GenericEvent
     tag_map = GenericEvent.tag_mapping
-    if 'QN' in from_event.tags.keys():
+    if "QN" in from_event.tags.keys():
         instance = ADRLine
         tag_map += ADRLine.tag_mapping
 
     new = instance()
-    TagMapping.apply_rules(tag_map, from_event.tags,
-                           from_event.clip_name, from_event.track_name,
-                           from_event.session_name, new)
+    TagMapping.apply_rules(
+        tag_map,
+        from_event.tags,
+        from_event.clip_name,
+        from_event.track_name,
+        from_event.session_name,
+        new,
+    )
 
     new.start = from_event.start
     new.finish = from_event.finish
@@ -75,8 +81,9 @@ class GenericEvent:
     requested_by: Optional[str] = None
 
     tag_mapping = [
-        TagMapping(source='Title', target="title",
-                   alt=TagMapping.ContentSource.Session),
+        TagMapping(
+            source="Title", target="title", alt=TagMapping.ContentSource.Session
+        ),
         TagMapping(source="Supv", target="supervisor"),
         TagMapping(source="Client", target="client"),
         TagMapping(source="Sc", target="scene"),
@@ -84,14 +91,12 @@ class GenericEvent:
         TagMapping(source="Reel", target="reel"),
         TagMapping(source="Note", target="note"),
         TagMapping(source="Rq", target="requested_by"),
-        TagMapping(source="OMIT", target="omitted",
-                   formatter=(lambda x: len(x) > 0)),
+        TagMapping(source="OMIT", target="omitted", formatter=(lambda x: len(x) > 0)),
     ]
 
 
 @dataclass
 class ADRLine(GenericEvent):
-
     priority: Optional[int] = None
     cue_number: Optional[str] = None
     character_id: Optional[str] = None
@@ -109,29 +114,23 @@ class ADRLine(GenericEvent):
     optional: bool = False
 
     tag_mapping = [
-
         TagMapping(source="P", target="priority"),
         TagMapping(source="QN", target="cue_number"),
         TagMapping(source="CN", target="character_id"),
-        TagMapping(source="Char", target="character_name",
-                   alt=TagMapping.ContentSource.Track),
+        TagMapping(
+            source="Char", target="character_name", alt=TagMapping.ContentSource.Track
+        ),
         TagMapping(source="Actor", target="actor_name"),
-        TagMapping(source="Line", target="prompt",
-                   alt=TagMapping.ContentSource.Clip),
+        TagMapping(source="Line", target="prompt", alt=TagMapping.ContentSource.Clip),
         TagMapping(source="R", target="reason"),
-        TagMapping(source="Mins", target="time_budget_mins",
-                   formatter=(lambda n: float(n))),
+        TagMapping(
+            source="Mins", target="time_budget_mins", formatter=(lambda n: float(n))
+        ),
         TagMapping(source="Spot", target="spot"),
         TagMapping(source="Shot", target="shot"),
-        TagMapping(source="EFF", target="effort",
-                   formatter=(lambda x: len(x) > 0)),
-        TagMapping(source="TV", target="tv",
-                   formatter=(lambda x: len(x) > 0)),
-        TagMapping(source="TBW", target="tbw",
-                   formatter=(lambda x: len(x) > 0)),
-
-        TagMapping(source="ADLIB", target="adlib",
-                   formatter=(lambda x: len(x) > 0)),
-        TagMapping(source="OPT", target="optional",
-                   formatter=(lambda x: len(x) > 0))
+        TagMapping(source="EFF", target="effort", formatter=(lambda x: len(x) > 0)),
+        TagMapping(source="TV", target="tv", formatter=(lambda x: len(x) > 0)),
+        TagMapping(source="TBW", target="tbw", formatter=(lambda x: len(x) > 0)),
+        TagMapping(source="ADLIB", target="adlib", formatter=(lambda x: len(x) > 0)),
+        TagMapping(source="OPT", target="optional", formatter=(lambda x: len(x) > 0)),
     ]

@@ -1,8 +1,9 @@
 """
 Methods for converting string reprentations of film footage.
 """
-from fractions import Fraction
+
 import re
+from fractions import Fraction
 from typing import Optional
 
 
@@ -15,7 +16,7 @@ def footage_to_seconds(footage: str) -> Optional[Fraction]:
     :param footage: A string reprenentation of a footage of the form
         resembling "90+01".
     """
-    m = re.match(r'(\d+)\+(\d+)(\.\d+)?', footage)
+    m = re.match(r"(\d+)\+(\d+)(\.\d+)?", footage)
     if m is None:
         return None
 

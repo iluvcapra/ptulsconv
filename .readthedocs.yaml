@@ -7,10 +7,19 @@ version: 2
 
 # Set the version of Python and other tools you might need
 build:
-  os: ubuntu-20.04
+  os: ubuntu-lts-latest
   tools:
-    python: "3.10"
-
+    python: "3.13"
+  jobs:
+    pre_install:
+      - pip install --upgrade pip
+      - pip install --upgrade --upgrade-strategy only-if-needed --group doc .
+    # build:
+    #   html:
+    #   - python -m sphinx -T -b html -d _build/doctrees -D language=en . $READTHEDOCS_OUTPUT/html
+    post_build:
+      - echo "Command run at 'post_build' step"
+      - echo `date`
 
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
@@ -23,7 +32,6 @@ formats:
 # FIXME: We should be installing the `doc` dependency group and not the `doc`
 # extra.
 
-#Optionally declare the Python requirements required to build your docs
 python:
   install:
     - method: pip

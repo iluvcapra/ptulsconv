@@ -131,7 +131,6 @@ class TagCompiler:
         return effective_tags
 
     def parse_data(self) -> Iterator[Intermediate]:
-
         for track, clip, start, finish, _ in self.session.track_clips_timed():
             if clip.state == "Muted":
                 continue
@@ -153,7 +152,6 @@ class TagCompiler:
 
     @staticmethod
     def apply_appends(parsed: Iterator[Intermediate]) -> Iterator[Intermediate]:
-
         def should_append(a, b):
             return b.clip_tag_mode == TagPreModes.APPEND and b.start >= a.finish
 
@@ -177,7 +175,6 @@ class TagCompiler:
     def collect_time_spans(
         parsed: Iterator[Intermediate],
     ) -> Iterator[tuple[Intermediate, tuple[dict, Fraction, Fraction]]]:
-
         time_spans = []
 
         for item in parsed:
@@ -199,7 +196,6 @@ class TagCompiler:
     def apply_tags(
         self, parsed_with_time_spans
     ) -> Iterator[tuple[str, str, str, dict, Fraction, Fraction]]:
-
         session_parsed = parse_tags(self.session.header.session_name)
 
         for event, time_spans in parsed_with_time_spans:
@@ -226,13 +222,13 @@ class TagCompiler:
 
 
 def apply_appends(
-    source: Iterator, should_append: Callable, do_append: Callable
+    source: Iterator, should_append: Callable, preform_append: Callable
 ) -> Generator:
     """
     :param source:
     :param should_append: Called with two variables a and b, your
-                        function should return true if b should be
-                        appended to a
+                          function should return true if b should be
+                          appended to a
     :param do_append: Called with two variables a and b, your function
                         should return
     :returns: A Generator
@@ -240,7 +236,7 @@ def apply_appends(
     this_element = next(source)
     for element in source:
         if should_append(this_element, element):
-            this_element = do_append(this_element, element)
+            this_element = preform_append(this_element, element)
         else:
             yield this_element
             this_element = element

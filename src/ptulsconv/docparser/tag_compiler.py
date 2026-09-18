@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 from collections import namedtuple
 from collections.abc import Generator, Iterator
 from dataclasses import dataclass
 from fractions import Fraction
-from typing import Callable, Dict, List, Tuple
+from typing import Callable
 
 from ptulsconv.docparser import doc_entity
 
@@ -14,7 +16,7 @@ class Event:
     clip_name: str
     track_name: str
     session_name: str
-    tags: Dict[str, str]
+    tags: dict[str, str]
     start: Fraction
     finish: Fraction
 
@@ -34,29 +36,29 @@ class TagCompiler:
 
     session: doc_entity.SessionDescriptor
 
-    def compile_all_time_spans(self) -> List[Tuple[str, str, Fraction, Fraction]]:
+    def compile_all_time_spans(self) -> list[tuple[str, str, Fraction, Fraction]]:
         """
         :returns: A `List` of (key: str, value: str, start: Fraction,
             finish: Fraction)
         """
-        ret_list = list()
+        ret_list = []
         for element in self.parse_data():
             if element.clip_tag_mode == TagPreModes.TIMESPAN:
-                for k in element.clip_tags.keys():
+                for k in element.clip_tags:
                     ret_list.append(
                         (k, element.clip_tags[k], element.start, element.finish)
                     )
 
         return ret_list
 
-    def compile_tag_list(self) -> Dict[str, List[str]]:
-        tags_dict = dict()
+    def compile_tag_list(self) -> dict[str, list[str]]:
+        tags_dict = {}
 
         def update_tags_dict(other_dict: dict):
-            for k in other_dict:
+            for k, value in other_dict.items():
                 if k not in tags_dict:
                     tags_dict[k] = set()
-                tags_dict[k].add(other_dict[k])
+                tags_dict[k].add(value)
 
         for parsed in self.parse_data():
             update_tags_dict(parsed.clip_tags)
@@ -91,7 +93,7 @@ class TagCompiler:
             )
 
     def _marker_tags(self, at):
-        retval = dict()
+        retval = {}
 
         applicable = [(m, t) for (m, t) in self.session.markers_timed() if t <= at]
 
@@ -119,7 +121,7 @@ class TagCompiler:
         marker_tags: dict,
         session_tags: dict,
     ):
-        effective_tags = dict()
+        effective_tags = {}
         effective_tags.update(session_tags)
         effective_tags.update(marker_tags)
         effective_tags.update(timespan_tags)
@@ -174,9 +176,9 @@ class TagCompiler:
     @staticmethod
     def collect_time_spans(
         parsed: Iterator[Intermediate],
-    ) -> Iterator[Tuple[Intermediate, Tuple[dict, Fraction, Fraction]]]:
+    ) -> Iterator[tuple[Intermediate, tuple[dict, Fraction, Fraction]]]:
 
-        time_spans = list()
+        time_spans = []
 
         for item in parsed:
             if item.clip_tag_mode == TagPreModes.TIMESPAN:
@@ -186,7 +188,7 @@ class TagCompiler:
 
     @staticmethod
     def _time_span_tags(at_time: Fraction, applicable_spans) -> dict:
-        retval = dict()
+        retval = {}
         for tags in reversed(
             [a[0] for a in applicable_spans if a[1] <= at_time <= a[2]]
         ):
@@ -196,7 +198,7 @@ class TagCompiler:
 
     def apply_tags(
         self, parsed_with_time_spans
-    ) -> Iterator[Tuple[str, str, str, dict, Fraction, Fraction]]:
+    ) -> Iterator[tuple[str, str, str, dict, Fraction, Fraction]]:
 
         session_parsed = parse_tags(self.session.header.session_name)
 

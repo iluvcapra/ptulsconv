@@ -4,6 +4,8 @@ import sys
 from enum import Enum
 from typing import Any, Callable
 
+# from ptulsconv.docparser.adr_entity import GenericEvent
+
 
 class TagMapping:
     class ContentSource(Enum):

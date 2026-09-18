@@ -6,6 +6,7 @@ from optparse import OptionGroup, OptionParser
 import ptulsconv
 from ptulsconv import __name__
 from ptulsconv.commands import convert
+from ptulsconv.docparser.adr_entity import ADR_TAG_MAPPING, GENERIC_TAG_MAPPING
 from ptulsconv.reporting import (
     print_banner_style,
     print_fatal_error,
@@ -15,11 +16,10 @@ from ptulsconv.reporting import (
 
 
 def dump_field_map(output=sys.stdout):
-    from ptulsconv.docparser.adr_entity import ADRLine, GenericEvent
     from ptulsconv.docparser.tag_mapping import TagMapping
 
-    TagMapping.print_rules(GenericEvent, output=output)
-    TagMapping.print_rules(ADRLine, output=output)
+    TagMapping.print_rules(GENERIC_TAG_MAPPING, output=output)
+    TagMapping.print_rules(ADR_TAG_MAPPING, output=output)
 
 
 def dump_formats():

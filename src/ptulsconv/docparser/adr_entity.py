@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from fractions import Fraction
+from typing import ClassVar
 
 from ptulsconv.docparser.tag_compiler import Event
 from ptulsconv.docparser.tag_mapping import TagMapping
@@ -115,6 +116,8 @@ class GenericEvent:
     note: str | None = None
     requested_by: str | None = None
 
+    tag_mapping: ClassVar = GENERIC_TAG_MAPPING
+
 
 @dataclass
 class ADRLine(GenericEvent):
@@ -133,3 +136,5 @@ class ADRLine(GenericEvent):
     tbw: bool = False
     adlib: bool = False
     optional: bool = False
+
+    tag_mapping: ClassVar = ADR_TAG_MAPPING

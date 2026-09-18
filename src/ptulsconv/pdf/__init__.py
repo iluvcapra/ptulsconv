@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 import datetime
-from typing import List
 
 from reportlab.lib.units import inch
 from reportlab.pdfbase import pdfmetrics
@@ -70,10 +71,10 @@ def make_doc_template(
     client: str,
     document_subheader: str,
     left_margin=0.5 * inch,
-    fonts: List[TTFont] = [],
+    fonts: list[TTFont] = [],
 ) -> ADRDocTemplate:
     right_margin = top_margin = bottom_margin = 0.5 * inch
-    page_box = GRect(0.0, 0.0, page_size[0], page_size[1])
+    page_box: GRect = GRect(0.0, 0.0, page_size[0], page_size[1])
     _, page_box = page_box.split_x(left_margin, direction="l")
     _, page_box = page_box.split_x(right_margin, direction="r")
     _, page_box = page_box.split_y(bottom_margin, direction="u")

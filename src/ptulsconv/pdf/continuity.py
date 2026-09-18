@@ -1,5 +1,4 @@
 from fractions import Fraction
-from typing import List, Tuple
 
 from reportlab.lib.pagesizes import letter, portrait
 from reportlab.lib.styles import getSampleStyleSheet
@@ -9,8 +8,6 @@ from reportlab.platypus import Paragraph, Table
 from ptulsconv.broadcast_timecode import TimecodeFormat
 from ptulsconv.pdf import make_doc_template
 
-# TODO: A Continuity
-
 
 def table_for_scene(scene, tc_format, font_name="Helvetica"):
     scene_style = getSampleStyleSheet()["Normal"]
@@ -19,11 +16,8 @@ def table_for_scene(scene, tc_format, font_name="Helvetica"):
     scene_style.leftPadding = 0.0
     scene_style.spaceAfter = 18.0
 
-    tc_data = "<em>%s</em><br />%s" % (
-        tc_format.seconds_to_smpte(scene[2]),
-        tc_format.seconds_to_smpte(scene[3]),
-    )
-
+    tc_data = f"<em>{tc_format.seconds_to_smpte(scene[2])}</em><br />{tc_format.seconds_to_smpte(scene[3])}"
+    
     row = [
         Paragraph(tc_data, scene_style),
         Paragraph(scene[1], scene_style),
@@ -40,14 +34,14 @@ def table_for_scene(scene, tc_format, font_name="Helvetica"):
 
 
 def output_report(
-    scenes: List[Tuple[str, str, Fraction, Fraction]],
+    scenes: list[tuple[str, str, Fraction, Fraction]],
     tc_display_format: TimecodeFormat,
     title: str,
     client: str,
     supervisor,
     paper_size=letter,
 ):
-    filename = "%s Continuity.pdf" % title
+    filename = f"{title} Continuity.pdf"
     document_header = "Continuity"
 
     doc = make_doc_template(
@@ -61,7 +55,7 @@ def output_report(
         document_header=document_header,
         left_margin=0.5 * inch,
     )
-    story = list()
+    story = []
     # story.append(Spacer(height=0.5 * inch, width=1.))
     for scene in scenes:
         story.append(table_for_scene(scene, tc_display_format))

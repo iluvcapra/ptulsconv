@@ -32,9 +32,9 @@ formats:
 # FIXME: We should be installing the `doc` dependency group and not the `doc`
 # extra.
 
-python:
-  install:
-    - method: pip
-      path: .
-      extra_requirements:
-        - doc
+# python:
+#   install:
+#     - method: pip
+#       path: .
+#       extra_requirements:
+#         - doc

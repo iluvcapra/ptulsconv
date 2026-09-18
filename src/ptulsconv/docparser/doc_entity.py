@@ -1,17 +1,18 @@
+from __future__ import annotations
+
 from collections.abc import Iterator
 from fractions import Fraction
-from typing import List, Tuple
 
 from ptulsconv.broadcast_timecode import TimecodeFormat
 
 
 class SessionDescriptor:
-    header: "HeaderDescriptor"
-    files: List["FileDescriptor"]
-    clips: List["ClipDescriptor"]
-    plugins: List["PluginDescriptor"]
-    tracks: List["TrackDescriptor"]
-    markers: List["MarkerDescriptor"]
+    header: HeaderDescriptor
+    files: list[FileDescriptor]
+    clips: list[ClipDescriptor]
+    plugins: list[PluginDescriptor]
+    tracks: list[TrackDescriptor]
+    markers: list[MarkerDescriptor]
 
     def __init__(self, **kwargs):
         self.header = kwargs["header"]
@@ -23,7 +24,7 @@ class SessionDescriptor:
 
     def markers_timed(
         self, only_ruler_markers: bool = True
-    ) -> Iterator[Tuple["MarkerDescriptor", Fraction]]:
+    ) -> Iterator[tuple[MarkerDescriptor, Fraction]]:
         """
         Iterate each marker in the session with its respective time reference.
         """
@@ -35,7 +36,7 @@ class SessionDescriptor:
             # marker_time = self.header.convert_timecode(marker.location)
             yield marker, marker_time
 
-    def tracks_clips(self) -> Iterator[Tuple["TrackDescriptor", "TrackClipDescriptor"]]:
+    def tracks_clips(self) -> Iterator[tuple[TrackDescriptor, TrackClipDescriptor]]:
         """
         Iterate each track clip with its respective owning clip.
         """
@@ -46,7 +47,7 @@ class SessionDescriptor:
     def track_clips_timed(
         self,
     ) -> Iterator[
-        Tuple["TrackDescriptor", "TrackClipDescriptor", Fraction, Fraction, Fraction]
+        tuple[TrackDescriptor, TrackClipDescriptor, Fraction, Fraction, Fraction | None]
     ]:
         """
         Iterate each track clip with its respective owning clip and timing
@@ -97,11 +98,11 @@ class HeaderDescriptor:
             drop_frame=self.timecode_drop_frame,
         )
 
-    def convert_timecode(self, tc_string: str) -> Fraction:
+    def convert_timecode(self, tc_string: str) -> Fraction | None:
         return self.timecode_format.smpte_to_seconds(tc_string)
 
     @property
-    def start_time(self) -> Fraction:
+    def start_time(self) -> Fraction | None:
         """
         The start time of this session.
         :return: Start time in seconds
@@ -117,7 +118,7 @@ class HeaderDescriptor:
         return self._get_tc_format_params[1]
 
     @property
-    def _get_tc_format_params(self) -> Tuple[int, Fraction]:
+    def _get_tc_format_params(self) -> tuple[int, Fraction]:
         frame_rates = {
             "23.976": (24, Fraction(1001, 24_000)),
             "24": (24, Fraction(1, 24)),
@@ -131,7 +132,7 @@ class HeaderDescriptor:
         if self.timecode_fps in frame_rates:
             return frame_rates[self.timecode_fps]
         else:
-            raise ValueError("Unrecognized TC rate (%s)" % self.timecode_format)
+            raise ValueError(f"Unrecognized TC rate ({self.timecode_format})")
 
 
 class TrackDescriptor:
@@ -139,9 +140,9 @@ class TrackDescriptor:
     name: str
     comments: str
     user_delay_samples: int
-    state: List[str]
-    plugins: List[str]
-    clips: List["TrackClipDescriptor"]
+    state: list[str]
+    plugins: list[str]
+    clips: list[TrackClipDescriptor]
 
     def __init__(self, **kwargs):
         self.index = kwargs["index"]

@@ -173,41 +173,33 @@ class DocParserVisitor(NodeVisitor):
 
     @staticmethod
     def visit_files_section(_, visited_children):
-        return list(
-            map(
-                lambda child: FileDescriptor(filename=child[0], path=child[2]),
-                visited_children[2],
-            )
-        )
+        return [
+            FileDescriptor(filemname=child[0], path=child[2])
+            for child in visited_children[2]
+        ]
 
     @staticmethod
     def visit_clips_section(_, visited_children):
         channel = next(iter(visited_children[2][3]), 1)
-
-        return list(
-            map(
-                lambda child: ClipDescriptor(
-                    clip_name=child[0], file=child[2], channel=channel
-                ),
-                visited_children[2],
-            )
-        )
+        return [
+            ClipDescriptor(clip_name=child[0], file=child[2], channel=channel)
+            for child in visited_children[2]
+        ]
 
     @staticmethod
     def visit_plugin_listing(_, visited_children):
-        return list(
-            map(
-                lambda child: PluginDescriptor(
-                    manufacturer=child[0],
-                    plugin_name=child[2],
-                    version=child[4],
-                    format=child[6],
-                    stems=child[8],
-                    count_instances=child[10],
-                ),
-                visited_children[2],
+
+        return [
+            PluginDescriptor(
+                manufacturer=child[0],
+                plugin_name=child[2],
+                version=child[4],
+                format=child[6],
+                stems=child[8],
+                count_instances=child[10],
             )
-        )
+            for child in visited_children[2]
+        ]
 
     # @staticmethod
     def visit_track_block(self, _, visited_children):
@@ -276,6 +268,7 @@ class DocParserVisitor(NodeVisitor):
         markers = []
 
         for marker in visited_children[1][0][1]:
+            marker: MarkerDescriptor
             markers.append(marker)
 
         return markers

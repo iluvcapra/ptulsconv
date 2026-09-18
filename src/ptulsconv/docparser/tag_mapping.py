@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import sys
 from enum import Enum
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable
 
 
 class TagMapping:
@@ -10,14 +12,14 @@ class TagMapping:
         Clip = (3,)
 
     source: str
-    alternate_source: Optional[ContentSource]
+    alternate_source: ContentSource | None
     formatter: Callable[[str], Any]
 
     @staticmethod
     def print_rules(for_type: object, output=sys.stdout):
         format_str = "%-20s |  %-20s | %-25s"
-        hr = "%s+%s+%s" % ("-" * 21, "-" * 23, "-" * 26)
-        print("Tag mapping for %s" % for_type.__name__)
+        hr = f"{'-' * 21}+{'-' * 23}+{'-' * 26}"
+        print(f"Tag mapping for {for_type.__class__}")
         print(hr)
         print(format_str % ("Tag Source", "Target", "Type"), file=output)
         print(hr)
@@ -33,7 +35,7 @@ class TagMapping:
 
     @staticmethod
     def apply_rules(
-        rules: List["TagMapping"],
+        rules: list[TagMapping],
         tags: dict,
         clip_content: str,
         track_content: str,
@@ -52,7 +54,7 @@ class TagMapping:
         self,
         source: str,
         target: str,
-        alt: Optional[ContentSource] = None,
+        alt: ContentSource | None = None,
         formatter=None,
     ):
         self.source = source

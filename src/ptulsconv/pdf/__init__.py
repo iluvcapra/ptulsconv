@@ -284,15 +284,10 @@ class GRect:
         return self.inset_xy(d, d)
 
     def __repr__(self):
-        return "<GRect x=%f y=%f width=%f height=%f>" % (
-            self.x,
-            self.y,
-            self.width,
-            self.height,
-        )
+        return f"<GRect x={self.x} y={self.y} width={self.width} height={self.height}>"
 
     def divide_x(self, x_list, direction="l"):
-        ret_list = list()
+        ret_list = []
 
         rem = self
         for item in x_list:
@@ -302,7 +297,7 @@ class GRect:
         return ret_list, rem
 
     def divide_y(self, y_list, direction="u"):
-        ret_list = list()
+        ret_list = []
 
         rem = self
         for item in y_list:

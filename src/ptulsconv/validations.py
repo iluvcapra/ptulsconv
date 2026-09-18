@@ -2,9 +2,10 @@
 Validation logic for enforcing various consistency rules.
 """
 
+from __future__ import annotations
+
 from collections.abc import Iterator
 from dataclasses import dataclass
-from typing import Optional
 
 from ptulsconv.docparser.adr_entity import ADRLine
 
@@ -12,7 +13,7 @@ from ptulsconv.docparser.adr_entity import ADRLine
 @dataclass
 class ValidationError:
     message: str
-    event: Optional[ADRLine] = None
+    event: ADRLine | None = None
 
     def report_message(self):
         if self.event is not None:
@@ -25,7 +26,7 @@ class ValidationError:
 
 
 def validate_unique_count(input_lines: Iterator[ADRLine], field="title", count=1):
-    values = set(list(map(lambda e: getattr(e, field), input_lines)))
+    values = {getattr(e, field) for e in input_lines}
     if len(values) > count:
         yield ValidationError(
             message=f"Field {field} has too many values (max={count}): {values}"
@@ -36,15 +37,13 @@ def validate_value(input_lines: Iterator[ADRLine], key_field, predicate):
     for event in input_lines:
         val = getattr(event, key_field)
         if not predicate(val):
-            yield ValidationError(
-                message=f"Field {val} not in range", event=event
-            )
+            yield ValidationError(message=f"Field {val} not in range", event=event)
 
 
 def validate_unique_field(
     input_lines: Iterator[ADRLine], field="cue_number", scope=None
 ):
-    values = dict()
+    values = {}
     for event in input_lines:
         this = getattr(event, field)
         if scope is not None:
@@ -72,7 +71,7 @@ def validate_dependent_value(
     Validates that two events with the same value in `key_field` always have
     the same value in `dependent_field`
     """
-    key_values = set(getattr(x, key_field) for x in input_lines)
+    key_values = {getattr(x, key_field) for x in input_lines}
 
     for key_value in key_values:
         rows = [

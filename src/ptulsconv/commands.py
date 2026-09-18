@@ -2,34 +2,35 @@
 This module provides the main input document parsing and transform
 implementation.
 """
+
+import csv
 import datetime
 import os
-
 import sys
-from itertools import chain
-import csv
-from typing import List, Optional, Iterator
+from collections.abc import Iterator
 from fractions import Fraction
+from itertools import chain
+from json import JSONEncoder
+from typing import List, Optional
 
 import ptsl
 
-from .docparser.adr_entity import make_entities, ADRLine
-from .reporting import print_section_header_style, print_status_style, \
-    print_warning
-from .validations import validate_unique_field, validate_non_empty_field, \
-    validate_dependent_value
-
+from ptulsconv.broadcast_timecode import TimecodeFormat
 from ptulsconv.docparser import parse_document
 from ptulsconv.docparser.tag_compiler import TagCompiler
-from ptulsconv.broadcast_timecode import TimecodeFormat
-
-from ptulsconv.pdf.supervisor_1pg import output_report as output_supervisor_1pg
-from ptulsconv.pdf.line_count import output_report as output_line_count
-from ptulsconv.pdf.talent_sides import output_report as output_talent_sides
-from ptulsconv.pdf.summary_log import output_report as output_summary
 from ptulsconv.pdf.continuity import output_report as output_continuity
+from ptulsconv.pdf.line_count import output_report as output_line_count
+from ptulsconv.pdf.summary_log import output_report as output_summary
+from ptulsconv.pdf.supervisor_1pg import output_report as output_supervisor_1pg
+from ptulsconv.pdf.talent_sides import output_report as output_talent_sides
 
-from json import JSONEncoder
+from .docparser.adr_entity import ADRLine, make_entities
+from .reporting import print_section_header_style, print_status_style, print_warning
+from .validations import (
+    validate_dependent_value,
+    validate_non_empty_field,
+    validate_unique_field,
+)
 
 
 class FractionEncoder(JSONEncoder):
@@ -37,12 +38,11 @@ class FractionEncoder(JSONEncoder):
     A subclass of :class:`JSONEncoder` which encodes :class:`Fraction` objects
     as a dict.
     """
+
     force_denominator: Optional[int]
 
     def default(self, o):
-        """
-
-        """
+        """ """
         if isinstance(o, Fraction):
             return dict(numerator=o.numerator, denominator=o.denominator)
         else:
@@ -62,43 +62,64 @@ def output_adr_csv(lines: List[ADRLine], time_format: TimecodeFormat):
         os.makedirs(dir_name, exist_ok=True)
         os.chdir(dir_name)
         for reel in reels:
-            these_lines = [ln for ln in lines
-                           if ln.character_id == n and ln.reel == reel]
+            these_lines = [
+                ln for ln in lines if ln.character_id == n and ln.reel == reel
+            ]
 
             if len(these_lines) == 0:
                 continue
 
-            outfile_name = "%s_%s_%s_%s.csv" % (these_lines[0].title, n,
-                                                these_lines[0].character_name,
-                                                reel,)
+            outfile_name = "%s_%s_%s_%s.csv" % (
+                these_lines[0].title,
+                n,
+                these_lines[0].character_name,
+                reel,
+            )
 
-            with open(outfile_name, mode='w', newline='') as outfile:
-                writer = csv.writer(outfile, dialect='excel')
-                writer.writerow(['Title', 'Character Name', 'Cue Number',
-                                 'Reel', 'Version',
-                                 'Start', 'Finish',
-                                 'Start Seconds', 'Finish Seconds',
-                                 'Prompt',
-                                 'Reason', 'Note', 'TV'])
+            with open(outfile_name, mode="w", newline="") as outfile:
+                writer = csv.writer(outfile, dialect="excel")
+                writer.writerow(
+                    [
+                        "Title",
+                        "Character Name",
+                        "Cue Number",
+                        "Reel",
+                        "Version",
+                        "Start",
+                        "Finish",
+                        "Start Seconds",
+                        "Finish Seconds",
+                        "Prompt",
+                        "Reason",
+                        "Note",
+                        "TV",
+                    ]
+                )
 
                 for event in these_lines:
                     this_start = event.start or 0
                     this_finish = event.finish or 0
-                    this_row = [event.title, event.character_name,
-                                event.cue_number, event.reel, event.version,
-                                time_format.seconds_to_smpte(this_start),
-                                time_format.seconds_to_smpte(this_finish),
-                                float(this_start), float(this_finish),
-                                event.prompt,
-                                event.reason, event.note, "TV"
-                                if event.tv else ""]
+                    this_row = [
+                        event.title,
+                        event.character_name,
+                        event.cue_number,
+                        event.reel,
+                        event.version,
+                        time_format.seconds_to_smpte(this_start),
+                        time_format.seconds_to_smpte(this_finish),
+                        float(this_start),
+                        float(this_finish),
+                        event.prompt,
+                        event.reason,
+                        event.note,
+                        "TV" if event.tv else "",
+                    ]
 
                     writer.writerow(this_row)
         os.chdir("..")
 
 
-def generate_documents(session_tc_format, scenes, adr_lines: List[ADRLine],
-                       title):
+def generate_documents(session_tc_format, scenes, adr_lines: List[ADRLine], title):
     """
     Create PDF output.
     """
@@ -111,23 +132,31 @@ def generate_documents(session_tc_format, scenes, adr_lines: List[ADRLine],
     client = next((x.client for x in adr_lines), "")
     supervisor = next((x.supervisor for x in adr_lines), "")
 
-    output_continuity(scenes=scenes, tc_display_format=session_tc_format,
-                      title=title, client=client or "",
-                      supervisor=supervisor)
+    output_continuity(
+        scenes=scenes,
+        tc_display_format=session_tc_format,
+        title=title,
+        client=client or "",
+        supervisor=supervisor,
+    )
 
-    reels = ['R1', 'R2', 'R3', 'R4', 'R5', 'R6']
+    reels = ["R1", "R2", "R3", "R4", "R5", "R6"]
 
     if len(adr_lines) == 0:
-        print_status_style("No ADR lines were found in the input document. "
-                           "ADR reports will not be generated.")
+        print_status_style(
+            "No ADR lines were found in the input document. "
+            "ADR reports will not be generated."
+        )
 
     else:
-        create_adr_reports(adr_lines, tc_display_format=session_tc_format,
-                           reel_list=sorted(reels))
+        create_adr_reports(
+            adr_lines, tc_display_format=session_tc_format, reel_list=sorted(reels)
+        )
 
 
-def create_adr_reports(lines: List[ADRLine], tc_display_format: TimecodeFormat,
-                       reel_list: List[str]):
+def create_adr_reports(
+    lines: List[ADRLine], tc_display_format: TimecodeFormat, reel_list: List[str]
+):
     """
     Creates a directory heirarchy and a respective set of ADR reports,
     given a list of lines.
@@ -148,8 +177,7 @@ def create_adr_reports(lines: List[ADRLine], tc_display_format: TimecodeFormat,
     print_status_style("Creating Director's Logs director and reports")
     os.makedirs("Director Logs", exist_ok=True)
     os.chdir("Director Logs")
-    output_summary(lines, tc_display_format=tc_display_format,
-                   by_character=True)
+    output_summary(lines, tc_display_format=tc_display_format, by_character=True)
     os.chdir("..")
 
     print_status_style("Creating CSV outputs")
@@ -178,8 +206,8 @@ def convert(major_mode, input_file=None, output=sys.stdout, warnings=True):
             session_text = file.read()
     else:
         with ptsl.open_engine(
-                company_name="The ptulsconv developers",
-                application_name="ptulsconv") as engine:
+            company_name="The ptulsconv developers", application_name="ptulsconv"
+        ) as engine:
             req = engine.export_session_as_text()
             req.utf8_encoding()
             req.include_track_edls()
@@ -192,7 +220,7 @@ def convert(major_mode, input_file=None, output=sys.stdout, warnings=True):
     session = parse_document(session_text)
     session_tc_format = session.header.timecode_format
 
-    if major_mode == 'raw':
+    if major_mode == "raw":
         output.write(FractionEncoder().encode(session))
 
     else:
@@ -200,35 +228,35 @@ def convert(major_mode, input_file=None, output=sys.stdout, warnings=True):
         compiler.session = session
         compiled_events = list(compiler.compile_events())
 
-        if major_mode == 'tagged':
+        if major_mode == "tagged":
             output.write(FractionEncoder().encode(compiled_events))
 
-        elif major_mode == 'doc':
+        elif major_mode == "doc":
             generic_events, adr_lines = make_entities(compiled_events)
 
-            scenes = sorted([s for s in compiler.compile_all_time_spans()
-                             if s[0] == 'Sc'],
-                            key=lambda x: x[2])
+            scenes = sorted(
+                [s for s in compiler.compile_all_time_spans() if s[0] == "Sc"],
+                key=lambda x: x[2],
+            )
 
             # TODO: Breakdown by titles
             titles = set([x.title for x in (generic_events + adr_lines)])
             if len(titles) != 1:
-                print_warning("Multiple titles per export is not supported, "
-                              "found multiple titles: %s Exiting." % titles)
+                print_warning(
+                    "Multiple titles per export is not supported, "
+                    "found multiple titles: %s Exiting." % titles
+                )
                 exit(-1)
 
             title = list(titles)[0]
 
-            print_status_style(
-                "%i generic events found." % len(generic_events)
-            )
+            print_status_style("%i generic events found." % len(generic_events))
             print_status_style("%i ADR events found." % len(adr_lines))
 
             if warnings:
                 perform_adr_validations(iter(adr_lines))
 
-            generate_documents(session_tc_format, scenes, adr_lines,
-                               title)
+            generate_documents(session_tc_format, scenes, adr_lines, title)
 
 
 def perform_adr_validations(lines: Iterator[ADRLine]):
@@ -236,20 +264,15 @@ def perform_adr_validations(lines: Iterator[ADRLine]):
     Performs validations on the input.
     """
     for warning in chain(
-            validate_unique_field(lines,
-                                  field='cue_number',
-                                  scope='title'),
-            validate_non_empty_field(lines,
-                                     field='cue_number'),
-            validate_non_empty_field(lines,
-                                     field='character_id'),
-            validate_non_empty_field(lines,
-                                     field='title'),
-            validate_dependent_value(lines,
-                                     key_field='character_id',
-                                     dependent_field='character_name'),
-            validate_dependent_value(lines,
-                                     key_field='character_id',
-                                     dependent_field='actor_name')):
-
+        validate_unique_field(lines, field="cue_number", scope="title"),
+        validate_non_empty_field(lines, field="cue_number"),
+        validate_non_empty_field(lines, field="character_id"),
+        validate_non_empty_field(lines, field="title"),
+        validate_dependent_value(
+            lines, key_field="character_id", dependent_field="character_name"
+        ),
+        validate_dependent_value(
+            lines, key_field="character_id", dependent_field="actor_name"
+        ),
+    ):
         print_warning(warning.report_message())

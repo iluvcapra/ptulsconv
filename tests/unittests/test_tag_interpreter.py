@@ -1,6 +1,6 @@
 import unittest
 
-from ptulsconv.docparser.tagged_string_parser_visitor import parse_tags, TagPreModes
+from ptulsconv.docparser.tagged_string_parser_visitor import TagPreModes, parse_tags
 
 
 class TestTagInterpreter(unittest.TestCase):
@@ -17,12 +17,12 @@ class TestTagInterpreter(unittest.TestCase):
 
     def test_tags(self):
         s1 = parse_tags("{a=100}")
-        self.assertEqual(s1.tag_dict['a'], "100")
+        self.assertEqual(s1.tag_dict["a"], "100")
 
         s2 = parse_tags("{b=This is a test} [option] $X=9")
-        self.assertEqual(s2.tag_dict['b'], 'This is a test')
-        self.assertEqual(s2.tag_dict['option'], 'option')
-        self.assertEqual(s2.tag_dict['X'], "9")
+        self.assertEqual(s2.tag_dict["b"], "This is a test")
+        self.assertEqual(s2.tag_dict["option"], "option")
+        self.assertEqual(s2.tag_dict["X"], "9")
 
     def test_modes(self):
         s1 = parse_tags("@ Monday Tuesday {a=1}")
@@ -35,5 +35,5 @@ class TestTagInterpreter(unittest.TestCase):
         self.assertEqual(s3.mode, TagPreModes.APPEND)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

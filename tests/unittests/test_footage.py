@@ -1,5 +1,7 @@
 import unittest
+
 from ptulsconv import footage
+
 
 class TestFootage(unittest.TestCase):
     def test_basic_footage(self):
@@ -11,5 +13,3 @@ class TestFootage(unittest.TestCase):
         r1 = "1+8"
         f1 = footage.footage_to_seconds(r1)
         self.assertEqual(float(f1 or 0), 1.0)
-
-

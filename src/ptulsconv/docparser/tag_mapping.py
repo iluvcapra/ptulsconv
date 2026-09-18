@@ -1,74 +1,81 @@
+from __future__ import annotations
+
 import sys
 from enum import Enum
-from typing import Optional, Callable, Any, List
+from typing import Any, Callable
+
+# from ptulsconv.docparser.adr_entity import GenericEvent
 
 
 class TagMapping:
     class ContentSource(Enum):
-        Session = 1,
-        Track = 2,
-        Clip = 3,
+        Session = (1,)
+        Track = (2,)
+        Clip = (3,)
 
     source: str
-    alternate_source: Optional[ContentSource]
+    alternate_source: ContentSource | None
     formatter: Callable[[str], Any]
 
     @staticmethod
     def print_rules(for_type: object, output=sys.stdout):
         format_str = "%-20s |  %-20s | %-25s"
-        hr = "%s+%s+%s" % ("-" * 21, "-" * 23, "-" * 26)
-        print("Tag mapping for %s" % for_type.__name__)
+        hr = f"{'-' * 21}+{'-' * 23}+{'-' * 26}"
+        print(f"Tag mapping for {for_type.__class__}")
         print(hr)
-        print(format_str % ("Tag Source", "Target", "Type"),
-              file=output)
+        print(format_str % ("Tag Source", "Target", "Type"), file=output)
         print(hr)
         for rule in for_type.tag_mapping:
             t = for_type.__annotations__[rule.target]
-            print(format_str % (rule.source, rule.target, t),
-                  file=output)
+            print(format_str % (rule.source, rule.target, t), file=output)
             if rule.alternate_source is TagMapping.ContentSource.Session:
-                print(format_str % (" - (Session Name)", rule.target, t),
-                      file=output)
+                print(format_str % (" - (Session Name)", rule.target, t), file=output)
             elif rule.alternate_source is TagMapping.ContentSource.Track:
-                print(format_str % (" - (Track Name)", rule.target, t),
-                      file=output)
+                print(format_str % (" - (Track Name)", rule.target, t), file=output)
             elif rule.alternate_source is TagMapping.ContentSource.Clip:
-                print(format_str % (" - (Clip Name)", rule.target, t),
-                      file=output)
+                print(format_str % (" - (Clip Name)", rule.target, t), file=output)
 
     @staticmethod
-    def apply_rules(rules: List['TagMapping'],
-                    tags: dict,
-                    clip_content: str,
-                    track_content: str,
-                    session_content: str,
-                    to: object):
+    def apply_rules(
+        rules: list[TagMapping],
+        tags: dict,
+        clip_content: str,
+        track_content: str,
+        session_content: str,
+        to: object,
+    ):
 
         done = set()
         for rule in rules:
             if rule.target in done:
                 continue
-            if rule.apply(tags, clip_content, track_content, session_content,
-                          to):
+            if rule.apply(tags, clip_content, track_content, session_content, to):
                 done.update(rule.target)
 
-    def __init__(self, source: str,
-                 target: str,
-                 alt: Optional[ContentSource] = None,
-                 formatter=None):
+    def __init__(
+        self,
+        source: str,
+        target: str,
+        alt: ContentSource | None = None,
+        formatter=None,
+    ):
         self.source = source
         self.target = target
         self.alternate_source = alt
         self.formatter = formatter or (lambda x: x)
 
-    def apply(self, tags: dict,
-              clip_content: str,
-              track_content: str,
-              session_content: str, to: object) -> bool:
+    def apply(
+        self,
+        tags: dict,
+        clip_content: str,
+        track_content: str,
+        session_content: str,
+        to: object,
+    ) -> bool:
 
         new_value = None
 
-        if self.source in tags.keys():
+        if self.source in tags:
             new_value = tags[self.source]
         elif self.alternate_source == TagMapping.ContentSource.Session:
             new_value = session_content

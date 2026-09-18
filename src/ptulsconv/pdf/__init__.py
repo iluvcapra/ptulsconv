@@ -1,15 +1,14 @@
+from __future__ import annotations
+
 import datetime
 
-from reportlab.pdfbase.pdfmetrics import (getAscent, getDescent)
 from reportlab.lib.units import inch
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.pdfmetrics import getAscent, getDescent
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from reportlab.platypus.doctemplate import BaseDocTemplate, PageTemplate
 from reportlab.platypus.frames import Frame
-
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-
-from typing import List
 
 # TODO: A Generic report useful for spotting
 # TODO: A report useful for M&E mixer's notes
@@ -40,12 +39,14 @@ class ReportCanvas(canvas.Canvas):
 
     def draw_page_number(self, page_count):
         self.saveState()
-        self.setFont('Helvetica', 10)  # FIXME make this customizable
-        self.drawString(0.5 * inch, 0.5 * inch,
-                        "Page %d of %d" % (self._pageNumber, page_count))
+        self.setFont("Helvetica", 10)  # FIXME make this customizable
+        self.drawString(
+            0.5 * inch, 0.5 * inch, "Page %d of %d" % (self._pageNumber, page_count)
+        )
         right_edge = self._pagesize[0] - 0.5 * inch
-        self.drawRightString(right_edge, 0.5 * inch,
-                             self._report_date.strftime("%m/%d/%Y %H:%M"))
+        self.drawRightString(
+            right_edge, 0.5 * inch, self._report_date.strftime("%m/%d/%Y %H:%M")
+        )
 
         top_line = self.beginPath()
         top_line.moveTo(0.5 * inch, 0.75 * inch)
@@ -60,49 +61,60 @@ class ADRDocTemplate(BaseDocTemplate):
         BaseDocTemplate.build(self, flowables, filename, canvasmaker)
 
 
-def make_doc_template(page_size, filename, document_title,
-                      title: str,
-                      supervisor: str,
-                      document_header: str,
-                      client: str,
-                      document_subheader: str,
-                      left_margin=0.5 * inch,
-                      fonts: List[TTFont] = []) -> ADRDocTemplate:
+def make_doc_template(
+    page_size,
+    filename,
+    document_title,
+    title: str,
+    supervisor: str,
+    document_header: str,
+    client: str,
+    document_subheader: str,
+    left_margin=0.5 * inch,
+    fonts: list[TTFont] = [],
+) -> ADRDocTemplate:
     right_margin = top_margin = bottom_margin = 0.5 * inch
-    page_box = GRect(0., 0., page_size[0], page_size[1])
-    _, page_box = page_box.split_x(left_margin, direction='l')
-    _, page_box = page_box.split_x(right_margin, direction='r')
-    _, page_box = page_box.split_y(bottom_margin, direction='u')
-    _, page_box = page_box.split_y(top_margin, direction='d')
+    page_box: GRect = GRect(0.0, 0.0, page_size[0], page_size[1])
+    _, page_box = page_box.split_x(left_margin, direction="l")
+    _, page_box = page_box.split_x(right_margin, direction="r")
+    _, page_box = page_box.split_y(bottom_margin, direction="u")
+    _, page_box = page_box.split_y(top_margin, direction="d")
 
-    footer_box, page_box = page_box.split_y(0.25 * inch, direction='u')
-    header_box, page_box = page_box.split_y(0.75 * inch, direction='d')
-    title_box, report_box = header_box.split_x(3.5 * inch, direction='r')
+    footer_box, page_box = page_box.split_y(0.25 * inch, direction="u")
+    header_box, page_box = page_box.split_y(0.75 * inch, direction="d")
+    title_box, report_box = header_box.split_x(3.5 * inch, direction="r")
 
     def on_page_lambda(c, _):
-        draw_header_footer(c, report_box, title_box,
-                     footer_box, title=title,
-                     supervisor=supervisor,
-                     document_subheader=document_subheader,
-                     client=client,
-                     doc_title=document_header)
+        draw_header_footer(
+            c,
+            report_box,
+            title_box,
+            footer_box,
+            title=title,
+            supervisor=supervisor,
+            document_subheader=document_subheader,
+            client=client,
+            doc_title=document_header,
+        )
 
-    frames = [Frame(page_box.min_x, page_box.min_y,
-                    page_box.width, page_box.height)]
 
-    page_template = PageTemplate(id="Main",
-                                 frames=frames,
-                                 onPage=on_page_lambda)
+    frames = [Frame(page_box.min_x, page_box.min_y, page_box.width, page_box.height)]
+
+    page_template = PageTemplate(id="Main", frames=frames, onPage=on_page_lambda)
 
     for font in fonts:
         pdfmetrics.registerFont(font)
 
-    doc = ADRDocTemplate(filename,
-                         title=document_title,
-                         author=supervisor,
-                         pagesize=page_size,
-                         leftMargin=left_margin, rightMargin=right_margin,
-                         topMargin=top_margin, bottomMargin=bottom_margin)
+    doc = ADRDocTemplate(
+        filename,
+        title=document_title,
+        author=supervisor,
+        pagesize=page_size,
+        leftMargin=left_margin,
+        rightMargin=right_margin,
+        topMargin=top_margin,
+        bottomMargin=bottom_margin,
+    )
 
     doc.addPageTemplates([page_template])
 
@@ -115,27 +127,43 @@ def time_format(mins, zero_str="-"):
     """
     if mins is None:
         return zero_str
-    if mins == 0. and zero_str is not None:
+    if mins == 0.0 and zero_str is not None:
         return zero_str
-    elif mins < 60.:
-        return "%im" % round(mins)
+    elif mins < 60.0:
+        return f"{round(mins)}m"
     else:
         m = round(mins)
         hh, mm = divmod(m, 60)
-        return "%i:%02i" % (hh, mm)
+        return f"{hh}:{mm:02}"
 
 
-def draw_header_footer(a_canvas: ReportCanvas, left_box, right_box,
-                       footer_box, title: str, supervisor: str,
-                       document_subheader: str, client: str, doc_title="",
-                       font_name='Helvetica'):
+def draw_header_footer(
+    a_canvas: ReportCanvas,
+    left_box,
+    right_box,
+    footer_box,
+    title: str,
+    supervisor: str,
+    document_subheader: str,
+    client: str,
+    doc_title="",
+    font_name="Helvetica",
+):
 
-    (_supervisor_box, client_box,), title_box = \
-        right_box.divide_y([16., 16., ])
-    title_box.draw_text_cell(a_canvas, title, font_name, 18,
-                             inset_y=2., inset_x=5.)
-    client_box.draw_text_cell(a_canvas, client, font_name, 11,
-                              inset_y=2., inset_x=5.)
+    (
+        (
+            _supervisor_box,
+            client_box,
+        ),
+        title_box,
+    ) = right_box.divide_y(
+        [
+            16.0,
+            16.0,
+        ]
+    )
+    title_box.draw_text_cell(a_canvas, title, font_name, 18, inset_y=2.0, inset_x=5.0)
+    client_box.draw_text_cell(a_canvas, client, font_name, 11, inset_y=2.0, inset_x=5.0)
 
     a_canvas.saveState()
     a_canvas.setLineWidth(0.5)
@@ -150,20 +178,26 @@ def draw_header_footer(a_canvas: ReportCanvas, left_box, right_box,
     a_canvas.drawPath(tline2)
     a_canvas.restoreState()
 
-    (doc_title_cell, spotting_version_cell,), _ = \
-        left_box.divide_y([18., 14], direction='d')
+    (
+        (
+            doc_title_cell,
+            spotting_version_cell,
+        ),
+        _,
+    ) = left_box.divide_y([18.0, 14], direction="d")
 
-    doc_title_cell.draw_text_cell(a_canvas, doc_title, font_name, 14.,
-                                  inset_y=2.)
+    doc_title_cell.draw_text_cell(a_canvas, doc_title, font_name, 14.0, inset_y=2.0)
 
     if document_subheader is not None:
-        spotting_version_cell.draw_text_cell(a_canvas, document_subheader,
-                                             font_name, 12., inset_y=2.)
+        spotting_version_cell.draw_text_cell(
+            a_canvas, document_subheader, font_name, 12.0, inset_y=2.0
+        )
 
     if supervisor is not None:
-        a_canvas.setFont(font_name, 11.)
-        a_canvas.drawCentredString(footer_box.min_x + footer_box.width / 2.,
-                                   footer_box.min_y, supervisor)
+        a_canvas.setFont(font_name, 11.0)
+        a_canvas.drawCentredString(
+            footer_box.min_x + footer_box.width / 2.0, footer_box.min_y, supervisor
+        )
 
 
 class GRect:
@@ -200,57 +234,61 @@ class GRect:
         return self.y + self.height / 2
 
     def normalize(self):
-        if self.width < 0.:
+        if self.width < 0.0:
             self.width = abs(self.width)
             self.x = self.x - self.width
 
-        if self.height < 0.:
+        if self.height < 0.0:
             self.height = abs(self.height)
             self.y = self.y - self.height
 
-    def split_x(self, at, direction='l'):
+    def split_x(self, at, direction="l"):
         if at >= self.width:
             return None, self
         elif at <= 0:
             return self, None
         else:
-            if direction == 'l':
-                return (GRect(self.min_x, self.min_y, at, self.height),
-                        GRect(self.min_x + at, self.y,
-                              self.width - at, self.height))
+            if direction == "l":
+                return (
+                    GRect(self.min_x, self.min_y, at, self.height),
+                    GRect(self.min_x + at, self.y, self.width - at, self.height),
+                )
             else:
-                return (GRect(self.max_x - at, self.y, at, self.height),
-                        GRect(self.min_x, self.y,
-                              self.width - at, self.height))
+                return (
+                    GRect(self.max_x - at, self.y, at, self.height),
+                    GRect(self.min_x, self.y, self.width - at, self.height),
+                )
 
-    def split_y(self, at, direction='u'):
+    def split_y(self, at, direction="u"):
         if at >= self.height:
             return None, self
         elif at <= 0:
             return self, None
         else:
-            if direction == 'u':
-                return (GRect(self.x, self.y, self.width, at),
-                        GRect(self.x, self.y + at,
-                              self.width, self.height - at))
+            if direction == "u":
+                return (
+                    GRect(self.x, self.y, self.width, at),
+                    GRect(self.x, self.y + at, self.width, self.height - at),
+                )
             else:
-                return (GRect(self.x, self.max_y - at, self.width, at),
-                        GRect(self.x, self.y,
-                              self.width, self.height - at))
+                return (
+                    GRect(self.x, self.max_y - at, self.width, at),
+                    GRect(self.x, self.y, self.width, self.height - at),
+                )
 
     def inset_xy(self, dx, dy):
-        return GRect(self.x + dx, self.y + dy,
-                     self.width - dx * 2, self.height - dy * 2)
+        return GRect(
+            self.x + dx, self.y + dy, self.width - dx * 2, self.height - dy * 2
+        )
 
     def inset(self, d):
         return self.inset_xy(d, d)
 
     def __repr__(self):
-        return "<GRect x=%f y=%f width=%f height=%f>" % \
-            (self.x, self.y, self.width, self.height)
+        return f"<GRect x={self.x} y={self.y} width={self.width} height={self.height}>"
 
-    def divide_x(self, x_list, direction='l'):
-        ret_list = list()
+    def divide_x(self, x_list, direction="l"):
+        ret_list = []
 
         rem = self
         for item in x_list:
@@ -259,8 +297,8 @@ class GRect:
 
         return ret_list, rem
 
-    def divide_y(self, y_list, direction='u'):
-        ret_list = list()
+    def divide_y(self, y_list, direction="u"):
+        ret_list = []
 
         rem = self
         for item in y_list:
@@ -279,18 +317,14 @@ class GRect:
     def draw_border(self, a_canvas, edge):
 
         def draw_border_impl(en):
-            if en == 'min_x':
-                coordinates = ((self.min_x, self.min_y),
-                               (self.min_x, self.max_y))
-            elif en == 'max_x':
-                coordinates = ((self.max_x, self.min_y),
-                               (self.max_x, self.max_y))
-            elif en == 'min_y':
-                coordinates = ((self.min_x, self.min_y),
-                               (self.max_x, self.min_y))
-            elif en == 'max_y':
-                coordinates = ((self.min_x, self.max_y),
-                               (self.max_x, self.max_y))
+            if en == "min_x":
+                coordinates = ((self.min_x, self.min_y), (self.min_x, self.max_y))
+            elif en == "max_x":
+                coordinates = ((self.max_x, self.min_y), (self.max_x, self.max_y))
+            elif en == "min_y":
+                coordinates = ((self.min_x, self.min_y), (self.max_x, self.min_y))
+            elif en == "max_y":
+                coordinates = ((self.min_x, self.max_y), (self.max_x, self.max_y))
             else:
                 return
 
@@ -305,9 +339,18 @@ class GRect:
         for e in edge:
             draw_border_impl(e)
 
-    def draw_text_cell(self, a_canvas, text, font_name, font_size,
-                       vertical_align='t', force_baseline=None, inset_x=0.,
-                       inset_y=0., draw_baseline=False):
+    def draw_text_cell(
+        self,
+        a_canvas,
+        text,
+        font_name,
+        font_size,
+        vertical_align="t",
+        force_baseline=None,
+        inset_x=0.0,
+        inset_y=0.0,
+        draw_baseline=False,
+    ):
         if text is None:
             return
 
@@ -315,9 +358,9 @@ class GRect:
 
         inset_rect = self.inset_xy(inset_x, inset_y)
 
-        if vertical_align == 'm':
-            y = inset_rect.center_y - getAscent(font_name, font_size) / 2.
-        elif vertical_align == 't':
+        if vertical_align == "m":
+            y = inset_rect.center_y - getAscent(font_name, font_size) / 2.0
+        elif vertical_align == "t":
             y = inset_rect.max_y - getAscent(font_name, font_size)
         else:
             y = inset_rect.min_y - getDescent(font_name, font_size)
@@ -339,14 +382,15 @@ class GRect:
             a_canvas.setDash([3.0, 1.0, 2.0, 1.0])
             a_canvas.setLineWidth(0.5)
             bl = a_canvas.beginPath()
-            bl.moveTo(inset_rect.min_x, y - 1.)
-            bl.lineTo(inset_rect.max_x, y - 1.)
+            bl.moveTo(inset_rect.min_x, y - 1.0)
+            bl.lineTo(inset_rect.max_x, y - 1.0)
             a_canvas.drawPath(bl)
 
         a_canvas.restoreState()
 
-    def draw_flowable(self, a_canvas, flowable, inset_x=0.,
-                      inset_y=0., draw_baselines=False):
+    def draw_flowable(
+        self, a_canvas, flowable, inset_x=0.0, inset_y=0.0, draw_baselines=False
+    ):
         a_canvas.saveState()
 
         inset_rect = self.inset_xy(inset_x, inset_y)
@@ -364,7 +408,7 @@ class GRect:
             a_canvas.setLineWidth(0.5)
             leading = flowable.style.leading
 
-            y = inset_rect.max_y - flowable.style.fontSize - 1.
+            y = inset_rect.max_y - flowable.style.fontSize - 1.0
             while y > inset_rect.min_x:
                 bl = a_canvas.beginPath()
                 bl.moveTo(inset_rect.min_x, y)

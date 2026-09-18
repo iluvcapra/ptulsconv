@@ -1,15 +1,18 @@
-import unittest
-from ptulsconv.docparser import doc_entity, pt_doc_parser, tag_compiler
 import os.path
+import unittest
+
+from ptulsconv.docparser import doc_entity, pt_doc_parser, tag_compiler
 
 
 class TaggingIntegratedTests(unittest.TestCase):
-    path = os.path.dirname(__file__) + '/../export_cases/Tag Tests/Tag Tests.txt'
+    path = os.path.dirname(__file__) + "/../export_cases/Tag Tests/Tag Tests.txt"
 
     def test_event_list(self):
-        with open(self.path, 'r') as f:
+        with open(self.path, "r") as f:
             document_ast = pt_doc_parser.protools_text_export_grammar.parse(f.read())
-            document: doc_entity.SessionDescriptor = pt_doc_parser.DocParserVisitor().visit(document_ast)
+            document: doc_entity.SessionDescriptor = (
+                pt_doc_parser.DocParserVisitor().visit(document_ast)
+            )
             compiler = tag_compiler.TagCompiler()
             compiler.session = document
 
@@ -27,9 +30,11 @@ class TaggingIntegratedTests(unittest.TestCase):
             self.assertEqual("Region 04", events[8].clip_name)
 
     def test_append(self):
-        with open(self.path, 'r') as f:
+        with open(self.path, "r") as f:
             document_ast = pt_doc_parser.protools_text_export_grammar.parse(f.read())
-            document: doc_entity.SessionDescriptor = pt_doc_parser.DocParserVisitor().visit(document_ast)
+            document: doc_entity.SessionDescriptor = (
+                pt_doc_parser.DocParserVisitor().visit(document_ast)
+            )
             compiler = tag_compiler.TagCompiler()
             compiler.session = document
 
@@ -39,20 +44,26 @@ class TaggingIntegratedTests(unittest.TestCase):
 
             self.assertEqual("Dolor sic amet the rain in spain", events[2].clip_name)
 
-            self.assertEqual(document.header.convert_timecode("01:00:10:00"), events[2].start)
-            self.assertEqual(document.header.convert_timecode("01:00:25:00"), events[2].finish)
+            self.assertEqual(
+                document.header.convert_timecode("01:00:10:00"), events[2].start
+            )
+            self.assertEqual(
+                document.header.convert_timecode("01:00:25:00"), events[2].finish
+            )
 
-            self.assertIn('X', events[2].tags.keys())
-            self.assertIn('ABC', events[2].tags.keys())
-            self.assertIn('A', events[2].tags.keys())
-            self.assertEqual('302', events[2].tags['X'])
-            self.assertEqual('ABC', events[2].tags['ABC'])
-            self.assertEqual('1', events[2].tags['A'])
+            self.assertIn("X", events[2].tags.keys())
+            self.assertIn("ABC", events[2].tags.keys())
+            self.assertIn("A", events[2].tags.keys())
+            self.assertEqual("302", events[2].tags["X"])
+            self.assertEqual("ABC", events[2].tags["ABC"])
+            self.assertEqual("1", events[2].tags["A"])
 
     def test_successive_appends(self):
-        with open(self.path, 'r') as f:
+        with open(self.path, "r") as f:
             document_ast = pt_doc_parser.protools_text_export_grammar.parse(f.read())
-            document: doc_entity.SessionDescriptor = pt_doc_parser.DocParserVisitor().visit(document_ast)
+            document: doc_entity.SessionDescriptor = (
+                pt_doc_parser.DocParserVisitor().visit(document_ast)
+            )
             compiler = tag_compiler.TagCompiler()
             compiler.session = document
 
@@ -62,9 +73,13 @@ class TaggingIntegratedTests(unittest.TestCase):
 
             self.assertEqual("A B C", events[3].clip_name)
 
-            self.assertEqual(document.header.convert_timecode("01:00:15:00"), events[3].start)
-            self.assertEqual(document.header.convert_timecode("01:00:45:00"), events[3].finish)
+            self.assertEqual(
+                document.header.convert_timecode("01:00:15:00"), events[3].start
+            )
+            self.assertEqual(
+                document.header.convert_timecode("01:00:45:00"), events[3].finish
+            )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

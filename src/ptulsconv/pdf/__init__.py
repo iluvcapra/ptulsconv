@@ -97,6 +97,7 @@ def make_doc_template(
             doc_title=document_header,
         )
 
+
     frames = [Frame(page_box.min_x, page_box.min_y, page_box.width, page_box.height)]
 
     page_template = PageTemplate(id="Main", frames=frames, onPage=on_page_lambda)

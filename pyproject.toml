@@ -52,7 +52,7 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
-    "ruff>=0.13.1",
+    "ruff==0.13.1",
 ]
 doc = [
     "sphinx>=7.4.7",

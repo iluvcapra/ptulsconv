@@ -14,9 +14,6 @@ build:
     pre_install:
       - pip install --upgrade pip
       - pip install --upgrade --upgrade-strategy only-if-needed --group doc .
-    # build:
-    #   html:
-    #   - python -m sphinx -T -b html -d _build/doctrees -D language=en . $READTHEDOCS_OUTPUT/html
     post_build:
       - echo "Command run at 'post_build' step"
       - echo `date`
@@ -28,13 +25,3 @@ sphinx:
 #If using Sphinx, optionally build your docs in additional formats such as PDF
 formats:
    - pdf
-
-# FIXME: We should be installing the `doc` dependency group and not the `doc`
-# extra.
-
-# python:
-#   install:
-#     - method: pip
-#       path: .
-#       extra_requirements:
-#         - doc

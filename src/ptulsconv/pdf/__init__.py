@@ -129,11 +129,11 @@ def time_format(mins, zero_str="-"):
     if mins == 0.0 and zero_str is not None:
         return zero_str
     elif mins < 60.0:
-        return "%im" % round(mins)
+        return f"{round(mins)}m"
     else:
         m = round(mins)
         hh, mm = divmod(m, 60)
-        return "%i:%02i" % (hh, mm)
+        return f"{hh}:{mm:02}"
 
 
 def draw_header_footer(

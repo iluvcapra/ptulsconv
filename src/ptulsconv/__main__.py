@@ -110,7 +110,7 @@ def main():
     elif options.show_formats:
         dump_formats()
         sys.exit(0)
-        
+
     major_mode = options.output_format
 
     if len(args) < 2:
@@ -119,9 +119,7 @@ def main():
         )
         convert(major_mode=major_mode, warnings=options.warnings)
     else:
-        convert(
-            input_file=args[1], major_mode=major_mode, warnings=options.warnings
-        )
+        convert(input_file=args[1], major_mode=major_mode, warnings=options.warnings)
 
 
 if __name__ == "__main__":

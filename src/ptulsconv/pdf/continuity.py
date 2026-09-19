@@ -17,7 +17,7 @@ def table_for_scene(scene, tc_format, font_name="Helvetica"):
     scene_style.spaceAfter = 18.0
 
     tc_data = f"<em>{tc_format.seconds_to_smpte(scene[2])}</em><br />{tc_format.seconds_to_smpte(scene[3])}"
-    
+
     row = [
         Paragraph(tc_data, scene_style),
         Paragraph(scene[1], scene_style),

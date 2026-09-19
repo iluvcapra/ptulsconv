@@ -1,6 +1,7 @@
 """
 Methods for converting string reprentations of film footage.
 """
+
 from __future__ import annotations
 
 import re

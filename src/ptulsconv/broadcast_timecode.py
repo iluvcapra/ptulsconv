@@ -28,7 +28,7 @@ class TimecodeFormat(NamedTuple):
         else:
             return frame_count * self.frame_duration
 
-    def seconds_to_smpte(self, seconds: float) -> str:
+    def seconds_to_smpte(self, seconds: Fraction) -> str:
         frame_count = int(seconds / self.frame_duration)
         return frame_count_to_smpte(frame_count, self.logical_fps, self.drop_frame)
 

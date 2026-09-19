@@ -24,7 +24,7 @@ def draw_header_block(canvas, rect, record: ADRLine):
 def draw_character_row(canvas, rect, record: ADRLine):
     label_frame, value_frame = rect.split_x(1.25 * inch)
     label_frame.draw_text_cell(canvas, "CHARACTER", font_name, 10, force_baseline=9.0)
-    line = "%s / %s" % (record.character_id, record.character_name)
+    line = f"{record.character_id} / {record.character_name}"
     if record.actor_name is not None:
         line = line + " / " + record.actor_name
     value_frame.draw_text_cell(canvas, line, font_name, 12, force_baseline=9.0)
@@ -61,9 +61,9 @@ def draw_cue_number_block(canvas, rect, record: ADRLine):
         "omitted": "OMIT",
     }
     tag_field = ""
-    for key in tags:
+    for key, value in tags.items():
         if getattr(record, key):
-            tag_field = tag_field + tags[key] + " "
+            tag_field = tag_field + value + " "
 
     aux_frame.draw_text_cell(
         canvas, tag_field, font_name, 10, inset_x=10.0, inset_y=2.0, vertical_align="t"
@@ -221,7 +221,7 @@ def draw_aux_block(canvas, rect, recording_time_sec_this_line, recording_time_se
     rect.draw_border(canvas, "min_x")
 
     content_rect = rect.inset_xy(10.0, 10.0)
-    lines, last_line = content_rect.divide_y(
+    lines, _ = content_rect.divide_y(
         [12.0, 12.0, 24.0, 24.0, 24.0, 24.0], direction="d"
     )
 
@@ -255,7 +255,7 @@ def draw_footer(canvas, rect, record: ADRLine, report_date, line_no, total_lines
     rect.draw_border(canvas, "max_y")
     report_date_s = [report_date.strftime("%c")]
     spotting_name = [record.spot] if record.spot is not None else []
-    pages_s = ["Line %i of %i" % (line_no, total_lines)]
+    pages_s = [f"Line {line_no} of {total_lines}"]
     footer_s = " - ".join(report_date_s + spotting_name + pages_s)
     rect.draw_text_cell(
         canvas, footer_s, font_name=font_name, font_size=10.0, inset_y=2.0
@@ -266,11 +266,8 @@ def create_report_for_character(
     records, report_date, tc_display_format: TimecodeFormat
 ):
 
-    outfile = "%s_%s_%s_Log.pdf" % (
-        records[0].title,
-        records[0].character_id,
-        records[0].character_name,
-    )
+    outfile = f"{records[0].title}_{records[0].character_id}_{records[0].character_name}_Log.pdf"
+
     assert outfile is not None
     assert outfile[-4:] == ".pdf", "Output file must have 'pdf' extension!"
 
@@ -285,7 +282,7 @@ def create_report_for_character(
         )
     )
 
-    cue_header_block, title_header_block = header_row.split_x(4.0 * inch)
+    cue_header_block, _title_header_block = header_row.split_x(4.0 * inch)
     (cue_number_block, timecode_block), reason_block = data_row.divide_x(
         [1.5 * inch, 1.5 * inch]
     )
@@ -297,8 +294,7 @@ def create_report_for_character(
     )
 
     c.setTitle(
-        "%s %s (%s) Supervisor's Log"
-        % (records[0].title, records[0].character_name, records[0].character_id)
+        f"{records[0].title} {records[0].character_name} ({records[0].character_id}) Supervisor's Log"
     )
     c.setAuthor(records[0].supervisor)
 
@@ -339,7 +335,7 @@ def create_report_for_character(
 def output_report(lines, tc_display_format: TimecodeFormat):
     report_date = datetime.datetime.now()
     events = sorted(lines, key=lambda x: x.start)
-    character_numbers = set([x.character_id for x in lines])
+    character_numbers = {x.character_id for x in lines}
 
     for n in character_numbers:
         create_report_for_character(

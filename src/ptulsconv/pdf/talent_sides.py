@@ -1,5 +1,3 @@
-from typing import List
-
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet
@@ -14,9 +12,9 @@ from .__init__ import make_doc_template
 
 
 def output_report(
-    lines: List[ADRLine], tc_display_format: TimecodeFormat, font_name="Helvetica"
+    lines: list[ADRLine], tc_display_format: TimecodeFormat, font_name="Helvetica"
 ):
-    character_numbers = set([n.character_id for n in lines])
+    character_numbers = {n.character_id for n in lines}
     # pdfmetrics.registerFont(TTFont('Futura', 'Futura.ttc'))
 
     for n in character_numbers:
@@ -27,8 +25,8 @@ def output_report(
 
         char_lines = sorted(char_lines, key=lambda line: line.start)
 
-        title = "%s (%s) %s ADR Script" % (char_lines[0].title, character_name, n)
-        filename = "%s_%s_%s_ADR Script.pdf" % (char_lines[0].title, n, character_name)
+        title = f"{char_lines[0].title} ({character_name}) {n} ADR Script"
+        filename = f"{char_lines[0].title}_{n}_{character_name}_ADR Script.pdf"
 
         doc = make_doc_template(
             page_size=letter,
@@ -64,7 +62,7 @@ def output_report(
             finish_tc = tc_display_format.seconds_to_smpte(line.finish)
             data_block = [
                 [
-                    Paragraph(line.cue_number, number_style),
+                    Paragraph(line.cue_number or "[No QN]", number_style),
                     Paragraph(start_tc + " - " + finish_tc, number_style),
                 ]
             ]
@@ -80,7 +78,7 @@ def output_report(
                             colWidths=[1.5 * inch, 6.0 * inch],
                             style=[("LEFTPADDING", (0, 0), (-1, -1), 0.0)],
                         ),
-                        Paragraph(line.prompt, prompt_style),
+                        Paragraph(line.prompt or "[No Prompt]", prompt_style),
                         Spacer(1.0, inch * 1.5),
                     ]
                 )

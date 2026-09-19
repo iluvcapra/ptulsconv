@@ -1,5 +1,4 @@
-
-from typing import List
+from __future__ import annotations
 
 from reportlab.lib.pagesizes import letter, portrait
 from reportlab.lib.styles import getSampleStyleSheet
@@ -13,7 +12,7 @@ from .__init__ import make_doc_template, time_format
 
 
 def build_aux_data_field(line: ADRLine):
-    entries = list()
+    entries = []
     if line.reason is not None:
         entries.append("Reason: " + line.reason)
     if line.note is not None:
@@ -27,40 +26,30 @@ def build_aux_data_field(line: ADRLine):
     tag_field = ""
     if line.effort:
         bg_color = "red"
-        tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font> " % (
-            bg_color,
-            fg_color,
-            "EFF",
+        tag_field += (
+            f"<font backColor={bg_color} textColor={fg_color} fontSize=11>EFF</font> "
         )
     elif line.tv:
         bg_color = "blue"
-        tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font> " % (
-            bg_color,
-            fg_color,
-            "TV",
+        tag_field += (
+            f"<font backColor={bg_color} textColor={fg_color} fontSize=11>TV</font> "
         )
     elif line.adlib:
         bg_color = "purple"
-        tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font> " % (
-            bg_color,
-            fg_color,
-            "ADLIB",
+        tag_field += (
+            f"<font backColor={bg_color} textColor={fg_color} fontSize=11>ADLIB</font> "
         )
     elif line.optional:
         bg_color = "green"
-        tag_field += "<font backColor=%s textColor=%s fontSize=11>%s</font>" % (
-            bg_color,
-            fg_color,
-            "OPTIONAL",
-        )
+        tag_field += f"font backColor={bg_color} textColor={fg_color} fontSize=11>OPTIONAL</font>"
 
     entries.append(tag_field)
 
     return "<br />".join(entries)
 
 
-def build_story(lines: List[ADRLine], tc_rate: TimecodeFormat, font_name="Helvetica"):
-    story = list()
+def build_story(lines: list[ADRLine], tc_rate: TimecodeFormat, font_name="Helvetica"):
+    story = []
 
     this_scene = None
     scene_style = getSampleStyleSheet()["Normal"]
@@ -78,15 +67,14 @@ def build_story(lines: List[ADRLine], tc_rate: TimecodeFormat, font_name="Helvet
             ("BOTTOMPADDING", (0, 0), (-1, -1), 24.0),
         ]
 
-        cue_number_field = "%s<br /><font fontSize=7>%s</font>" % (
-            line.cue_number,
-            line.character_name,
+        cue_number_field = (
+            f"{line.cue_number}<br /><font fontSize=7>{line.character_name}</font>"
         )
 
         time_data = time_format(line.time_budget_mins)
 
         if line.priority is not None:
-            time_data = time_data + "<br />" + "P: " + line.priority
+            time_data = time_data + "<br />" + "P: " + str(line.priority)
 
         aux_data_field = build_aux_data_field(line)
 
@@ -96,7 +84,7 @@ def build_story(lines: List[ADRLine], tc_rate: TimecodeFormat, font_name="Helvet
             [
                 Paragraph(cue_number_field, line_style),
                 Paragraph(tc_data, line_style),
-                Paragraph(line.prompt, line_style),
+                Paragraph(line.prompt or "[No Prompt]", line_style),
                 Paragraph(time_data, line_style),
                 Paragraph(aux_data_field, line_style),
             ]
@@ -135,11 +123,11 @@ def build_tc_data(line: ADRLine, tc_format: TimecodeFormat):
     third_line = []
     if line.reel is not None:
         if line.reel[0:1] == "R":
-            third_line.append("%s" % line.reel)
+            third_line.append(f"{line.reel}")
         else:
-            third_line.append("Reel %s" % line.reel)
+            third_line.append(f"Reel {line.reel}")
     if line.version is not None:
-        third_line.append("(%s)" % line.version)
+        third_line.append(f"({line.version})")
     if len(third_line) > 0:
         tc_data = tc_data + "<br/>" + " ".join(third_line)
     return tc_data
@@ -147,17 +135,17 @@ def build_tc_data(line: ADRLine, tc_format: TimecodeFormat):
 
 def generate_report(
     page_size,
-    lines: List[ADRLine],
+    lines: list[ADRLine],
     tc_rate: TimecodeFormat,
     character_number=None,
     include_omitted=True,
 ):
     if character_number is not None:
         lines = [r for r in lines if r.character_id == character_number]
-        title = "%s ADR Report (%s)" % (lines[0].title, lines[0].character_name)
-        document_header = "%s ADR Report" % lines[0].character_name
+        title = f"{lines[0].title} ADR Report ({lines[0].character_name})"
+        document_header = f"{lines[0].character_name} ADR Report"
     else:
-        title = "%s ADR Report" % lines[0].title
+        title = f"{lines[0].title} ADR Report"
         document_header = "ADR Report"
 
     if not include_omitted:
@@ -172,9 +160,9 @@ def generate_report(
         document_title=title,
         document_header=document_header,
         title=lines[0].title,
-        supervisor=lines[0].supervisor,
-        client=lines[0].client,
-        document_subheader=lines[0].spot,
+        supervisor=lines[0].supervisor or "",
+        client=lines[0].client or "",
+        document_subheader=lines[0].spot or "",
         left_margin=0.75 * inch,
     )
     story = build_story(lines, tc_rate)
@@ -182,13 +170,16 @@ def generate_report(
 
 
 def output_report(
-    lines: List[ADRLine],
+    lines: list[ADRLine],
     tc_display_format: TimecodeFormat,
-    page_size=portrait(letter),
-    by_character=False,
+    page_size: tuple[float, float] | None = None,
+    by_character: bool = False,
 ):
+    if page_size is None:
+        page_size = portrait(letter)
+
     if by_character:
-        character_numbers = set(r.character_id for r in lines)
+        character_numbers = {r.character_id for r in lines}
         for n in character_numbers:
             generate_report(page_size, lines, tc_display_format, n)
     else:

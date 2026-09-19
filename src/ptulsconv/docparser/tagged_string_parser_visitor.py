@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Dict
 
 from parsimonious import Grammar, NodeVisitor
 
@@ -37,7 +36,7 @@ def parse_tags(prompt: str) -> "TaggedStringResult":
 
 class TaggedStringResult:
     content: str
-    tag_dict: Dict[str, str]
+    tag_dict: dict[str, str]
     mode: TagPreModes
 
     def __init__(self, content, tag_dict, mode):
@@ -53,7 +52,7 @@ class TagListVisitor(NodeVisitor):
 
         return TaggedStringResult(
             content=next(iter(line_opt), None),
-            tag_dict=next(iter(tag_list_opt), dict()),
+            tag_dict=next(iter(tag_list_opt), {}),
             mode=TagPreModes(next(iter(modifier_opt), "Normal")),
         )
 
@@ -74,7 +73,7 @@ class TagListVisitor(NodeVisitor):
 
     @staticmethod
     def visit_tag_list(_, visited_children):
-        retdict = dict()
+        retdict = {}
         for child in visited_children:
             if child[0] is not None:
                 k, v = child[0]

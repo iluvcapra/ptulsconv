@@ -1,11 +1,8 @@
-from typing import List, Optional
+from __future__ import annotations
 
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter, portrait
 from reportlab.lib.styles import getSampleStyleSheet
-
-# from reportlab.pdfbase import pdfmetrics
-# from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.units import inch
 from reportlab.platypus import Paragraph, Spacer, Table
 
@@ -14,15 +11,13 @@ from .__init__ import make_doc_template, time_format
 
 
 def build_columns(
-    lines: List[ADRLine],
-    reel_list: Optional[List[str]],
+    lines: list[ADRLine],
+    reel_list: list[str] | None,
     show_priorities=False,
     include_omitted=False,
 ):
-    columns = list()
-    reel_numbers = reel_list or sorted(
-        set([x.reel for x in lines if x.reel is not None])
-    )
+    columns = []
+    reel_numbers = reel_list or sorted({x.reel for x in lines if x.reel is not None})
 
     num_column_width = 15.0 / 32.0 * inch
 
@@ -160,17 +155,17 @@ def build_columns(
         ):
             columns.append(
                 {
-                    "heading": "P%i" % n,
-                    "value_getter": lambda recs: len(
-                        [r for r in recs if r.priority == n]
+                    "heading": f"P{n}",
+                    "value_getter": lambda recs, N=n: len(
+                        [r for r in recs if r.priority == N]
                     ),
                     "value_getter2": (
-                        lambda recs: time_format(
+                        lambda recs, N=n: time_format(
                             sum(
                                 [
                                     r.time_budget_mins or 0.0
                                     for r in recs
-                                    if r.priority == n
+                                    if r.priority == N
                                 ]
                             )
                         )
@@ -243,22 +238,20 @@ def build_columns(
     return columns
 
 
-def populate_columns(lines: List[ADRLine], columns, include_omitted, _page_size):
-    data = list()
-    styles = list()
-    columns_widths = list()
+def populate_columns(lines: list[ADRLine], columns, include_omitted, _page_size):
+    data = []
+    styles = []
+    columns_widths = []
 
-    sorted_character_numbers: List[str] = sorted(
-        set([x.character_id for x in lines]), key=lambda x: str(x)
+    sorted_character_numbers: list[str | None] = sorted(
+        {x.character_id for x in lines}, key=lambda x: str(x)
     )
-
-    # construct column styles
 
     for i, c in enumerate(columns):
         styles.extend(c["style_getter"](i))
         columns_widths.append(c["width"])
 
-    data.append(list(map(lambda x: x["heading"], columns)))
+    data.append([x["heading"] for x in columns])
 
     if not include_omitted:
         lines = [x for x in lines if not x.omitted]
@@ -266,8 +259,8 @@ def populate_columns(lines: List[ADRLine], columns, include_omitted, _page_size)
     for n in sorted_character_numbers:
         char_records = [x for x in lines if x.character_id == n]
         if len(char_records) > 0:
-            row_data = list()
-            row_data2 = list()
+            row_data = []
+            row_data2 = []
 
             for col in columns:
                 row1_index = len(data)
@@ -291,8 +284,8 @@ def populate_columns(lines: List[ADRLine], columns, include_omitted, _page_size)
             data.append(row_data)
             data.append(row_data2)
 
-    summary_row1 = list()
-    summary_row2 = list()
+    summary_row1 = []
+    summary_row2 = []
     row1_index = len(data)
 
     for col in columns:
@@ -316,12 +309,15 @@ def populate_columns(lines: List[ADRLine], columns, include_omitted, _page_size)
 
 
 def output_report(
-    lines: List[ADRLine],
-    reel_list: List[str],
+    lines: list[ADRLine],
+    reel_list: list[str],
+    page_size: tuple[float, float] | None = None,
     include_omitted=False,
-    page_size=portrait(letter),
     font_name="Helvetica",
 ):
+    if page_size is None:
+        page_size = portrait(letter)
+
     columns = build_columns(lines, include_omitted=include_omitted, reel_list=reel_list)
     data, style, columns_widths = populate_columns(
         lines, columns, include_omitted, page_size
@@ -334,16 +330,17 @@ def output_report(
 
     # pdfmetrics.registerFont(TTFont('Futura', 'Futura.ttc'))
 
-    title = "%s Line Count" % lines[0].title
+    title = f"{lines[0].title} Line Count"
     filename = title + ".pdf"
+
     doc = make_doc_template(
         page_size=page_size,
         filename=filename,
         document_title=title,
         title=lines[0].title,
-        document_subheader=lines[0].spot,
-        client=lines[0].client,
-        supervisor=lines[0].supervisor,
+        document_subheader=lines[0].spot or "",
+        client=lines[0].client or "",
+        supervisor=lines[0].supervisor or "",
         document_header="Line Count",
     )
 
@@ -364,8 +361,6 @@ def output_report(
     omitted_count = len([x for x in lines if x.omitted])
 
     if not include_omitted and omitted_count > 0:
-        story.append(
-            Paragraph("* %i Omitted lines are excluded." % omitted_count, style)
-        )
+        story.append(Paragraph(f"* {omitted_count} Omitted lines are excluded.", style))
 
     doc.build(story)

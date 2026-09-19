@@ -26,7 +26,7 @@ class ReportCanvas(canvas.Canvas):
 
     def showPage(self):
         self._saved_page_states.append(dict(self.__dict__))
-        self._startPage()
+        self._startPage()  # pyright: ignore[reportAttributeAccessIssue]
 
     def save(self):
         """add page info to each page (page x of y)"""
@@ -41,9 +41,11 @@ class ReportCanvas(canvas.Canvas):
         self.saveState()
         self.setFont("Helvetica", 10)  # FIXME make this customizable
         self.drawString(
-            0.5 * inch, 0.5 * inch, "Page %d of %d" % (self._pageNumber, page_count)
+            0.5 * inch,
+            0.5 * inch,
+            f"Page {self._pageNumber} of {page_count}",  # pyright: ignore[reportAttributeAccessIssue]
         )
-        right_edge = self._pagesize[0] - 0.5 * inch
+        right_edge = self._pagesize[0] - 0.5 * inch  # pyright: ignore[reportAttributeAccessIssue]
         self.drawRightString(
             right_edge, 0.5 * inch, self._report_date.strftime("%m/%d/%Y %H:%M")
         )
@@ -62,7 +64,7 @@ class ADRDocTemplate(BaseDocTemplate):
 
 
 def make_doc_template(
-    page_size,
+    page_size: tuple[float, float],
     filename,
     document_title,
     title: str,
@@ -71,18 +73,22 @@ def make_doc_template(
     client: str,
     document_subheader: str,
     left_margin=0.5 * inch,
-    fonts: list[TTFont] = [],
+    fonts: list[TTFont] | None = None,
 ) -> ADRDocTemplate:
+
+    if fonts is None:
+        fonts = []
+
     right_margin = top_margin = bottom_margin = 0.5 * inch
     page_box: GRect = GRect(0.0, 0.0, page_size[0], page_size[1])
-    _, page_box = page_box.split_x(left_margin, direction="l")
-    _, page_box = page_box.split_x(right_margin, direction="r")
-    _, page_box = page_box.split_y(bottom_margin, direction="u")
-    _, page_box = page_box.split_y(top_margin, direction="d")
+    _, page_box = page_box.split_x(left_margin, direction="l")  # pyright: ignore[reportAssignmentType]
+    _, page_box = page_box.split_x(right_margin, direction="r")  # pyright: ignore[reportAssignmentType]
+    _, page_box = page_box.split_y(bottom_margin, direction="u")  # pyright: ignore[reportAssignmentType]
+    _, page_box = page_box.split_y(top_margin, direction="d")  # pyright: ignore[reportAssignmentType]
 
-    footer_box, page_box = page_box.split_y(0.25 * inch, direction="u")
-    header_box, page_box = page_box.split_y(0.75 * inch, direction="d")
-    title_box, report_box = header_box.split_x(3.5 * inch, direction="r")
+    footer_box, page_box = page_box.split_y(0.25 * inch, direction="u")  # pyright: ignore[reportAssignmentType]
+    header_box, page_box = page_box.split_y(0.75 * inch, direction="d")  # pyright: ignore[reportAssignmentType]
+    title_box, report_box = header_box.split_x(3.5 * inch, direction="r")  # pyright: ignore[reportOptionalMemberAccess]
 
     def on_page_lambda(c, _):
         draw_header_footer(
@@ -96,7 +102,6 @@ def make_doc_template(
             client=client,
             doc_title=document_header,
         )
-
 
     frames = [Frame(page_box.min_x, page_box.min_y, page_box.width, page_box.height)]
 
@@ -292,7 +297,7 @@ class GRect:
 
         rem = self
         for item in x_list:
-            s, rem = rem.split_x(item, direction)
+            s, rem = rem.split_x(item, direction)  # pyright: ignore[reportOptionalMemberAccess]
             ret_list.append(s)
 
         return ret_list, rem
@@ -302,7 +307,7 @@ class GRect:
 
         rem = self
         for item in y_list:
-            s, rem = rem.split_y(item, direction)
+            s, rem = rem.split_y(item, direction)  # pyright: ignore[reportOptionalMemberAccess]
             ret_list.append(s)
 
         return ret_list, rem
@@ -399,7 +404,7 @@ class GRect:
         cp.rect(self.min_x, self.min_y, self.width, self.height)
         a_canvas.clipPath(cp, stroke=0, fill=0)
 
-        w, h = flowable.wrap(inset_rect.width, inset_rect.height)
+        _w, h = flowable.wrap(inset_rect.width, inset_rect.height)
 
         flowable.drawOn(a_canvas, inset_rect.x, inset_rect.max_y - h)
 

@@ -9,7 +9,6 @@ from ptulsconv.commands import convert
 from ptulsconv.docparser.adr_entity import ADR_TAG_MAPPING, GENERIC_TAG_MAPPING
 from ptulsconv.reporting import (
     print_banner_style,
-    print_fatal_error,
     print_section_header_style,
     print_status_style,
 )
@@ -111,18 +110,18 @@ def main():
     elif options.show_formats:
         dump_formats()
         sys.exit(0)
-    try:
-        major_mode = options.output_format
+        
+    major_mode = options.output_format
 
-        if len(args) < 2:
-            print_status_style(
-                "No input file provided, will connect to Pro Tools with PTSL..."
-            )
-            convert(major_mode=major_mode, warnings=options.warnings)
-        else:
-            convert(
-                input_file=args[1], major_mode=major_mode, warnings=options.warnings
-            )
+    if len(args) < 2:
+        print_status_style(
+            "No input file provided, will connect to Pro Tools with PTSL..."
+        )
+        convert(major_mode=major_mode, warnings=options.warnings)
+    else:
+        convert(
+            input_file=args[1], major_mode=major_mode, warnings=options.warnings
+        )
 
 
 if __name__ == "__main__":

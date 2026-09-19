@@ -13,7 +13,6 @@ from collections.abc import Iterator
 from fractions import Fraction
 from itertools import chain
 from json import JSONEncoder
-from zoneinfo import ZoneInfo
 
 import ptsl
 

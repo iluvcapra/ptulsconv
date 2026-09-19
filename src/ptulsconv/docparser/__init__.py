@@ -3,6 +3,4 @@ Docparser module
 """
 
 
-from .pt_doc_parser import parse_document
-
-__all__ = [parse_document]
+from .pt_doc_parser import parse_document  # pyright: ignore[reportUnusedImport, reportUnusedImport]  # noqa: F401, I001

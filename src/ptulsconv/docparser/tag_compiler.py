@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from collections import namedtuple
 from collections.abc import Generator, Iterator
 from dataclasses import dataclass
 from fractions import Fraction
-from typing import Callable
+from typing import Callable, NamedTuple
 
 from ptulsconv.docparser import doc_entity
 
@@ -27,12 +26,15 @@ class TagCompiler:
     items.
     """
 
-    Intermediate = namedtuple(
-        "Intermediate",
-        "track_content track_tags track_comment_tags "
-        "clip_content clip_tags clip_tag_mode start "
-        "finish",
-    )
+    class Intermediate(NamedTuple):
+        track_content: str
+        clip_content: str
+        track_tags: dict[str, str]
+        track_comment_tags: dict[str, str]
+        clip_tags: dict[str, str]
+        clip_tag_mode: TagPreModes
+        start: Fraction
+        finish: Fraction
 
     session: doc_entity.SessionDescriptor
 
@@ -181,7 +183,7 @@ class TagCompiler:
             if item.clip_tag_mode == TagPreModes.TIMESPAN:
                 time_spans.append((item.clip_tags, item.start, item.finish))
             else:
-                yield item, list(time_spans)
+                yield item, tuple(time_spans)
 
     @staticmethod
     def _time_span_tags(at_time: Fraction, applicable_spans) -> dict:

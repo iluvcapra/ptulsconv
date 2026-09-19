@@ -1,13 +1,13 @@
 """
 Methods for converting string reprentations of film footage.
 """
+from __future__ import annotations
 
 import re
 from fractions import Fraction
-from typing import Optional
 
 
-def footage_to_seconds(footage: str) -> Optional[Fraction]:
+def footage_to_seconds(footage: str) -> Fraction | None:
     """
     Converts a string representation of a footage (35mm, 24fps)
     into a :class:`Fraction`, this fraction being a some number of

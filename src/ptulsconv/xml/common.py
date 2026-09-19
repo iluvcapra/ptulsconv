@@ -1,11 +1,13 @@
-import datetime
+from __future__ import annotations
+
 import glob
 import os
 import os.path
 import pathlib
 import subprocess
 import sys
-from typing import List
+from datetime import datetime
+from importlib.metadata import version as module_version
 from xml.etree.ElementTree import TreeBuilder, tostring
 
 import ptulsconv
@@ -15,12 +17,15 @@ from ptulsconv.docparser.adr_entity import ADRLine
 
 
 def avid_marker_list(
-    lines: List[ADRLine],
-    report_date=datetime.datetime.now(),
+    lines: list[ADRLine],
+    report_date: datetime | None = None,
     reel_start_frame=0,
     fps=24,
 ):
     doc = TreeBuilder(element_factory=None)
+
+    if report_date is None:
+        report_date = datetime.now()
 
     doc.start("Avid:StreamItems", {"xmlns:Avid": "http://www.avid.com"})
     doc.start("Avid:XMLFileData", {})
@@ -57,6 +62,8 @@ def avid_marker_list(
 
         doc.start("List", {"id": "OMFI:ATTR:AttrRefs"})
 
+        assert report_date
+
         insert_elem(
             "1",
             "OMFI:ATTB:IntAttribute",
@@ -75,7 +82,7 @@ def avid_marker_list(
             line.supervisor or "",
         )
 
-        marker_name = "%s: %s" % (line.cue_number, line.prompt)
+        marker_name = f"{line.cue_number}: {line.prompt}"
         insert_elem(
             "2", "OMFI:ATTB:StringAttribute", "string", "_ATN_CRM_COM", marker_name
         )
@@ -112,7 +119,8 @@ def dump_fmpxml(data, input_file_name, output, adr_field_map):
     doc.data("0")
     doc.end("ERRORCODE")
 
-    doc.start("PRODUCT", {"NAME": ptulsconv.__name__, "VERSION": ptulsconv.__version__})
+    version = module_version("ptulsconv")
+    doc.start("PRODUCT", {"NAME": ptulsconv.__name__, "VERSION": f"{version}"})
     doc.end("PRODUCT")
 
     doc.start(
@@ -147,7 +155,7 @@ def dump_fmpxml(data, input_file_name, output, adr_field_map):
             doc.start("COL", {})
             doc.start("DATA", {})
             for key_attempt in field[0]:
-                if key_attempt in event.keys():
+                if key_attempt in event:
                     doc.data(str(event[key_attempt]))
                     break
             doc.end("DATA")
@@ -170,7 +178,7 @@ def xform_options():
 
 def dump_xform_options(output=sys.stdout):
     print("# Available transforms:", file=output)
-    print("# Transform dir: %s" % xslt_path, file=output)
+    print(f"# Transform dir: {xslt_path}", file=output)
     for f in xform_options():
         base = os.path.basename(f)
         name, _ = os.path.splitext(base)
@@ -188,14 +196,14 @@ def fmp_transformed_dump(data, input_file, xsl_name, output, adr_field_map):
     dump_fmpxml(data, input_file, pipe, adr_field_map)
 
     str_data = pipe.getvalue()
-    print_status_style("Base XML size %i" % (len(str_data)))
+    print_status_style(f"Base XML size {len(str_data)}")
 
     print_status_style("Running xsltproc")
 
     xsl_path = os.path.join(
         pathlib.Path(__file__).parent.absolute(), "xslt", xsl_name + ".xsl"
     )
-    print_status_style("Using xsl: %s" % xsl_path)
+    print_status_style(f"Using xsl: {xsl_path}")
     subprocess.run(
         ["xsltproc", xsl_path, "-"],
         input=str_data,

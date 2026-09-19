@@ -6,17 +6,18 @@ from __future__ import annotations
 
 import math
 import re
-from collections import namedtuple
 from fractions import Fraction
-from typing import SupportsFloat
+from typing import NamedTuple
 
 
-class TimecodeFormat(
-    namedtuple("_TimecodeFormat", "frame_duration logical_fps drop_frame")
-):
+class TimecodeFormat(NamedTuple):
     """
     A struct reperesenting a timecode datum.
     """
+
+    frame_duration: Fraction
+    logical_fps: int
+    drop_frame: bool
 
     def smpte_to_seconds(self, smpte: str) -> Fraction | None:
         frame_count = smpte_to_frame_count(
@@ -27,7 +28,7 @@ class TimecodeFormat(
         else:
             return frame_count * self.frame_duration
 
-    def seconds_to_smpte(self, seconds: SupportsFloat) -> str:
+    def seconds_to_smpte(self, seconds: float) -> str:
         frame_count = int(seconds / self.frame_duration)
         return frame_count_to_smpte(frame_count, self.logical_fps, self.drop_frame)
 

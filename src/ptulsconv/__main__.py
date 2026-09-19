@@ -102,7 +102,7 @@ def main():
     (options, args) = parser.parse_args(sys.argv)
 
     print_section_header_style("Startup")
-    print_status_style("This run started %s" % (datetime.datetime.now().isoformat()))
+    print_status_style(f"This run started {datetime.datetime.now().isoformat()}")
 
     if options.show_tags:
         dump_field_map()
@@ -123,17 +123,6 @@ def main():
             convert(
                 input_file=args[1], major_mode=major_mode, warnings=options.warnings
             )
-
-    except FileNotFoundError as e:
-        print_fatal_error("Error trying to read input file")
-        raise e
-
-    except Exception as e:
-        import traceback
-
-        print_fatal_error("Error trying to convert file")
-        print("\033[31m" + e.__repr__() + "\033[0m", file=sys.stderr)
-        print(traceback.format_exc())
 
 
 if __name__ == "__main__":

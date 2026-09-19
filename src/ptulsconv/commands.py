@@ -3,6 +3,8 @@ This module provides the main input document parsing and transform
 implementation.
 """
 
+from __future__ import annotations
+
 import csv
 import datetime
 import os
@@ -11,7 +13,7 @@ from collections.abc import Iterator
 from fractions import Fraction
 from itertools import chain
 from json import JSONEncoder
-from typing import List, Optional
+from zoneinfo import ZoneInfo
 
 import ptsl
 
@@ -39,26 +41,25 @@ class FractionEncoder(JSONEncoder):
     as a dict.
     """
 
-    force_denominator: Optional[int]
+    force_denominator: int | None
 
     def default(self, o):
-        """ """
         if isinstance(o, Fraction):
-            return dict(numerator=o.numerator, denominator=o.denominator)
+            return {"numerator": o.numerator, "denominator": o.denominator}
         else:
             return o.__dict__
 
 
-def output_adr_csv(lines: List[ADRLine], time_format: TimecodeFormat):
+def output_adr_csv(lines: list[ADRLine], time_format: TimecodeFormat):
     """
     Writes ADR lines as CSV to the current working directory. Creates
     directories for each character number and name pair, and within that
     directory, creates a CSV file for each reel.
     """
 
-    reels: set[str | None] = set([ln.reel for ln in lines])
+    reels: set[str | None] = {ln.reel for ln in lines}
     for n, name in [(n.character_id, n.character_name) for n in lines]:
-        dir_name = "%s_%s" % (n, name)
+        dir_name = f"{n}_{name}"
         os.makedirs(dir_name, exist_ok=True)
         os.chdir(dir_name)
         for reel in reels:
@@ -69,11 +70,8 @@ def output_adr_csv(lines: List[ADRLine], time_format: TimecodeFormat):
             if len(these_lines) == 0:
                 continue
 
-            outfile_name = "%s_%s_%s_%s.csv" % (
-                these_lines[0].title,
-                n,
-                these_lines[0].character_name,
-                reel,
+            outfile_name = (
+                f"{these_lines[0].title}_{n}_{these_lines[0].character_name}_{reel}.csv"
             )
 
             with open(outfile_name, mode="w", newline="") as outfile:
@@ -119,13 +117,13 @@ def output_adr_csv(lines: List[ADRLine], time_format: TimecodeFormat):
         os.chdir("..")
 
 
-def generate_documents(session_tc_format, scenes, adr_lines: List[ADRLine], title):
+def generate_documents(session_tc_format, scenes, adr_lines: list[ADRLine], title):
     """
     Create PDF output.
     """
     print_section_header_style("Creating PDF Reports")
     report_date = datetime.datetime.now()
-    reports_dir = "%s_%s" % (title, report_date.strftime("%Y-%m-%d_%H%M%S"))
+    reports_dir = f"{title}_{report_date.strftime('%Y-%m-%d_%H%M%S')}"
     os.makedirs(reports_dir, exist_ok=False)
     os.chdir(reports_dir)
 
@@ -155,7 +153,7 @@ def generate_documents(session_tc_format, scenes, adr_lines: List[ADRLine], titl
 
 
 def create_adr_reports(
-    lines: List[ADRLine], tc_display_format: TimecodeFormat, reel_list: List[str]
+    lines: list[ADRLine], tc_display_format: TimecodeFormat, reel_list: list[str]
 ):
     """
     Creates a directory heirarchy and a respective set of ADR reports,
@@ -240,18 +238,18 @@ def convert(major_mode, input_file=None, output=sys.stdout, warnings=True):
             )
 
             # TODO: Breakdown by titles
-            titles = set([x.title for x in (generic_events + adr_lines)])
+            titles = {x.title for x in (generic_events + adr_lines)}
             if len(titles) != 1:
                 print_warning(
                     "Multiple titles per export is not supported, "
-                    "found multiple titles: %s Exiting." % titles
+                    f"found multiple titles: {titles} Exiting."
                 )
-                exit(-1)
+                sys.exit(-1)
 
-            title = list(titles)[0]
+            title = next(iter(titles))
 
-            print_status_style("%i generic events found." % len(generic_events))
-            print_status_style("%i ADR events found." % len(adr_lines))
+            print_status_style(f"{len(generic_events)} generic events found.")
+            print_status_style(f"{len(adr_lines)} ADR events found.")
 
             if warnings:
                 perform_adr_validations(iter(adr_lines))

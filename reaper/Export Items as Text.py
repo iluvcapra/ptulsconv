@@ -6,7 +6,7 @@
 #
 import datetime
 import json
-import time
+from zoneinfo import ZoneInfo
 
 item_records = []
 
@@ -66,7 +66,7 @@ output["project_frame_rate"], _, output["project_drop_frame"] = (
 
 output_path, _ = RPR_GetProjectPath("", 1024)
 
-now = datetime.datetime.now(tz=time.tzname)
+now = datetime.datetime.now()
 output_title = output["project_title"]
 
 if output_title == "":

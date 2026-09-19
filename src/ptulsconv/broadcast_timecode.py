@@ -2,11 +2,13 @@
 Useful functions for parsing and working with timecode.
 """
 
+from __future__ import annotations
+
 import math
 import re
 from collections import namedtuple
 from fractions import Fraction
-from typing import Optional, SupportsFloat
+from typing import SupportsFloat
 
 
 class TimecodeFormat(
@@ -16,7 +18,7 @@ class TimecodeFormat(
     A struct reperesenting a timecode datum.
     """
 
-    def smpte_to_seconds(self, smpte: str) -> Optional[Fraction]:
+    def smpte_to_seconds(self, smpte: str) -> Fraction | None:
         frame_count = smpte_to_frame_count(
             smpte, self.logical_fps, drop_frame_hint=self.drop_frame
         )
@@ -32,7 +34,7 @@ class TimecodeFormat(
 
 def smpte_to_frame_count(
     smpte_rep_string: str, frames_per_logical_second: int, drop_frame_hint=False
-) -> Optional[int]:
+) -> int | None:
     """
     Convert a string with a SMPTE timecode representation into a frame count.
 
@@ -83,7 +85,7 @@ def frame_count_to_smpte(
     frame_count: int,
     frames_per_logical_second: int,
     drop_frame: bool = False,
-    fractional_frame: Optional[float] = None,
+    fractional_frame: float | None = None,
 ) -> str:
     assert frames_per_logical_second in [24, 25, 30, 48, 50, 60]
     assert fractional_frame is None or fractional_frame < 1.0
@@ -104,20 +106,21 @@ def frame_count_to_smpte(
     ss, ff = divmod(rem, frames_per_logical_second)
 
     hh = hh % 24
+
+    hh = int(hh)
+    mm = int(mm)
+    ss = int(ss)
+    ff = int(ff)
+
     if fractional_frame is not None and fractional_frame > 0:
-        return "%02i:%02i:%02i%s%02i%s" % (
-            hh,
-            mm,
-            ss,
-            separator,
-            ff,
-            ("%.3f" % fractional_frame)[1:],
-        )
+        fpart = "{fractional_frame:.3f}"[1:]
+        return f"{hh:02}:{mm:02}:{ss:02}{separator}{ff:02}{fpart}"
     else:
-        return "%02i:%02i:%02i%s%02i" % (hh, mm, ss, separator, ff)
+        return f"{hh:02}:{mm:02}:{ss:02}{separator}{ff:02}"
+        # "%02i:%02i:%02i%s%02i" % (hh, mm, ss, separator, ff)
 
 
-def footage_to_frame_count(footage_string) -> Optional[int]:
+def footage_to_frame_count(footage_string) -> int | None:
     m = re.search(r"(\d+)\+(\d+)(\.\d+)?", footage_string)
     if m is None:
         return None
@@ -131,4 +134,4 @@ def footage_to_frame_count(footage_string) -> Optional[int]:
 
 def frame_count_to_footage(frame_count):
     feet, frm = divmod(frame_count, 16)
-    return "%i+%02i" % (feet, frm)
+    return f"{feet}+{frm:02}"

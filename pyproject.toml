@@ -42,6 +42,11 @@ doc = [
     "sphinx-rtd-theme>=3.0.2",
 ]
 
+[tool.ruff.lint]
+ignore = [
+    "DTZ005" # datetime created without a tz
+]
+
 [tool.ruff.lint.per-file-ignores]
 "reaper/Export Items as Text.py" = ["F821"]
 

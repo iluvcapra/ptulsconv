@@ -1,10 +1,16 @@
-from parsimonious.nodes import NodeVisitor
 from parsimonious.grammar import Grammar
+from parsimonious.nodes import NodeVisitor
 
-from .doc_entity import SessionDescriptor, HeaderDescriptor, TrackDescriptor, \
-    FileDescriptor, TrackClipDescriptor, ClipDescriptor, PluginDescriptor, \
-    MarkerDescriptor
-
+from .doc_entity import (
+    ClipDescriptor,
+    FileDescriptor,
+    HeaderDescriptor,
+    MarkerDescriptor,
+    PluginDescriptor,
+    SessionDescriptor,
+    TrackClipDescriptor,
+    TrackDescriptor,
+)
 
 protools_text_export_grammar = Grammar(
     r"""
@@ -110,7 +116,8 @@ protools_text_export_grammar = Grammar(
     integer_value  = ~r"\d+"
     float_value    = ~r"\d+(\.\d+)?"
     isp            = ~r"[^\d\t\n]*"
-    """)
+    """
+)
 
 
 def parse_document(session_text: str) -> SessionDescriptor:
@@ -124,7 +131,6 @@ def parse_document(session_text: str) -> SessionDescriptor:
 
 
 class DocParserVisitor(NodeVisitor):
-
     def __init__(self):
         self.track_index = 0
 
@@ -137,12 +143,14 @@ class DocParserVisitor(NodeVisitor):
         tracks = next(iter(visited_children[4]), None)
         markers = next(iter(visited_children[5]), None)
 
-        return SessionDescriptor(header=visited_children[0],
-                                 files=files,
-                                 clips=clips,
-                                 plugins=plugins,
-                                 tracks=tracks,
-                                 markers=markers)
+        return SessionDescriptor(
+            header=visited_children[0],
+            files=files,
+            clips=clips,
+            plugins=plugins,
+            tracks=tracks,
+            markers=markers,
+        )
 
     @staticmethod
     def visit_header(_, visited_children):
@@ -151,41 +159,47 @@ class DocParserVisitor(NodeVisitor):
         for _ in visited_children[20]:
             tc_drop = True
 
-        return HeaderDescriptor(session_name=visited_children[2],
-                                sample_rate=visited_children[6],
-                                bit_depth=visited_children[10],
-                                start_timecode=visited_children[15],
-                                timecode_format=visited_children[19],
-                                timecode_drop_frame=tc_drop,
-                                count_audio_tracks=visited_children[25],
-                                count_clips=visited_children[29],
-                                count_files=visited_children[33])
+        return HeaderDescriptor(
+            session_name=visited_children[2],
+            sample_rate=visited_children[6],
+            bit_depth=visited_children[10],
+            start_timecode=visited_children[15],
+            timecode_format=visited_children[19],
+            timecode_drop_frame=tc_drop,
+            count_audio_tracks=visited_children[25],
+            count_clips=visited_children[29],
+            count_files=visited_children[33],
+        )
 
     @staticmethod
     def visit_files_section(_, visited_children):
-        return list(map(
-            lambda child: FileDescriptor(filename=child[0], path=child[2]),
-                    visited_children[2]))
+        return [
+            FileDescriptor(filemname=child[0], path=child[2])
+            for child in visited_children[2]
+        ]
 
     @staticmethod
     def visit_clips_section(_, visited_children):
         channel = next(iter(visited_children[2][3]), 1)
-
-        return list(map(
-            lambda child: ClipDescriptor(clip_name=child[0], file=child[2],
-                                         channel=channel),
-            visited_children[2]))
+        return [
+            ClipDescriptor(clip_name=child[0], file=child[2], channel=channel)
+            for child in visited_children[2]
+        ]
 
     @staticmethod
     def visit_plugin_listing(_, visited_children):
-        return list(map(lambda child:
-                        PluginDescriptor(manufacturer=child[0],
-                                         plugin_name=child[2],
-                                         version=child[4],
-                                         format=child[6],
-                                         stems=child[8],
-                                         count_instances=child[10]),
-                        visited_children[2]))
+
+        return [
+            PluginDescriptor(
+                manufacturer=child[0],
+                plugin_name=child[2],
+                version=child[4],
+                format=child[6],
+                stems=child[8],
+                count_instances=child[10],
+            )
+            for child in visited_children[2]
+        ]
 
     # @staticmethod
     def visit_track_block(self, _, visited_children):
@@ -210,7 +224,7 @@ class DocParserVisitor(NodeVisitor):
             user_delay_samples=track_header[10],
             state=track_header[14],
             plugins=plugins,
-            clips=clips
+            clips=clips,
         )
 
     @staticmethod
@@ -227,14 +241,16 @@ class DocParserVisitor(NodeVisitor):
         if isinstance(visited_children[14], list):
             timestamp = visited_children[14][0][0]
 
-        return TrackClipDescriptor(channel=visited_children[0],
-                                   event=visited_children[3],
-                                   clip_name=visited_children[6],
-                                   start_time=visited_children[8],
-                                   finish_time=visited_children[10],
-                                   duration=visited_children[12],
-                                   timestamp=timestamp,
-                                   state=visited_children[15])
+        return TrackClipDescriptor(
+            channel=visited_children[0],
+            event=visited_children[3],
+            clip_name=visited_children[6],
+            start_time=visited_children[8],
+            finish_time=visited_children[10],
+            duration=visited_children[12],
+            timestamp=timestamp,
+            state=visited_children[15],
+        )
 
     @staticmethod
     def visit_track_state_list(_, visited_children):
@@ -252,6 +268,7 @@ class DocParserVisitor(NodeVisitor):
         markers = []
 
         for marker in visited_children[1][0][1]:
+            marker: MarkerDescriptor
             markers.append(marker)
 
         return markers
@@ -259,26 +276,30 @@ class DocParserVisitor(NodeVisitor):
     @staticmethod
     def visit_marker_record_simple(_, visited_children):
 
-        return MarkerDescriptor(number=visited_children[0],
-                                location=visited_children[3],
-                                time_reference=visited_children[5],
-                                units=visited_children[8],
-                                name=visited_children[10],
-                                comments=visited_children[12],
-                                track_marker=False)
+        return MarkerDescriptor(
+            number=visited_children[0],
+            location=visited_children[3],
+            time_reference=visited_children[5],
+            units=visited_children[8],
+            name=visited_children[10],
+            comments=visited_children[12],
+            track_marker=False,
+        )
 
     @staticmethod
     def visit_marker_record(_, visited_children):
         track_type = visited_children[15]
-        is_track_marker = (track_type == "Track")
+        is_track_marker = track_type == "Track"
 
-        return MarkerDescriptor(number=visited_children[0],
-                                location=visited_children[3],
-                                time_reference=visited_children[5],
-                                units=visited_children[8],
-                                name=visited_children[10],
-                                comments=visited_children[16],
-                                track_marker=is_track_marker)
+        return MarkerDescriptor(
+            number=visited_children[0],
+            location=visited_children[3],
+            time_reference=visited_children[5],
+            units=visited_children[8],
+            name=visited_children[10],
+            comments=visited_children[16],
+            track_marker=is_track_marker,
+        )
 
     @staticmethod
     def visit_formatted_clip_name(_, visited_children):
@@ -303,5 +324,5 @@ class DocParserVisitor(NodeVisitor):
         pass
 
     def generic_visit(self, node, visited_children):
-        """ The generic visit method. """
+        """The generic visit method."""
         return visited_children or node

@@ -109,3 +109,4 @@ lcov.info
 
 .vim
 .vscode
+uv.lock

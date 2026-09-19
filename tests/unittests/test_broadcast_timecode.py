@@ -1,6 +1,8 @@
 import unittest
-from ptulsconv import broadcast_timecode
 from fractions import Fraction
+
+from ptulsconv import broadcast_timecode
+
 
 class TestBroadcastTimecode(unittest.TestCase):
     def test_basic_to_frame_count(self):
@@ -66,7 +68,9 @@ class TestBroadcastTimecode(unittest.TestCase):
     def test_seconds_to_smpte(self):
         secs = Fraction(25, 24)
         frame_duration = Fraction(1, 24)
-        tc_format = broadcast_timecode.TimecodeFormat(frame_duration=frame_duration, logical_fps=24, drop_frame=False)
+        tc_format = broadcast_timecode.TimecodeFormat(
+            frame_duration=frame_duration, logical_fps=24, drop_frame=False
+        )
         s1 = tc_format.seconds_to_smpte(secs)
         self.assertEqual(s1, "00:00:01:01")
 
@@ -77,9 +81,11 @@ class TestBroadcastTimecode(unittest.TestCase):
 
     def test_unparseable_timecode(self):
         time_str = "11.32-19"
-        s1 = broadcast_timecode.smpte_to_frame_count(time_str, frames_per_logical_second=24)
+        s1 = broadcast_timecode.smpte_to_frame_count(
+            time_str, frames_per_logical_second=24
+        )
         self.assertIsNone(s1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -1,20 +1,20 @@
+# type: ignore[reportUndefinedVariable]
+
 # Export Items as Text.py
 # (c) 2021 Jamie Hardt. All rights reserved.
 #
 #
-
 import datetime
 import json
+import time
 
-item_records = list()
+item_records = []
 
 for i in range(RPR_CountMediaItems(0)):
     this_item = RPR_GetMediaItem(0, i)
 
     item_record = {}
-    item_record["mute"] = (
-        True if RPR_GetMediaItemInfo_Value(this_item, "B_MUTE_ACTUAL") > 0.0 else False
-    )
+    item_record["mute"] = RPR_GetMediaItemInfo_Value(this_item, "B_MUTE_ACTUAL") > 0.0
 
     item_record["duration"] = RPR_GetMediaItemInfo_Value(this_item, "D_LENGTH")
     _, item_record["duration_tc"], _, _, _ = RPR_format_timestr_len(
@@ -26,9 +26,7 @@ for i in range(RPR_CountMediaItems(0)):
         item_record["position"], "", 128, 5
     )
 
-    item_record["selected"] = (
-        True if RPR_GetMediaItemInfo_Value(this_item, "B_UISEL") > 0.0 else False
-    )
+    item_record["selected"] = RPR_GetMediaItemInfo_Value(this_item, "B_UISEL") > 0.0
     _, _, _, item_record["notes"], _ = RPR_GetSetMediaItemInfo_String(
         this_item, "P_NOTES", "", False
     )
@@ -54,13 +52,11 @@ for i in range(RPR_CountMediaItems(0)):
     item_record["track_index"] = RPR_GetMediaTrackInfo_Value(
         item_track, "IP_TRACKNUMBER"
     )
-    item_record["track_muted"] = (
-        True if RPR_GetMediaTrackInfo_Value(item_track, "B_MUTE") > 0.0 else False
-    )
+    item_record["track_muted"] = RPR_GetMediaTrackInfo_Value(item_track, "B_MUTE") > 0.0
 
     item_records = item_records + [item_record]
 
-output = dict()
+output = {}
 output["items"] = item_records
 _, output["project_title"], _ = RPR_GetProjectName(0, "", 1024)
 _, _, output["project_author"], _ = RPR_GetSetProjectAuthor(0, False, "", 1024)
@@ -70,21 +66,20 @@ output["project_frame_rate"], _, output["project_drop_frame"] = (
 
 output_path, _ = RPR_GetProjectPath("", 1024)
 
-now = datetime.datetime.now()
+now = datetime.datetime.now(tz=time.tzname)
 output_title = output["project_title"]
 
 if output_title == "":
     output_title = "unsaved project"
 
-output_file_name = "%s Text Export %s.txt" % (output_title, now.strftime("%Y%m%d_%H%M"))
+output_file_name = f"{output_title} Text Export {now.strftime('%Y%m%d_%H%M')}.txt"
 output_path = output_path + "/" + output_file_name
 
 with open(output_path, "w") as f:
     json.dump(output, f, allow_nan=True, indent=4)
 
 RPR_ShowMessageBox(
-    'Exported text file "%s" to project folder.' % output_file_name,
-    "Text Export Complete",
+    f'Exported text file "{output_file_name}" to project folder. Text Export Complete',
     0,
 )
 

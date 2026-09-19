@@ -42,6 +42,8 @@ doc = [
     "sphinx-rtd-theme>=3.0.2",
 ]
 
+[tool.ruff.lint.per-file-ignores]
+"reaper/Export Items as Text.py" = ["F821"]
 
 [project.scripts]
 ptulsconv = "ptulsconv:__main__.main"

@@ -1,6 +1,6 @@
 [project]
 name = "ptulsconv"
-version = "4.0.0"
+version = "4.0.1"
 description = "Read Pro Tools Text exports and generate PDF ADR Reports, JSON"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -9,7 +9,6 @@ license-files = ["LICENSE"]
 keywords = ["text-processing", "parsers", "film", 
     "broadcast", "editing", "editorial"]
 classifiers = [
-    'License :: OSI Approved :: MIT License',
     'Topic :: Multimedia',
     'Topic :: Multimedia :: Sound/Audio',
     "Programming Language :: Python :: 3.9",
